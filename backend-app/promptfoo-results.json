@@ -1,0 +1,1988 @@
+{
+  "evalId": "eval-pkH-2025-07-18T11:28:32",
+  "results": {
+    "version": 3,
+    "timestamp": "2025-07-18T11:28:32.146Z",
+    "prompts": [
+      {
+        "raw": "baseline_structured",
+        "label": "Baseline Structured Extraction",
+        "id": "ac9cfb62cb67f9dada9df23181241f268a0f9ce055e4da30d9c1b83007855323",
+        "provider": "base_config",
+        "metrics": {
+          "score": 4.5,
+          "testPassCount": 4,
+          "testFailCount": 1,
+          "testErrorCount": 0,
+          "assertPassCount": 9,
+          "assertFailCount": 1,
+          "totalLatencyMs": 211036,
+          "tokenUsage": {
+            "total": 34950,
+            "prompt": 30980,
+            "completion": 3970,
+            "cached": 0,
+            "numRequests": 5,
+            "completionDetails": {
+              "reasoning": 0,
+              "acceptedPrediction": 0,
+              "rejectedPrediction": 0
+            },
+            "assertions": {
+              "total": 0,
+              "prompt": 0,
+              "completion": 0,
+              "cached": 0
+            }
+          },
+          "namedScores": {},
+          "namedScoresCount": {},
+          "cost": 0
+        }
+      },
+      {
+        "raw": "baseline_structured",
+        "label": "Baseline Structured Extraction",
+        "id": "ac9cfb62cb67f9dada9df23181241f268a0f9ce055e4da30d9c1b83007855323",
+        "provider": "high_precision",
+        "metrics": {
+          "score": 4.5,
+          "testPassCount": 4,
+          "testFailCount": 1,
+          "testErrorCount": 0,
+          "assertPassCount": 9,
+          "assertFailCount": 1,
+          "totalLatencyMs": 210907,
+          "tokenUsage": {
+            "total": 34985,
+            "prompt": 30980,
+            "completion": 4005,
+            "cached": 0,
+            "numRequests": 5,
+            "completionDetails": {
+              "reasoning": 0,
+              "acceptedPrediction": 0,
+              "rejectedPrediction": 0
+            },
+            "assertions": {
+              "total": 0,
+              "prompt": 0,
+              "completion": 0,
+              "cached": 0
+            }
+          },
+          "namedScores": {},
+          "namedScoresCount": {},
+          "cost": 0
+        }
+      },
+      {
+        "raw": "baseline_structured",
+        "label": "Baseline Structured Extraction",
+        "id": "ac9cfb62cb67f9dada9df23181241f268a0f9ce055e4da30d9c1b83007855323",
+        "provider": "creative",
+        "metrics": {
+          "score": 4.5,
+          "testPassCount": 4,
+          "testFailCount": 1,
+          "testErrorCount": 0,
+          "assertPassCount": 9,
+          "assertFailCount": 1,
+          "totalLatencyMs": 210867,
+          "tokenUsage": {
+            "total": 34968,
+            "prompt": 30980,
+            "completion": 3988,
+            "cached": 0,
+            "numRequests": 5,
+            "completionDetails": {
+              "reasoning": 0,
+              "acceptedPrediction": 0,
+              "rejectedPrediction": 0
+            },
+            "assertions": {
+              "total": 0,
+              "prompt": 0,
+              "completion": 0,
+              "cached": 0
+            }
+          },
+          "namedScores": {},
+          "namedScoresCount": {},
+          "cost": 0
+        }
+      },
+      {
+        "raw": "baseline_structured",
+        "label": "Baseline Structured Extraction",
+        "id": "ac9cfb62cb67f9dada9df23181241f268a0f9ce055e4da30d9c1b83007855323",
+        "provider": "balanced",
+        "metrics": {
+          "score": 4.5,
+          "testPassCount": 4,
+          "testFailCount": 1,
+          "testErrorCount": 0,
+          "assertPassCount": 9,
+          "assertFailCount": 1,
+          "totalLatencyMs": 210765,
+          "tokenUsage": {
+            "total": 34968,
+            "prompt": 30980,
+            "completion": 3988,
+            "cached": 0,
+            "numRequests": 5,
+            "completionDetails": {
+              "reasoning": 0,
+              "acceptedPrediction": 0,
+              "rejectedPrediction": 0
+            },
+            "assertions": {
+              "total": 0,
+              "prompt": 0,
+              "completion": 0,
+              "cached": 0
+            }
+          },
+          "namedScores": {},
+          "namedScoresCount": {},
+          "cost": 0
+        }
+      }
+    ],
+    "results": [
+      {
+        "cost": 0,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "is-json"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "const data = JSON.parse(output);\nconst fields = data.result?.fields || [];\nconst findField = (name) => fields.find(f => f.fieldName === name);\n\n// Required fields check\nconst requiredFields = [\n  \"Patient First Name\",\n  \"Patient Last Name\", \n  \"Healthcare Facility\"\n];\n\nfor (const fieldName of requiredFields) {\n  const field = findField(fieldName);\n  if (!field || !field.value) {\n    throw new Error(`Required field \"${fieldName}\" is missing or empty`);\n  }\n}\n\n// Accuracy check\nconst accuracy = parseInt(data.accuracy || \"0\");\nif (accuracy < 70) {\n  throw new Error(`Accuracy too low: ${accuracy}% (minimum 70%)`);\n}\n\nreturn true;\n"
+              }
+            }
+          ],
+          "assertion": null
+        },
+        "id": "f3a49ca5-ff0f-42e0-a548-baea24bdea55",
+        "latencyMs": 42977,
+        "namedScores": {},
+        "prompt": {
+          "raw": "baseline_structured",
+          "label": "Baseline Structured Extraction"
+        },
+        "promptId": "ac9cfb62cb67f9dada9df23181241f268a0f9ce055e4da30d9c1b83007855323",
+        "promptIdx": 0,
+        "provider": {
+          "id": "./sagemaker-provider.ts",
+          "label": "base_config"
+        },
+        "response": {
+          "output": "{\n  \"result\": {\n    \"fields\": [\n      {\n        \"fieldName\": \"Patient First Name\",\n        \"value\": \"John\",\n        \"tips\": \"Field value can be presented as: Print or printed name, Patient name, Member name, Name on information to be disclosed, Our client, Client Name, Patient.\"\n      },\n      {\n        \"fieldName\": \"Patient Last Name\",\n        \"value\": \"Meyer\",\n        \"tips\": \"If a comma is found in the patient name field take the first value as the last name and the second value after comma as the first name.\"\n      },\n      {\n        \"fieldName\": \"Patient DOB\",\n        \"value\": \"01/28/2005\",\n        \"format\": \"MM/DD/YYYY\"\n      },\n      {\n        \"fieldName\": \"Date Received\",\n        \"value\": \"03/25/24\",\n        \"format\": \"MM/DD/YYYY\"\n      },\n      {\n        \"fieldName\": \"Patient Phone\",\n        \"value\": \"417-293-6056\",\n        \"format\": \"###-###-####\",\n        \"tips\": \"Find a US based phone number near with proximity to the patient name. If you do not find a phone number near the patient name ignore this field and do not extract a value.\"\n      },\n      {\n        \"fieldName\": \"Healthcare Facility\",\n        \"value\": \"WEST PLAINS R-VII SCHOOL DISTRICT\",\n        \"tips\": \"The healthcare facility name and address is typically the return address block on the top left of the patient information. Field value can be presented as: Release From, Facility, PHP Hospital Doctor Name, Provider facility, Name of individual, guardian, legal or personal representative.\"\n      },\n      {\n        \"fieldName\": \"Facility Street Address\",\n        \"value\": \"305 VALLEY VIEW DRIVE\",\n        \"tips\": \"Find a US based street address which is near the healthcare facility name.\"\n      },\n      {\n        \"fieldName\": \"Facility City\",\n        \"value\": \"WEST PLAINS\",\n        \"tips\": \"Find a US based city name which is near the healthcare facility name and street address.\"\n      },\n      {\n        \"fieldName\": \"Facility State\",\n        \"value\": \"MO\",\n        \"tips\": \"Find a US based State name which is near the healthcare facility name, street address and facility city.\"\n      },\n      {\n        \"fieldName\": \"Facility Zip\",\n        \"value\": \"65775\",\n        \"tips\": \"\"\n      },\n      {\n        \"fieldName\": \"Requestor Email\",\n        \"value\": \"\",\n        \"tips\": \"Find an email formatted string that is in close proximity to the requestor name.\"\n      },\n      {\n        \"fieldName\": \"Requester Name\",\n        \"value\": \"WEST PLAINS R-VII SCHOOL DISTRICT\",\n        \"tips\": \"Name of entity or individual holding the records. Company or individual name at typically at top of first page.\"\n      },\n      {\n        \"fieldName\": \"Requester Fax Number\",\n        \"value\": \"417-256-7806\",\n        \"format\": \"###-###-####\",\n        \"tips\": \"Field value can be presented as: Release to fax, Secure Fax, Records can be faxed to, Find a US phone number where you also find this symbol >> as the fax number, Securely faxing, Workers name fax.\"\n      },\n      {\n        \"fieldName\": \"Requester Address\",\n        \"value\": \"305 VALLEY VIEW DRIVE\",\n        \"tips\": \"Field value can be presented as: Release To Address. Address is typically on top of first page in the middle. Mailing the records directly.\"\n      }\n    ]\n  },\n  \"accuracy\": \"95\"\n}",
+          "tokenUsage": {
+            "total": 6990,
+            "prompt": 6196,
+            "completion": 794
+          }
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "name": "Horn Record - Basic Extraction",
+          "vars": {
+            "key": "images/P95-Meyer req-1.jpeg"
+          },
+          "assert": [
+            {
+              "type": "is-json"
+            },
+            {
+              "type": "javascript",
+              "value": "const data = JSON.parse(output);\nconst fields = data.result?.fields || [];\nconst findField = (name) => fields.find(f => f.fieldName === name);\n\n// Required fields check\nconst requiredFields = [\n  \"Patient First Name\",\n  \"Patient Last Name\", \n  \"Healthcare Facility\"\n];\n\nfor (const fieldName of requiredFields) {\n  const field = findField(fieldName);\n  if (!field || !field.value) {\n    throw new Error(`Required field \"${fieldName}\" is missing or empty`);\n  }\n}\n\n// Accuracy check\nconst accuracy = parseInt(data.accuracy || \"0\");\nif (accuracy < 70) {\n  throw new Error(`Accuracy too low: ${accuracy}% (minimum 70%)`);\n}\n\nreturn true;\n"
+            }
+          ],
+          "options": {},
+          "metadata": {}
+        },
+        "testIdx": 0,
+        "vars": {
+          "key": "images/P95-Meyer req-1.jpeg"
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      },
+      {
+        "cost": 0,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "is-json"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "const data = JSON.parse(output);\nconst fields = data.result?.fields || [];\nconst findField = (name) => fields.find(f => f.fieldName === name);\n\n// Required fields check\nconst requiredFields = [\n  \"Patient First Name\",\n  \"Patient Last Name\", \n  \"Healthcare Facility\"\n];\n\nfor (const fieldName of requiredFields) {\n  const field = findField(fieldName);\n  if (!field || !field.value) {\n    throw new Error(`Required field \"${fieldName}\" is missing or empty`);\n  }\n}\n\n// Accuracy check\nconst accuracy = parseInt(data.accuracy || \"0\");\nif (accuracy < 70) {\n  throw new Error(`Accuracy too low: ${accuracy}% (minimum 70%)`);\n}\n\nreturn true;\n"
+              }
+            }
+          ],
+          "assertion": null
+        },
+        "id": "839dff65-aeb2-4504-979e-08dbaaba0c97",
+        "latencyMs": 43000,
+        "namedScores": {},
+        "prompt": {
+          "raw": "baseline_structured",
+          "label": "Baseline Structured Extraction"
+        },
+        "promptId": "ac9cfb62cb67f9dada9df23181241f268a0f9ce055e4da30d9c1b83007855323",
+        "promptIdx": 3,
+        "provider": {
+          "id": "./sagemaker-provider.ts",
+          "label": "balanced"
+        },
+        "response": {
+          "output": "{\n  \"result\": {\n    \"fields\": [\n      {\n        \"fieldName\": \"Patient First Name\",\n        \"value\": \"John\",\n        \"tips\": \"Field value can be presented as: Print or printed name, Patient name, Member name, Name on information to be disclosed, Our client, Client Name, Patient.\"\n      },\n      {\n        \"fieldName\": \"Patient Last Name\",\n        \"value\": \"Meyer\",\n        \"tips\": \"If a comma is found in the patient name field take the first value as the last name and the second value after comma as the first name.\"\n      },\n      {\n        \"fieldName\": \"Patient DOB\",\n        \"value\": \"01/28/2005\",\n        \"format\": \"MM/DD/YYYY\"\n      },\n      {\n        \"fieldName\": \"Date Received\",\n        \"value\": \"03/25/24\",\n        \"format\": \"MM/DD/YYYY\"\n      },\n      {\n        \"fieldName\": \"Patient Phone\",\n        \"value\": \"417-293-6056\",\n        \"format\": \"###-###-####\",\n        \"tips\": \"Find a US based phone number near with proximity to the patient name. If you do not find a phone number near the patient name ignore this field and do not extract a value.\"\n      },\n      {\n        \"fieldName\": \"Healthcare Facility\",\n        \"value\": \"WEST PLAINS R-VII SCHOOL DISTRICT\",\n        \"tips\": \"The healthcare facility name and address is typically the return address block on the top left of the patient information. Field value can be presented as: Release From, Facility, PHP Hospital Doctor Name, Provider facility, Name of individual, guardian, legal or personal representative.\"\n      },\n      {\n        \"fieldName\": \"Facility Street Address\",\n        \"value\": \"305 VALLEY VIEW DRIVE\",\n        \"tips\": \"Find a US based street address which is near the healthcare facility name.\"\n      },\n      {\n        \"fieldName\": \"Facility City\",\n        \"value\": \"WEST PLAINS\",\n        \"tips\": \"Find a US based city name which is near the healthcare facility name and street address.\"\n      },\n      {\n        \"fieldName\": \"Facility State\",\n        \"value\": \"MO\",\n        \"tips\": \"Find a US based State name which is near the healthcare facility name, street address and facility city.\"\n      },\n      {\n        \"fieldName\": \"Facility Zip\",\n        \"value\": \"65775\",\n        \"tips\": \"\"\n      },\n      {\n        \"fieldName\": \"Requestor Email\",\n        \"value\": \"www.zizzers.org\",\n        \"tips\": \"Find an email formatted string that is in close proximity to the requestor name.\"\n      },\n      {\n        \"fieldName\": \"Requester Name\",\n        \"value\": \"WEST PLAINS R-VII SCHOOL DISTRICT\",\n        \"tips\": \"Name of entity or individual holding the records. Company or individual name at typically at top of first page.\"\n      },\n      {\n        \"fieldName\": \"Requester Fax Number\",\n        \"value\": \"417-256-7806\",\n        \"format\": \"###-###-####\",\n        \"tips\": \"Field value can be presented as: Release to fax, Secure Fax, Records can be faxed to, Find a US phone number where you also find this symbol >> as the fax number, Securely faxing, Workers name fax.\"\n      },\n      {\n        \"fieldName\": \"Requester Address\",\n        \"value\": \"305 VALLEY VIEW DRIVE\\nWEST PLAINS, MO 65775\",\n        \"tips\": \"Field value can be presented as: Release To Address. Address is typically on top of first page in the middle. Mailing the records directly.\"\n      }\n    ]\n  },\n  \"accuracy\": \"95\"\n}",
+          "tokenUsage": {
+            "total": 7008,
+            "prompt": 6196,
+            "completion": 812
+          }
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "name": "Horn Record - Basic Extraction",
+          "vars": {
+            "key": "images/P95-Meyer req-1.jpeg"
+          },
+          "assert": [
+            {
+              "type": "is-json"
+            },
+            {
+              "type": "javascript",
+              "value": "const data = JSON.parse(output);\nconst fields = data.result?.fields || [];\nconst findField = (name) => fields.find(f => f.fieldName === name);\n\n// Required fields check\nconst requiredFields = [\n  \"Patient First Name\",\n  \"Patient Last Name\", \n  \"Healthcare Facility\"\n];\n\nfor (const fieldName of requiredFields) {\n  const field = findField(fieldName);\n  if (!field || !field.value) {\n    throw new Error(`Required field \"${fieldName}\" is missing or empty`);\n  }\n}\n\n// Accuracy check\nconst accuracy = parseInt(data.accuracy || \"0\");\nif (accuracy < 70) {\n  throw new Error(`Accuracy too low: ${accuracy}% (minimum 70%)`);\n}\n\nreturn true;\n"
+            }
+          ],
+          "options": {},
+          "metadata": {}
+        },
+        "testIdx": 0,
+        "vars": {
+          "key": "images/P95-Meyer req-1.jpeg"
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      },
+      {
+        "cost": 0,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "is-json"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "const data = JSON.parse(output);\nconst fields = data.result?.fields || [];\nconst findField = (name) => fields.find(f => f.fieldName === name);\n\n// Required fields check\nconst requiredFields = [\n  \"Patient First Name\",\n  \"Patient Last Name\", \n  \"Healthcare Facility\"\n];\n\nfor (const fieldName of requiredFields) {\n  const field = findField(fieldName);\n  if (!field || !field.value) {\n    throw new Error(`Required field \"${fieldName}\" is missing or empty`);\n  }\n}\n\n// Accuracy check\nconst accuracy = parseInt(data.accuracy || \"0\");\nif (accuracy < 70) {\n  throw new Error(`Accuracy too low: ${accuracy}% (minimum 70%)`);\n}\n\nreturn true;\n"
+              }
+            }
+          ],
+          "assertion": null
+        },
+        "id": "69a4f0ee-57e2-47ca-9720-a331b8b33da4",
+        "latencyMs": 43009,
+        "namedScores": {},
+        "prompt": {
+          "raw": "baseline_structured",
+          "label": "Baseline Structured Extraction"
+        },
+        "promptId": "ac9cfb62cb67f9dada9df23181241f268a0f9ce055e4da30d9c1b83007855323",
+        "promptIdx": 1,
+        "provider": {
+          "id": "./sagemaker-provider.ts",
+          "label": "high_precision"
+        },
+        "response": {
+          "output": "{\n  \"result\": {\n    \"fields\": [\n      {\n        \"fieldName\": \"Patient First Name\",\n        \"value\": \"John\",\n        \"tips\": \"Field value can be presented as: Print or printed name, Patient name, Member name, Name on information to be disclosed, Our client, Client Name, Patient.\"\n      },\n      {\n        \"fieldName\": \"Patient Last Name\",\n        \"value\": \"Meyer\",\n        \"tips\": \"If a comma is found in the patient name field take the first value as the last name and the second value after comma as the first name.\"\n      },\n      {\n        \"fieldName\": \"Patient DOB\",\n        \"value\": \"01/28/2005\",\n        \"format\": \"MM/DD/YYYY\"\n      },\n      {\n        \"fieldName\": \"Date Received\",\n        \"value\": \"03/25/24\",\n        \"format\": \"MM/DD/YYYY\"\n      },\n      {\n        \"fieldName\": \"Patient Phone\",\n        \"value\": \"417-293-6560\",\n        \"format\": \"###-###-####\",\n        \"tips\": \"Find a US based phone number near with proximity to the patient name. If you do not find a phone number near the patient name ignore this field and do not extract a value.\"\n      },\n      {\n        \"fieldName\": \"Healthcare Facility\",\n        \"value\": \"WEST PLAINS R-VII SCHOOL DISTRICT\",\n        \"tips\": \"The healthcare facility name and address is typically the return address block on the top left of the patient information. Field value can be presented as: Release From, Facility, PHP Hospital Doctor Name, Provider facility, Name of individual, guardian, legal or personal representative.\"\n      },\n      {\n        \"fieldName\": \"Facility Street Address\",\n        \"value\": \"305 Valley View Drive\",\n        \"tips\": \"Find a US based street address which is near the healthcare facility name.\"\n      },\n      {\n        \"fieldName\": \"Facility City\",\n        \"value\": \"WEST PLAINS\",\n        \"tips\": \"Find a US based city name which is near the healthcare facility name and street address.\"\n      },\n      {\n        \"fieldName\": \"Facility State\",\n        \"value\": \"MO\",\n        \"tips\": \"Find a US based State name which is near the healthcare facility name, street address and facility city.\"\n      },\n      {\n        \"fieldName\": \"Facility Zip\",\n        \"value\": \"65775\",\n        \"tips\": \"\"\n      },\n      {\n        \"fieldName\": \"Requestor Email\",\n        \"value\": \"\",\n        \"tips\": \"Find an email formatted string that is in close proximity to the requestor name.\"\n      },\n      {\n        \"fieldName\": \"Requester Name\",\n        \"value\": \"WEST PLAINS R-VII SCHOOL DISTRICT\",\n        \"tips\": \"Name of entity or individual holding the records. Company or individual name at typically at top of first page.\"\n      },\n      {\n        \"fieldName\": \"Requester Fax Number\",\n        \"value\": \"417-256-7806\",\n        \"format\": \"###-###-####\",\n        \"tips\": \"Field value can be presented as: Release to fax, Secure Fax, Records can be faxed to, Find a US phone number where you also find this symbol >> as the fax number, Securely faxing, Workers name fax.\"\n      },\n      {\n        \"fieldName\": \"Requester Address\",\n        \"value\": \"305 Valley View Drive\\nWEST PLAINS, MO 65775\",\n        \"tips\": \"Field value can be presented as: Release To Address. Address is typically on top of first page in the middle. Mailing the records directly.\"\n      }\n    ]\n  },\n  \"accuracy\": \"95\"\n}",
+          "tokenUsage": {
+            "total": 7000,
+            "prompt": 6196,
+            "completion": 804
+          }
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "name": "Horn Record - Basic Extraction",
+          "vars": {
+            "key": "images/P95-Meyer req-1.jpeg"
+          },
+          "assert": [
+            {
+              "type": "is-json"
+            },
+            {
+              "type": "javascript",
+              "value": "const data = JSON.parse(output);\nconst fields = data.result?.fields || [];\nconst findField = (name) => fields.find(f => f.fieldName === name);\n\n// Required fields check\nconst requiredFields = [\n  \"Patient First Name\",\n  \"Patient Last Name\", \n  \"Healthcare Facility\"\n];\n\nfor (const fieldName of requiredFields) {\n  const field = findField(fieldName);\n  if (!field || !field.value) {\n    throw new Error(`Required field \"${fieldName}\" is missing or empty`);\n  }\n}\n\n// Accuracy check\nconst accuracy = parseInt(data.accuracy || \"0\");\nif (accuracy < 70) {\n  throw new Error(`Accuracy too low: ${accuracy}% (minimum 70%)`);\n}\n\nreturn true;\n"
+            }
+          ],
+          "options": {},
+          "metadata": {}
+        },
+        "testIdx": 0,
+        "vars": {
+          "key": "images/P95-Meyer req-1.jpeg"
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      },
+      {
+        "cost": 0,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "is-json"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "const data = JSON.parse(output);\nconst fields = data.result?.fields || [];\nconst findField = (name) => fields.find(f => f.fieldName === name);\n\n// Required fields check\nconst requiredFields = [\n  \"Patient First Name\",\n  \"Patient Last Name\", \n  \"Healthcare Facility\"\n];\n\nfor (const fieldName of requiredFields) {\n  const field = findField(fieldName);\n  if (!field || !field.value) {\n    throw new Error(`Required field \"${fieldName}\" is missing or empty`);\n  }\n}\n\n// Accuracy check\nconst accuracy = parseInt(data.accuracy || \"0\");\nif (accuracy < 70) {\n  throw new Error(`Accuracy too low: ${accuracy}% (minimum 70%)`);\n}\n\nreturn true;\n"
+              }
+            }
+          ],
+          "assertion": null
+        },
+        "id": "7df9b0f5-601f-4653-89fe-7791749110ca",
+        "latencyMs": 43014,
+        "namedScores": {},
+        "prompt": {
+          "raw": "baseline_structured",
+          "label": "Baseline Structured Extraction"
+        },
+        "promptId": "ac9cfb62cb67f9dada9df23181241f268a0f9ce055e4da30d9c1b83007855323",
+        "promptIdx": 2,
+        "provider": {
+          "id": "./sagemaker-provider.ts",
+          "label": "creative"
+        },
+        "response": {
+          "output": "{\n  \"result\": {\n    \"fields\": [\n      {\n        \"fieldName\": \"Patient First Name\",\n        \"value\": \"John\",\n        \"tips\": \"Field value can be presented as: Print or printed name, Patient name, Member name, Name on information to be disclosed, Our client, Client Name, Patient.\"\n      },\n      {\n        \"fieldName\": \"Patient Last Name\",\n        \"value\": \"Meyer\",\n        \"tips\": \"If a comma is found in the patient name field take the first value as the last name and the second value after comma as the first name.\"\n      },\n      {\n        \"fieldName\": \"Patient DOB\",\n        \"value\": \"01/28/2005\",\n        \"format\": \"MM/DD/YYYY\"\n      },\n      {\n        \"fieldName\": \"Date Received\",\n        \"value\": \"03/25/24\",\n        \"format\": \"MM/DD/YYYY\"\n      },\n      {\n        \"fieldName\": \"Patient Phone\",\n        \"value\": \"417-293-6560\",\n        \"format\": \"###-###-####\",\n        \"tips\": \"Find a US based phone number near with proximity to the patient name. If you do not find a phone number near the patient name ignore this field and do not extract a value.\"\n      },\n      {\n        \"fieldName\": \"Healthcare Facility\",\n        \"value\": \"WEST PLAINS R-VII SCHOOL DISTRICT\",\n        \"tips\": \"The healthcare facility name and address is typically the return address block on the top left of the patient information. Field value can be presented as: Release From, Facility, PHP Hospital Doctor Name, Provider facility, Name of individual, guardian, legal or personal representative.\"\n      },\n      {\n        \"fieldName\": \"Facility Street Address\",\n        \"value\": \"305 VALLEY VIEW DRIVE\",\n        \"tips\": \"Find a US based street address which is near the healthcare facility name.\"\n      },\n      {\n        \"fieldName\": \"Facility City\",\n        \"value\": \"WEST PLAINS\",\n        \"tips\": \"Find a US based city name which is near the healthcare facility name and street address.\"\n      },\n      {\n        \"fieldName\": \"Facility State\",\n        \"value\": \"MO\",\n        \"tips\": \"Find a US based State name which is near the healthcare facility name, street address and facility city.\"\n      },\n      {\n        \"fieldName\": \"Facility Zip\",\n        \"value\": \"65775\",\n        \"tips\": \"\"\n      },\n      {\n        \"fieldName\": \"Requestor Email\",\n        \"value\": \"www.zizzers.org\",\n        \"tips\": \"Find an email formatted string that is in close proximity to the requestor name.\"\n      },\n      {\n        \"fieldName\": \"Requester Name\",\n        \"value\": \"WEST PLAINS R-VII SCHOOL DISTRICT\",\n        \"tips\": \"Name of entity or individual holding the records. Company or individual name at typically at top of first page.\"\n      },\n      {\n        \"fieldName\": \"Requester Fax Number\",\n        \"value\": \"417-256-7806\",\n        \"format\": \"###-###-####\",\n        \"tips\": \"Field value can be presented as: Release to fax, Secure Fax, Records can be faxed to, Find a US phone number where you also find this symbol >> as the fax number, Securely faxing, Workers name fax.\"\n      },\n      {\n        \"fieldName\": \"Requester Address\",\n        \"value\": \"305 VALLEY VIEW DRIVE\",\n        \"tips\": \"Field value can be presented as: Release To Address. Address is typically on top of first page in the middle. Mailing the records directly.\"\n      }\n    ]\n  },\n  \"accuracy\": \"95\"\n}",
+          "tokenUsage": {
+            "total": 6996,
+            "prompt": 6196,
+            "completion": 800
+          }
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "name": "Horn Record - Basic Extraction",
+          "vars": {
+            "key": "images/P95-Meyer req-1.jpeg"
+          },
+          "assert": [
+            {
+              "type": "is-json"
+            },
+            {
+              "type": "javascript",
+              "value": "const data = JSON.parse(output);\nconst fields = data.result?.fields || [];\nconst findField = (name) => fields.find(f => f.fieldName === name);\n\n// Required fields check\nconst requiredFields = [\n  \"Patient First Name\",\n  \"Patient Last Name\", \n  \"Healthcare Facility\"\n];\n\nfor (const fieldName of requiredFields) {\n  const field = findField(fieldName);\n  if (!field || !field.value) {\n    throw new Error(`Required field \"${fieldName}\" is missing or empty`);\n  }\n}\n\n// Accuracy check\nconst accuracy = parseInt(data.accuracy || \"0\");\nif (accuracy < 70) {\n  throw new Error(`Accuracy too low: ${accuracy}% (minimum 70%)`);\n}\n\nreturn true;\n"
+            }
+          ],
+          "options": {},
+          "metadata": {}
+        },
+        "testIdx": 0,
+        "vars": {
+          "key": "images/P95-Meyer req-1.jpeg"
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      },
+      {
+        "cost": 0,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "is-json"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "const data = JSON.parse(output);\nconst fields = data.result?.fields || [];\nconst findField = (name) => fields.find(f => f.fieldName === name);\n\n// Specific value checks (adjust based on actual document content)\nconst checks = [\n  { field: \"Patient First Name\", expected: \"John\" },\n  { field: \"Patient Last Name\", expected: \"Meyer\" },\n  { field: \"Healthcare Facility\", expected: \"WEST PLAINS R-VII SCHOOL DISTRICT\" },\n  { field: \"Facility State\", expected: \"MO\" },\n  { field: \"Facility City\", expected: \"WEST PLAINS\" }\n];\n\nconst errors = [];\nfor (const check of checks) {\n  const field = findField(check.field);\n  if (!field) {\n    errors.push(`Field \"${check.field}\" not found`);\n  } else if (field.value !== check.expected) {\n    errors.push(`Field \"${check.field}\": expected \"${check.expected}\", got \"${field.value}\"`);\n  }\n}\n\nif (errors.length > 0) {\n  throw new Error(`Field validation failed: ${errors.join(\"; \")}`);\n}\n\nreturn true;\n"
+              }
+            }
+          ],
+          "assertion": null
+        },
+        "id": "51b000a3-fbb6-4d65-9d7a-3c10727cc338",
+        "latencyMs": 41913,
+        "namedScores": {},
+        "prompt": {
+          "raw": "baseline_structured",
+          "label": "Baseline Structured Extraction"
+        },
+        "promptId": "ac9cfb62cb67f9dada9df23181241f268a0f9ce055e4da30d9c1b83007855323",
+        "promptIdx": 3,
+        "provider": {
+          "id": "./sagemaker-provider.ts",
+          "label": "balanced"
+        },
+        "response": {
+          "output": "{\n  \"result\": {\n    \"fields\": [\n      {\n        \"fieldName\": \"Patient First Name\",\n        \"value\": \"John\",\n        \"tips\": \"Field value can be presented as: Print or printed name, Patient name, Member name, Name on information to be disclosed, Our client, Client Name, Patient.\"\n      },\n      {\n        \"fieldName\": \"Patient Last Name\",\n        \"value\": \"Meyer\",\n        \"tips\": \"If a comma is found in the patient name field take the first value as the last name and the second value after comma as the first name.\"\n      },\n      {\n        \"fieldName\": \"Patient DOB\",\n        \"value\": \"01/28/2005\",\n        \"format\": \"MM/DD/YYYY\"\n      },\n      {\n        \"fieldName\": \"Date Received\",\n        \"value\": \"03/25/24\",\n        \"format\": \"MM/DD/YYYY\"\n      },\n      {\n        \"fieldName\": \"Patient Phone\",\n        \"value\": \"417-293-6056\",\n        \"format\": \"###-###-####\",\n        \"tips\": \"Find a US based phone number near with proximity to the patient name. If you do not find a phone number near the patient name ignore this field and do not extract a value.\"\n      },\n      {\n        \"fieldName\": \"Healthcare Facility\",\n        \"value\": \"WEST PLAINS R-VII SCHOOL DISTRICT\",\n        \"tips\": \"The healthcare facility name and address is typically the return address block on the top left of the patient information. Field value can be presented as: Release From, Facility, PHP Hospital Doctor Name, Provider facility, Name of individual, guardian, legal or personal representative.\"\n      },\n      {\n        \"fieldName\": \"Facility Street Address\",\n        \"value\": \"305 VALLEY VIEW DRIVE\",\n        \"tips\": \"Find a US based street address which is near the healthcare facility name.\"\n      },\n      {\n        \"fieldName\": \"Facility City\",\n        \"value\": \"WEST PLAINS\",\n        \"tips\": \"Find a US based city name which is near the healthcare facility name and street address.\"\n      },\n      {\n        \"fieldName\": \"Facility State\",\n        \"value\": \"MO\",\n        \"tips\": \"Find a US based State name which is near the healthcare facility name, street address and facility city.\"\n      },\n      {\n        \"fieldName\": \"Facility Zip\",\n        \"value\": \"65775\",\n        \"tips\": \"\"\n      },\n      {\n        \"fieldName\": \"Requestor Email\",\n        \"value\": \"\",\n        \"tips\": \"Find an email formatted string that is in close proximity to the requestor name.\"\n      },\n      {\n        \"fieldName\": \"Requester Name\",\n        \"value\": \"WEST PLAINS R-VII SCHOOL DISTRICT\",\n        \"tips\": \"Name of entity or individual holding the records. Company or individual name at typically at top of first page.\"\n      },\n      {\n        \"fieldName\": \"Requester Fax Number\",\n        \"value\": \"417-256-7806\",\n        \"format\": \"###-###-####\",\n        \"tips\": \"Field value can be presented as: Release to fax, Secure Fax, Records can be faxed to, Find a US phone number where you also find this symbol >> as the fax number, Securely faxing, Workers name fax.\"\n      },\n      {\n        \"fieldName\": \"Requester Address\",\n        \"value\": \"305 VALLEY VIEW DRIVE\",\n        \"tips\": \"Field value can be presented as: Release To Address. Address is typically on top of first page in the middle. Mailing the records directly.\"\n      }\n    ]\n  },\n  \"accuracy\": \"95\"\n}",
+          "tokenUsage": {
+            "total": 6990,
+            "prompt": 6196,
+            "completion": 794
+          }
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "name": "Horn Record - Field Validation",
+          "vars": {
+            "key": "images/P95-Meyer req-1.jpeg"
+          },
+          "assert": [
+            {
+              "type": "is-json"
+            },
+            {
+              "type": "javascript",
+              "value": "const data = JSON.parse(output);\nconst fields = data.result?.fields || [];\nconst findField = (name) => fields.find(f => f.fieldName === name);\n\n// Specific value checks (adjust based on actual document content)\nconst checks = [\n  { field: \"Patient First Name\", expected: \"John\" },\n  { field: \"Patient Last Name\", expected: \"Meyer\" },\n  { field: \"Healthcare Facility\", expected: \"WEST PLAINS R-VII SCHOOL DISTRICT\" },\n  { field: \"Facility State\", expected: \"MO\" },\n  { field: \"Facility City\", expected: \"WEST PLAINS\" }\n];\n\nconst errors = [];\nfor (const check of checks) {\n  const field = findField(check.field);\n  if (!field) {\n    errors.push(`Field \"${check.field}\" not found`);\n  } else if (field.value !== check.expected) {\n    errors.push(`Field \"${check.field}\": expected \"${check.expected}\", got \"${field.value}\"`);\n  }\n}\n\nif (errors.length > 0) {\n  throw new Error(`Field validation failed: ${errors.join(\"; \")}`);\n}\n\nreturn true;\n"
+            }
+          ],
+          "options": {},
+          "metadata": {}
+        },
+        "testIdx": 1,
+        "vars": {
+          "key": "images/P95-Meyer req-1.jpeg"
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      },
+      {
+        "cost": 0,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "is-json"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "const data = JSON.parse(output);\nconst fields = data.result?.fields || [];\nconst findField = (name) => fields.find(f => f.fieldName === name);\n\n// Specific value checks (adjust based on actual document content)\nconst checks = [\n  { field: \"Patient First Name\", expected: \"John\" },\n  { field: \"Patient Last Name\", expected: \"Meyer\" },\n  { field: \"Healthcare Facility\", expected: \"WEST PLAINS R-VII SCHOOL DISTRICT\" },\n  { field: \"Facility State\", expected: \"MO\" },\n  { field: \"Facility City\", expected: \"WEST PLAINS\" }\n];\n\nconst errors = [];\nfor (const check of checks) {\n  const field = findField(check.field);\n  if (!field) {\n    errors.push(`Field \"${check.field}\" not found`);\n  } else if (field.value !== check.expected) {\n    errors.push(`Field \"${check.field}\": expected \"${check.expected}\", got \"${field.value}\"`);\n  }\n}\n\nif (errors.length > 0) {\n  throw new Error(`Field validation failed: ${errors.join(\"; \")}`);\n}\n\nreturn true;\n"
+              }
+            }
+          ],
+          "assertion": null
+        },
+        "id": "0e128324-8eaa-4a46-9261-dc60372e8f5c",
+        "latencyMs": 41957,
+        "namedScores": {},
+        "prompt": {
+          "raw": "baseline_structured",
+          "label": "Baseline Structured Extraction"
+        },
+        "promptId": "ac9cfb62cb67f9dada9df23181241f268a0f9ce055e4da30d9c1b83007855323",
+        "promptIdx": 1,
+        "provider": {
+          "id": "./sagemaker-provider.ts",
+          "label": "high_precision"
+        },
+        "response": {
+          "output": "{\n  \"result\": {\n    \"fields\": [\n      {\n        \"fieldName\": \"Patient First Name\",\n        \"value\": \"John\",\n        \"tips\": \"Field value can be presented as: Print or printed name, Patient name, Member name, Name on information to be disclosed, Our client, Client Name, Patient.\"\n      },\n      {\n        \"fieldName\": \"Patient Last Name\",\n        \"value\": \"Meyer\",\n        \"tips\": \"If a comma is found in the patient name field take the first value as the last name and the second value after comma as the first name.\"\n      },\n      {\n        \"fieldName\": \"Patient DOB\",\n        \"value\": \"01/28/2005\",\n        \"format\": \"MM/DD/YYYY\"\n      },\n      {\n        \"fieldName\": \"Date Received\",\n        \"value\": \"3/25/24\",\n        \"format\": \"MM/DD/YYYY\"\n      },\n      {\n        \"fieldName\": \"Patient Phone\",\n        \"value\": \"417-293-65660\",\n        \"format\": \"###-###-####\",\n        \"tips\": \"Find a US based phone number near with proximity to the patient name. If you do not find a phone number near the patient name ignore this field and do not extract a value.\"\n      },\n      {\n        \"fieldName\": \"Healthcare Facility\",\n        \"value\": \"WEST PLAINS R-VII SCHOOL DISTRICT\",\n        \"tips\": \"The healthcare facility name and address is typically the return address block on the top left of the patient information. Field value can be presented as: Release From, Facility, PHP Hospital Doctor Name, Provider facility, Name of individual, guardian, legal or personal representative.\"\n      },\n      {\n        \"fieldName\": \"Facility Street Address\",\n        \"value\": \"305 VALLEY VIEW DRIVE\",\n        \"tips\": \"Find a US based street address which is near the healthcare facility name.\"\n      },\n      {\n        \"fieldName\": \"Facility City\",\n        \"value\": \"WEST PLAINS\",\n        \"tips\": \"Find a US based city name which is near the healthcare facility name and street address.\"\n      },\n      {\n        \"fieldName\": \"Facility State\",\n        \"value\": \"MO\",\n        \"tips\": \"Find a US based State name which is near the healthcare facility name, street address and facility city.\"\n      },\n      {\n        \"fieldName\": \"Facility Zip\",\n        \"value\": \"65775\",\n        \"tips\": \"\"\n      },\n      {\n        \"fieldName\": \"Requestor Email\",\n        \"value\": \"www.zizzers.org\",\n        \"tips\": \"Find an email formatted string that is in close proximity to the requestor name.\"\n      },\n      {\n        \"fieldName\": \"Requester Name\",\n        \"value\": \"WEST PLAINS R-VII SCHOOL DISTRICT\",\n        \"tips\": \"Name of entity or individual holding the records. Company or individual name at typically at top of first page.\"\n      },\n      {\n        \"fieldName\": \"Requester Fax Number\",\n        \"value\": \"417-256-7806\",\n        \"format\": \"###-###-####\",\n        \"tips\": \"Field value can be presented as: Release to fax, Secure Fax, Records can be faxed to, Find a US phone number where you also find this symbol >> as the fax number, Securely faxing, Workers name fax.\"\n      },\n      {\n        \"fieldName\": \"Requester Address\",\n        \"value\": \"305 VALLEY VIEW DRIVE\",\n        \"tips\": \"Field value can be presented as: Release To Address. Address is typically on top of first page in the middle. Mailing the records directly.\"\n      }\n    ]\n  },\n  \"accuracy\": \"100\"\n}",
+          "tokenUsage": {
+            "total": 6993,
+            "prompt": 6196,
+            "completion": 797
+          }
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "name": "Horn Record - Field Validation",
+          "vars": {
+            "key": "images/P95-Meyer req-1.jpeg"
+          },
+          "assert": [
+            {
+              "type": "is-json"
+            },
+            {
+              "type": "javascript",
+              "value": "const data = JSON.parse(output);\nconst fields = data.result?.fields || [];\nconst findField = (name) => fields.find(f => f.fieldName === name);\n\n// Specific value checks (adjust based on actual document content)\nconst checks = [\n  { field: \"Patient First Name\", expected: \"John\" },\n  { field: \"Patient Last Name\", expected: \"Meyer\" },\n  { field: \"Healthcare Facility\", expected: \"WEST PLAINS R-VII SCHOOL DISTRICT\" },\n  { field: \"Facility State\", expected: \"MO\" },\n  { field: \"Facility City\", expected: \"WEST PLAINS\" }\n];\n\nconst errors = [];\nfor (const check of checks) {\n  const field = findField(check.field);\n  if (!field) {\n    errors.push(`Field \"${check.field}\" not found`);\n  } else if (field.value !== check.expected) {\n    errors.push(`Field \"${check.field}\": expected \"${check.expected}\", got \"${field.value}\"`);\n  }\n}\n\nif (errors.length > 0) {\n  throw new Error(`Field validation failed: ${errors.join(\"; \")}`);\n}\n\nreturn true;\n"
+            }
+          ],
+          "options": {},
+          "metadata": {}
+        },
+        "testIdx": 1,
+        "vars": {
+          "key": "images/P95-Meyer req-1.jpeg"
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      },
+      {
+        "cost": 0,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "is-json"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "const data = JSON.parse(output);\nconst fields = data.result?.fields || [];\nconst findField = (name) => fields.find(f => f.fieldName === name);\n\n// Specific value checks (adjust based on actual document content)\nconst checks = [\n  { field: \"Patient First Name\", expected: \"John\" },\n  { field: \"Patient Last Name\", expected: \"Meyer\" },\n  { field: \"Healthcare Facility\", expected: \"WEST PLAINS R-VII SCHOOL DISTRICT\" },\n  { field: \"Facility State\", expected: \"MO\" },\n  { field: \"Facility City\", expected: \"WEST PLAINS\" }\n];\n\nconst errors = [];\nfor (const check of checks) {\n  const field = findField(check.field);\n  if (!field) {\n    errors.push(`Field \"${check.field}\" not found`);\n  } else if (field.value !== check.expected) {\n    errors.push(`Field \"${check.field}\": expected \"${check.expected}\", got \"${field.value}\"`);\n  }\n}\n\nif (errors.length > 0) {\n  throw new Error(`Field validation failed: ${errors.join(\"; \")}`);\n}\n\nreturn true;\n"
+              }
+            }
+          ],
+          "assertion": null
+        },
+        "id": "bb3cc5f1-dcf5-428b-b3bd-35943554d59c",
+        "latencyMs": 41958,
+        "namedScores": {},
+        "prompt": {
+          "raw": "baseline_structured",
+          "label": "Baseline Structured Extraction"
+        },
+        "promptId": "ac9cfb62cb67f9dada9df23181241f268a0f9ce055e4da30d9c1b83007855323",
+        "promptIdx": 2,
+        "provider": {
+          "id": "./sagemaker-provider.ts",
+          "label": "creative"
+        },
+        "response": {
+          "output": "{\n  \"result\": {\n    \"fields\": [\n      {\n        \"fieldName\": \"Patient First Name\",\n        \"value\": \"John\",\n        \"tips\": \"Field value can be presented as: Print or printed name, Patient name, Member name, Name on information to be disclosed, Our client, Client Name, Patient.\"\n      },\n      {\n        \"fieldName\": \"Patient Last Name\",\n        \"value\": \"Meyer\",\n        \"tips\": \"If a comma is found in the patient name field take the first value as the last name and the second value after comma as the first name.\"\n      },\n      {\n        \"fieldName\": \"Patient DOB\",\n        \"value\": \"01/28/2005\",\n        \"format\": \"MM/DD/YYYY\"\n      },\n      {\n        \"fieldName\": \"Date Received\",\n        \"value\": \"03/25/24\",\n        \"format\": \"MM/DD/YYYY\"\n      },\n      {\n        \"fieldName\": \"Patient Phone\",\n        \"value\": \"417-293-6056\",\n        \"format\": \"###-###-####\",\n        \"tips\": \"Find a US based phone number near with proximity to the patient name. If you do not find a phone number near the patient name ignore this field and do not extract a value.\"\n      },\n      {\n        \"fieldName\": \"Healthcare Facility\",\n        \"value\": \"WEST PLAINS R-VII SCHOOL DISTRICT\",\n        \"tips\": \"The healthcare facility name and address is typically the return address block on the top left of the patient information. Field value can be presented as: Release From, Facility, PHP Hospital Doctor Name, Provider facility, Name of individual, guardian, legal or personal representative.\"\n      },\n      {\n        \"fieldName\": \"Facility Street Address\",\n        \"value\": \"305 VALLEY VIEW DRIVE\",\n        \"tips\": \"Find a US based street address which is near the healthcare facility name.\"\n      },\n      {\n        \"fieldName\": \"Facility City\",\n        \"value\": \"WEST PLAINS\",\n        \"tips\": \"Find a US based city name which is near the healthcare facility name and street address.\"\n      },\n      {\n        \"fieldName\": \"Facility State\",\n        \"value\": \"MO\",\n        \"tips\": \"Find a US based State name which is near the healthcare facility name, street address and facility city.\"\n      },\n      {\n        \"fieldName\": \"Facility Zip\",\n        \"value\": \"65775\",\n        \"tips\": \"\"\n      },\n      {\n        \"fieldName\": \"Requestor Email\",\n        \"value\": \"\",\n        \"tips\": \"Find an email formatted string that is in close proximity to the requestor name.\"\n      },\n      {\n        \"fieldName\": \"Requester Name\",\n        \"value\": \"WEST PLAINS R-VII SCHOOL DISTRICT\",\n        \"tips\": \"Name of entity or individual holding the records. Company or individual name at typically at top of first page.\"\n      },\n      {\n        \"fieldName\": \"Requester Fax Number\",\n        \"value\": \"417-256-7806\",\n        \"format\": \"###-###-####\",\n        \"tips\": \"Field value can be presented as: Release to fax, Secure Fax, Records can be faxed to, Find a US phone number where you also find this symbol >> as the fax number, Securely faxing, Workers name fax.\"\n      },\n      {\n        \"fieldName\": \"Requester Address\",\n        \"value\": \"305 VALLEY VIEW DRIVE\",\n        \"tips\": \"Field value can be presented as: Release To Address. Address is typically on top of first page in the middle. Mailing the records directly.\"\n      }\n    ]\n  },\n  \"accuracy\": \"95\"\n}",
+          "tokenUsage": {
+            "total": 6990,
+            "prompt": 6196,
+            "completion": 794
+          }
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "name": "Horn Record - Field Validation",
+          "vars": {
+            "key": "images/P95-Meyer req-1.jpeg"
+          },
+          "assert": [
+            {
+              "type": "is-json"
+            },
+            {
+              "type": "javascript",
+              "value": "const data = JSON.parse(output);\nconst fields = data.result?.fields || [];\nconst findField = (name) => fields.find(f => f.fieldName === name);\n\n// Specific value checks (adjust based on actual document content)\nconst checks = [\n  { field: \"Patient First Name\", expected: \"John\" },\n  { field: \"Patient Last Name\", expected: \"Meyer\" },\n  { field: \"Healthcare Facility\", expected: \"WEST PLAINS R-VII SCHOOL DISTRICT\" },\n  { field: \"Facility State\", expected: \"MO\" },\n  { field: \"Facility City\", expected: \"WEST PLAINS\" }\n];\n\nconst errors = [];\nfor (const check of checks) {\n  const field = findField(check.field);\n  if (!field) {\n    errors.push(`Field \"${check.field}\" not found`);\n  } else if (field.value !== check.expected) {\n    errors.push(`Field \"${check.field}\": expected \"${check.expected}\", got \"${field.value}\"`);\n  }\n}\n\nif (errors.length > 0) {\n  throw new Error(`Field validation failed: ${errors.join(\"; \")}`);\n}\n\nreturn true;\n"
+            }
+          ],
+          "options": {},
+          "metadata": {}
+        },
+        "testIdx": 1,
+        "vars": {
+          "key": "images/P95-Meyer req-1.jpeg"
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      },
+      {
+        "cost": 0,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "is-json"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "const data = JSON.parse(output);\nconst fields = data.result?.fields || [];\nconst findField = (name) => fields.find(f => f.fieldName === name);\n\n// Specific value checks (adjust based on actual document content)\nconst checks = [\n  { field: \"Patient First Name\", expected: \"John\" },\n  { field: \"Patient Last Name\", expected: \"Meyer\" },\n  { field: \"Healthcare Facility\", expected: \"WEST PLAINS R-VII SCHOOL DISTRICT\" },\n  { field: \"Facility State\", expected: \"MO\" },\n  { field: \"Facility City\", expected: \"WEST PLAINS\" }\n];\n\nconst errors = [];\nfor (const check of checks) {\n  const field = findField(check.field);\n  if (!field) {\n    errors.push(`Field \"${check.field}\" not found`);\n  } else if (field.value !== check.expected) {\n    errors.push(`Field \"${check.field}\": expected \"${check.expected}\", got \"${field.value}\"`);\n  }\n}\n\nif (errors.length > 0) {\n  throw new Error(`Field validation failed: ${errors.join(\"; \")}`);\n}\n\nreturn true;\n"
+              }
+            }
+          ],
+          "assertion": null
+        },
+        "id": "3d928eb7-d430-4a16-9a19-2fb24d3e00d7",
+        "latencyMs": 41996,
+        "namedScores": {},
+        "prompt": {
+          "raw": "baseline_structured",
+          "label": "Baseline Structured Extraction"
+        },
+        "promptId": "ac9cfb62cb67f9dada9df23181241f268a0f9ce055e4da30d9c1b83007855323",
+        "promptIdx": 0,
+        "provider": {
+          "id": "./sagemaker-provider.ts",
+          "label": "base_config"
+        },
+        "response": {
+          "output": "{\n  \"result\": {\n    \"fields\": [\n      {\n        \"fieldName\": \"Patient First Name\",\n        \"value\": \"John\",\n        \"tips\": \"Field value can be presented as: Print or printed name, Patient name, Member name, Name on information to be disclosed, Our client, Client Name, Patient.\"\n      },\n      {\n        \"fieldName\": \"Patient Last Name\",\n        \"value\": \"Meyer\",\n        \"tips\": \"If a comma is found in the patient name field take the first value as the last name and the second value after comma as the first name.\"\n      },\n      {\n        \"fieldName\": \"Patient DOB\",\n        \"value\": \"01/28/2005\",\n        \"format\": \"MM/DD/YYYY\"\n      },\n      {\n        \"fieldName\": \"Date Received\",\n        \"value\": \"03/25/24\",\n        \"format\": \"MM/DD/YYYY\"\n      },\n      {\n        \"fieldName\": \"Patient Phone\",\n        \"value\": \"417-293-6056\",\n        \"format\": \"###-###-####\",\n        \"tips\": \"Find a US based phone number near with proximity to the patient name. If you do not find a phone number near the patient name ignore this field and do not extract a value.\"\n      },\n      {\n        \"fieldName\": \"Healthcare Facility\",\n        \"value\": \"WEST PLAINS R-VII SCHOOL DISTRICT\",\n        \"tips\": \"The healthcare facility name and address is typically the return address block on the top left of the patient information. Field value can be presented as: Release From, Facility, PHP Hospital Doctor Name, Provider facility, Name of individual, guardian, legal or personal representative.\"\n      },\n      {\n        \"fieldName\": \"Facility Street Address\",\n        \"value\": \"305 VALLEY VIEW DRIVE\",\n        \"tips\": \"Find a US based street address which is near the healthcare facility name.\"\n      },\n      {\n        \"fieldName\": \"Facility City\",\n        \"value\": \"WEST PLAINS\",\n        \"tips\": \"Find a US based city name which is near the healthcare facility name and street address.\"\n      },\n      {\n        \"fieldName\": \"Facility State\",\n        \"value\": \"MO\",\n        \"tips\": \"Find a US based State name which is near the healthcare facility name, street address and facility city.\"\n      },\n      {\n        \"fieldName\": \"Facility Zip\",\n        \"value\": \"65775\",\n        \"tips\": \"\"\n      },\n      {\n        \"fieldName\": \"Requestor Email\",\n        \"value\": \"\",\n        \"tips\": \"Find an email formatted string that is in close proximity to the requestor name.\"\n      },\n      {\n        \"fieldName\": \"Requester Name\",\n        \"value\": \"WEST PLAINS R-VII SCHOOL DISTRICT\",\n        \"tips\": \"Name of entity or individual holding the records. Company or individual name at typically at top of first page.\"\n      },\n      {\n        \"fieldName\": \"Requester Fax Number\",\n        \"value\": \"417-256-7806\",\n        \"format\": \"###-###-####\",\n        \"tips\": \"Field value can be presented as: Release to fax, Secure Fax, Records can be faxed to, Find a US phone number where you also find this symbol >> as the fax number, Securely faxing, Workers name fax.\"\n      },\n      {\n        \"fieldName\": \"Requester Address\",\n        \"value\": \"305 VALLEY VIEW DRIVE\",\n        \"tips\": \"Field value can be presented as: Release To Address. Address is typically on top of first page in the middle. Mailing the records directly.\"\n      }\n    ]\n  },\n  \"accuracy\": \"95\"\n}",
+          "tokenUsage": {
+            "total": 6990,
+            "prompt": 6196,
+            "completion": 794
+          }
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "name": "Horn Record - Field Validation",
+          "vars": {
+            "key": "images/P95-Meyer req-1.jpeg"
+          },
+          "assert": [
+            {
+              "type": "is-json"
+            },
+            {
+              "type": "javascript",
+              "value": "const data = JSON.parse(output);\nconst fields = data.result?.fields || [];\nconst findField = (name) => fields.find(f => f.fieldName === name);\n\n// Specific value checks (adjust based on actual document content)\nconst checks = [\n  { field: \"Patient First Name\", expected: \"John\" },\n  { field: \"Patient Last Name\", expected: \"Meyer\" },\n  { field: \"Healthcare Facility\", expected: \"WEST PLAINS R-VII SCHOOL DISTRICT\" },\n  { field: \"Facility State\", expected: \"MO\" },\n  { field: \"Facility City\", expected: \"WEST PLAINS\" }\n];\n\nconst errors = [];\nfor (const check of checks) {\n  const field = findField(check.field);\n  if (!field) {\n    errors.push(`Field \"${check.field}\" not found`);\n  } else if (field.value !== check.expected) {\n    errors.push(`Field \"${check.field}\": expected \"${check.expected}\", got \"${field.value}\"`);\n  }\n}\n\nif (errors.length > 0) {\n  throw new Error(`Field validation failed: ${errors.join(\"; \")}`);\n}\n\nreturn true;\n"
+            }
+          ],
+          "options": {},
+          "metadata": {}
+        },
+        "testIdx": 1,
+        "vars": {
+          "key": "images/P95-Meyer req-1.jpeg"
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      },
+      {
+        "cost": 0,
+        "error": "Custom function threw error: Date field \"Date Received\" has invalid format: \"3/25/24\" (expected MM/DD/YYYY)\nStack Trace: Error: Date field \"Date Received\" has invalid format: \"3/25/24\" (expected MM/DD/YYYY)\n    at eval (eval at handleJavascript (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/promptfoo/src/assertions/javascript.ts:59:30), <anonymous>:14:11)\n    at handleJavascript (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/promptfoo/src/assertions/javascript.ts:60:37)\n    at runAssertion (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/promptfoo/src/assertions/index.ts:325:26)\n    at /Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/promptfoo/src/assertions/index.ts:408:28\n    at /Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:151:38\n    at replenish (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:447:21)\n    at /Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:452:13\n    at Object.eachOfLimit (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:478:36)\n    at /Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:220:25\n    at new Promise (<anonymous>)\nconst data = JSON.parse(output);\nconst fields = data.result?.fields || [];\nconst findField = (name) => fields.find(f => f.fieldName === name);\n\n// Date format validation (MM/DD/YYYY)\nconst dateRegex = /^\\d{2}\\/\\d{2}\\/\\d{4}$/;\nconst dateFields = [\"Patient DOB\", \"Date Received\"];\n\nfor (const fieldName of dateFields) {\n  const field = findField(fieldName);\n  if (field && field.value && !dateRegex.test(field.value)) {\n    throw new Error(`Date field \"${fieldName}\" has invalid format: \"${field.value}\" (expected MM/DD/YYYY)`);\n  }\n}\n\nreturn true;",
+        "gradingResult": {
+          "pass": false,
+          "score": 0.5,
+          "reason": "Custom function threw error: Date field \"Date Received\" has invalid format: \"3/25/24\" (expected MM/DD/YYYY)\nStack Trace: Error: Date field \"Date Received\" has invalid format: \"3/25/24\" (expected MM/DD/YYYY)\n    at eval (eval at handleJavascript (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/promptfoo/src/assertions/javascript.ts:59:30), <anonymous>:14:11)\n    at handleJavascript (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/promptfoo/src/assertions/javascript.ts:60:37)\n    at runAssertion (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/promptfoo/src/assertions/index.ts:325:26)\n    at /Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/promptfoo/src/assertions/index.ts:408:28\n    at /Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:151:38\n    at replenish (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:447:21)\n    at /Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:452:13\n    at Object.eachOfLimit (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:478:36)\n    at /Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:220:25\n    at new Promise (<anonymous>)\nconst data = JSON.parse(output);\nconst fields = data.result?.fields || [];\nconst findField = (name) => fields.find(f => f.fieldName === name);\n\n// Date format validation (MM/DD/YYYY)\nconst dateRegex = /^\\d{2}\\/\\d{2}\\/\\d{4}$/;\nconst dateFields = [\"Patient DOB\", \"Date Received\"];\n\nfor (const fieldName of dateFields) {\n  const field = findField(fieldName);\n  if (field && field.value && !dateRegex.test(field.value)) {\n    throw new Error(`Date field \"${fieldName}\" has invalid format: \"${field.value}\" (expected MM/DD/YYYY)`);\n  }\n}\n\nreturn true;",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "is-json"
+              }
+            },
+            {
+              "pass": false,
+              "score": 0,
+              "reason": "Custom function threw error: Date field \"Date Received\" has invalid format: \"3/25/24\" (expected MM/DD/YYYY)\nStack Trace: Error: Date field \"Date Received\" has invalid format: \"3/25/24\" (expected MM/DD/YYYY)\n    at eval (eval at handleJavascript (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/promptfoo/src/assertions/javascript.ts:59:30), <anonymous>:14:11)\n    at handleJavascript (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/promptfoo/src/assertions/javascript.ts:60:37)\n    at runAssertion (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/promptfoo/src/assertions/index.ts:325:26)\n    at /Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/promptfoo/src/assertions/index.ts:408:28\n    at /Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:151:38\n    at replenish (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:447:21)\n    at /Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:452:13\n    at Object.eachOfLimit (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:478:36)\n    at /Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:220:25\n    at new Promise (<anonymous>)\nconst data = JSON.parse(output);\nconst fields = data.result?.fields || [];\nconst findField = (name) => fields.find(f => f.fieldName === name);\n\n// Date format validation (MM/DD/YYYY)\nconst dateRegex = /^\\d{2}\\/\\d{2}\\/\\d{4}$/;\nconst dateFields = [\"Patient DOB\", \"Date Received\"];\n\nfor (const fieldName of dateFields) {\n  const field = findField(fieldName);\n  if (field && field.value && !dateRegex.test(field.value)) {\n    throw new Error(`Date field \"${fieldName}\" has invalid format: \"${field.value}\" (expected MM/DD/YYYY)`);\n  }\n}\n\nreturn true;",
+              "assertion": {
+                "type": "javascript",
+                "value": "const data = JSON.parse(output);\nconst fields = data.result?.fields || [];\nconst findField = (name) => fields.find(f => f.fieldName === name);\n\n// Date format validation (MM/DD/YYYY)\nconst dateRegex = /^\\d{2}\\/\\d{2}\\/\\d{4}$/;\nconst dateFields = [\"Patient DOB\", \"Date Received\"];\n\nfor (const fieldName of dateFields) {\n  const field = findField(fieldName);\n  if (field && field.value && !dateRegex.test(field.value)) {\n    throw new Error(`Date field \"${fieldName}\" has invalid format: \"${field.value}\" (expected MM/DD/YYYY)`);\n  }\n}\n\nreturn true;\n"
+              }
+            }
+          ],
+          "assertion": null
+        },
+        "id": "67d207f9-2272-4cda-bf4f-a2269dc8ec80",
+        "latencyMs": 41898,
+        "namedScores": {},
+        "prompt": {
+          "raw": "baseline_structured",
+          "label": "Baseline Structured Extraction"
+        },
+        "promptId": "ac9cfb62cb67f9dada9df23181241f268a0f9ce055e4da30d9c1b83007855323",
+        "promptIdx": 1,
+        "provider": {
+          "id": "./sagemaker-provider.ts",
+          "label": "high_precision"
+        },
+        "response": {
+          "output": "{\n  \"result\": {\n    \"fields\": [\n      {\n        \"fieldName\": \"Patient First Name\",\n        \"value\": \"John\",\n        \"tips\": \"Field value can be presented as: Print or printed name, Patient name, Member name, Name on information to be disclosed, Our client, Client Name, Patient.\"\n      },\n      {\n        \"fieldName\": \"Patient Last Name\",\n        \"value\": \"Meyer\",\n        \"tips\": \"If a comma is found in the patient name field take the first value as the last name and the second value after comma as the first name.\"\n      },\n      {\n        \"fieldName\": \"Patient DOB\",\n        \"value\": \"01/28/2005\",\n        \"format\": \"MM/DD/YYYY\"\n      },\n      {\n        \"fieldName\": \"Date Received\",\n        \"value\": \"3/25/24\",\n        \"format\": \"MM/DD/YYYY\"\n      },\n      {\n        \"fieldName\": \"Patient Phone\",\n        \"value\": \"417-293-6056\",\n        \"format\": \"###-###-####\",\n        \"tips\": \"Find a US based phone number near with proximity to the patient name. If you do not find a phone number near the patient name ignore this field and do not extract a value.\"\n      },\n      {\n        \"fieldName\": \"Healthcare Facility\",\n        \"value\": \"WEST PLAINS R-VII SCHOOL DISTRICT\",\n        \"tips\": \"The healthcare facility name and address is typically the return address block on the top left of the patient information. Field value can be presented as: Release From, Facility, PHP Hospital Doctor Name, Provider facility, Name of individual, guardian, legal or personal representative.\"\n      },\n      {\n        \"fieldName\": \"Facility Street Address\",\n        \"value\": \"305 VALLEY VIEW DRIVE\",\n        \"tips\": \"Find a US based street address which is near the healthcare facility name.\"\n      },\n      {\n        \"fieldName\": \"Facility City\",\n        \"value\": \"WEST PLAINS\",\n        \"tips\": \"Find a US based city name which is near the healthcare facility name and street address.\"\n      },\n      {\n        \"fieldName\": \"Facility State\",\n        \"value\": \"MO\",\n        \"tips\": \"Find a US based State name which is near the healthcare facility name, street address and facility city.\"\n      },\n      {\n        \"fieldName\": \"Facility Zip\",\n        \"value\": \"65775\",\n        \"tips\": \"\"\n      },\n      {\n        \"fieldName\": \"Requestor Email\",\n        \"value\": \"\",\n        \"tips\": \"Find an email formatted string that is in close proximity to the requestor name.\"\n      },\n      {\n        \"fieldName\": \"Requester Name\",\n        \"value\": \"WEST PLAINS R-VII SCHOOL DISTRICT\",\n        \"tips\": \"Name of entity or individual holding the records. Company or individual name at typically at top of first page.\"\n      },\n      {\n        \"fieldName\": \"Requester Fax Number\",\n        \"value\": \"417-256-7806\",\n        \"format\": \"###-###-####\",\n        \"tips\": \"Field value can be presented as: Release to fax, Secure Fax, Records can be faxed to, Find a US phone number where you also find this symbol >> as the fax number, Securely faxing, Workers name fax.\"\n      },\n      {\n        \"fieldName\": \"Requester Address\",\n        \"value\": \"305 VALLEY VIEW DRIVE\\nWEST PLAINS, MO 65775\",\n        \"tips\": \"Field value can be presented as: Release To Address. Address is typically on top of first page in the middle. Mailing the records directly.\"\n      }\n    ]\n  },\n  \"accuracy\": \"88\"\n}",
+          "tokenUsage": {
+            "total": 7001,
+            "prompt": 6196,
+            "completion": 805
+          }
+        },
+        "score": 0.5,
+        "success": false,
+        "testCase": {
+          "name": "Horn Record - Date Format Validation",
+          "vars": {
+            "key": "images/P95-Meyer req-1.jpeg"
+          },
+          "assert": [
+            {
+              "type": "is-json"
+            },
+            {
+              "type": "javascript",
+              "value": "const data = JSON.parse(output);\nconst fields = data.result?.fields || [];\nconst findField = (name) => fields.find(f => f.fieldName === name);\n\n// Date format validation (MM/DD/YYYY)\nconst dateRegex = /^\\d{2}\\/\\d{2}\\/\\d{4}$/;\nconst dateFields = [\"Patient DOB\", \"Date Received\"];\n\nfor (const fieldName of dateFields) {\n  const field = findField(fieldName);\n  if (field && field.value && !dateRegex.test(field.value)) {\n    throw new Error(`Date field \"${fieldName}\" has invalid format: \"${field.value}\" (expected MM/DD/YYYY)`);\n  }\n}\n\nreturn true;\n"
+            }
+          ],
+          "options": {},
+          "metadata": {}
+        },
+        "testIdx": 2,
+        "vars": {
+          "key": "images/P95-Meyer req-1.jpeg"
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 1
+      },
+      {
+        "cost": 0,
+        "error": "Custom function threw error: Date field \"Date Received\" has invalid format: \"03/25/24\" (expected MM/DD/YYYY)\nStack Trace: Error: Date field \"Date Received\" has invalid format: \"03/25/24\" (expected MM/DD/YYYY)\n    at eval (eval at handleJavascript (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/promptfoo/src/assertions/javascript.ts:59:30), <anonymous>:14:11)\n    at handleJavascript (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/promptfoo/src/assertions/javascript.ts:60:37)\n    at runAssertion (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/promptfoo/src/assertions/index.ts:325:26)\n    at /Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/promptfoo/src/assertions/index.ts:408:28\n    at /Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:151:38\n    at replenish (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:447:21)\n    at /Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:452:13\n    at Object.eachOfLimit (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:478:36)\n    at /Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:220:25\n    at new Promise (<anonymous>)\nconst data = JSON.parse(output);\nconst fields = data.result?.fields || [];\nconst findField = (name) => fields.find(f => f.fieldName === name);\n\n// Date format validation (MM/DD/YYYY)\nconst dateRegex = /^\\d{2}\\/\\d{2}\\/\\d{4}$/;\nconst dateFields = [\"Patient DOB\", \"Date Received\"];\n\nfor (const fieldName of dateFields) {\n  const field = findField(fieldName);\n  if (field && field.value && !dateRegex.test(field.value)) {\n    throw new Error(`Date field \"${fieldName}\" has invalid format: \"${field.value}\" (expected MM/DD/YYYY)`);\n  }\n}\n\nreturn true;",
+        "gradingResult": {
+          "pass": false,
+          "score": 0.5,
+          "reason": "Custom function threw error: Date field \"Date Received\" has invalid format: \"03/25/24\" (expected MM/DD/YYYY)\nStack Trace: Error: Date field \"Date Received\" has invalid format: \"03/25/24\" (expected MM/DD/YYYY)\n    at eval (eval at handleJavascript (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/promptfoo/src/assertions/javascript.ts:59:30), <anonymous>:14:11)\n    at handleJavascript (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/promptfoo/src/assertions/javascript.ts:60:37)\n    at runAssertion (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/promptfoo/src/assertions/index.ts:325:26)\n    at /Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/promptfoo/src/assertions/index.ts:408:28\n    at /Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:151:38\n    at replenish (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:447:21)\n    at /Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:452:13\n    at Object.eachOfLimit (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:478:36)\n    at /Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:220:25\n    at new Promise (<anonymous>)\nconst data = JSON.parse(output);\nconst fields = data.result?.fields || [];\nconst findField = (name) => fields.find(f => f.fieldName === name);\n\n// Date format validation (MM/DD/YYYY)\nconst dateRegex = /^\\d{2}\\/\\d{2}\\/\\d{4}$/;\nconst dateFields = [\"Patient DOB\", \"Date Received\"];\n\nfor (const fieldName of dateFields) {\n  const field = findField(fieldName);\n  if (field && field.value && !dateRegex.test(field.value)) {\n    throw new Error(`Date field \"${fieldName}\" has invalid format: \"${field.value}\" (expected MM/DD/YYYY)`);\n  }\n}\n\nreturn true;",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "is-json"
+              }
+            },
+            {
+              "pass": false,
+              "score": 0,
+              "reason": "Custom function threw error: Date field \"Date Received\" has invalid format: \"03/25/24\" (expected MM/DD/YYYY)\nStack Trace: Error: Date field \"Date Received\" has invalid format: \"03/25/24\" (expected MM/DD/YYYY)\n    at eval (eval at handleJavascript (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/promptfoo/src/assertions/javascript.ts:59:30), <anonymous>:14:11)\n    at handleJavascript (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/promptfoo/src/assertions/javascript.ts:60:37)\n    at runAssertion (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/promptfoo/src/assertions/index.ts:325:26)\n    at /Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/promptfoo/src/assertions/index.ts:408:28\n    at /Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:151:38\n    at replenish (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:447:21)\n    at /Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:452:13\n    at Object.eachOfLimit (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:478:36)\n    at /Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:220:25\n    at new Promise (<anonymous>)\nconst data = JSON.parse(output);\nconst fields = data.result?.fields || [];\nconst findField = (name) => fields.find(f => f.fieldName === name);\n\n// Date format validation (MM/DD/YYYY)\nconst dateRegex = /^\\d{2}\\/\\d{2}\\/\\d{4}$/;\nconst dateFields = [\"Patient DOB\", \"Date Received\"];\n\nfor (const fieldName of dateFields) {\n  const field = findField(fieldName);\n  if (field && field.value && !dateRegex.test(field.value)) {\n    throw new Error(`Date field \"${fieldName}\" has invalid format: \"${field.value}\" (expected MM/DD/YYYY)`);\n  }\n}\n\nreturn true;",
+              "assertion": {
+                "type": "javascript",
+                "value": "const data = JSON.parse(output);\nconst fields = data.result?.fields || [];\nconst findField = (name) => fields.find(f => f.fieldName === name);\n\n// Date format validation (MM/DD/YYYY)\nconst dateRegex = /^\\d{2}\\/\\d{2}\\/\\d{4}$/;\nconst dateFields = [\"Patient DOB\", \"Date Received\"];\n\nfor (const fieldName of dateFields) {\n  const field = findField(fieldName);\n  if (field && field.value && !dateRegex.test(field.value)) {\n    throw new Error(`Date field \"${fieldName}\" has invalid format: \"${field.value}\" (expected MM/DD/YYYY)`);\n  }\n}\n\nreturn true;\n"
+              }
+            }
+          ],
+          "assertion": null
+        },
+        "id": "6e11b8fc-71aa-4bb2-b736-752fdeddb2ac",
+        "latencyMs": 41918,
+        "namedScores": {},
+        "prompt": {
+          "raw": "baseline_structured",
+          "label": "Baseline Structured Extraction"
+        },
+        "promptId": "ac9cfb62cb67f9dada9df23181241f268a0f9ce055e4da30d9c1b83007855323",
+        "promptIdx": 2,
+        "provider": {
+          "id": "./sagemaker-provider.ts",
+          "label": "creative"
+        },
+        "response": {
+          "output": "{\n  \"result\": {\n    \"fields\": [\n      {\n        \"fieldName\": \"Patient First Name\",\n        \"value\": \"John\",\n        \"tips\": \"Field value can be presented as: Print or printed name, Patient name, Member name, Name on information to be disclosed, Our client, Client Name, Patient.\"\n      },\n      {\n        \"fieldName\": \"Patient Last Name\",\n        \"value\": \"Meyer\",\n        \"tips\": \"If a comma is found in the patient name field take the first value as the last name and the second value after comma as the first name.\"\n      },\n      {\n        \"fieldName\": \"Patient DOB\",\n        \"value\": \"01/28/2005\",\n        \"format\": \"MM/DD/YYYY\"\n      },\n      {\n        \"fieldName\": \"Date Received\",\n        \"value\": \"03/25/24\",\n        \"format\": \"MM/DD/YYYY\"\n      },\n      {\n        \"fieldName\": \"Patient Phone\",\n        \"value\": \"417-293-6560\",\n        \"format\": \"###-###-####\",\n        \"tips\": \"Find a US based phone number near with proximity to the patient name. If you do not find a phone number near the patient name ignore this field and do not extract a value.\"\n      },\n      {\n        \"fieldName\": \"Healthcare Facility\",\n        \"value\": \"WEST PLAINS R-VII SCHOOL DISTRICT\",\n        \"tips\": \"The healthcare facility name and address is typically the return address block on the top left of the patient information. Field value can be presented as: Release From, Facility, PHP Hospital Doctor Name, Provider facility, Name of individual, guardian, legal or personal representative.\"\n      },\n      {\n        \"fieldName\": \"Facility Street Address\",\n        \"value\": \"305 VALLEY VIEW DRIVE\",\n        \"tips\": \"Find a US based street address which is near the healthcare facility name.\"\n      },\n      {\n        \"fieldName\": \"Facility City\",\n        \"value\": \"WEST PLAINS\",\n        \"tips\": \"Find a US based city name which is near the healthcare facility name and street address.\"\n      },\n      {\n        \"fieldName\": \"Facility State\",\n        \"value\": \"MO\",\n        \"tips\": \"Find a US based State name which is near the healthcare facility name, street address and facility city.\"\n      },\n      {\n        \"fieldName\": \"Facility Zip\",\n        \"value\": \"65775\",\n        \"tips\": \"\"\n      },\n      {\n        \"fieldName\": \"Requestor Email\",\n        \"value\": \"\",\n        \"tips\": \"Find an email formatted string that is in close proximity to the requestor name.\"\n      },\n      {\n        \"fieldName\": \"Requester Name\",\n        \"value\": \"WEST PLAINS R-VII SCHOOL DISTRICT\",\n        \"tips\": \"Name of entity or individual holding the records. Company or individual name at typically at top of first page.\"\n      },\n      {\n        \"fieldName\": \"Requester Fax Number\",\n        \"value\": \"417-256-7806\",\n        \"format\": \"###-###-####\",\n        \"tips\": \"Field value can be presented as: Release to fax, Secure Fax, Records can be faxed to, Find a US phone number where you also find this symbol >> as the fax number, Securely faxing, Workers name fax.\"\n      },\n      {\n        \"fieldName\": \"Requester Address\",\n        \"value\": \"305 VALLEY VIEW DRIVE\\nWEST PLAINS, MO 65775\",\n        \"tips\": \"Field value can be presented as: Release To Address. Address is typically on top of first page in the middle. Mailing the records directly.\"\n      }\n    ]\n  },\n  \"accuracy\": \"95\"\n}",
+          "tokenUsage": {
+            "total": 7002,
+            "prompt": 6196,
+            "completion": 806
+          }
+        },
+        "score": 0.5,
+        "success": false,
+        "testCase": {
+          "name": "Horn Record - Date Format Validation",
+          "vars": {
+            "key": "images/P95-Meyer req-1.jpeg"
+          },
+          "assert": [
+            {
+              "type": "is-json"
+            },
+            {
+              "type": "javascript",
+              "value": "const data = JSON.parse(output);\nconst fields = data.result?.fields || [];\nconst findField = (name) => fields.find(f => f.fieldName === name);\n\n// Date format validation (MM/DD/YYYY)\nconst dateRegex = /^\\d{2}\\/\\d{2}\\/\\d{4}$/;\nconst dateFields = [\"Patient DOB\", \"Date Received\"];\n\nfor (const fieldName of dateFields) {\n  const field = findField(fieldName);\n  if (field && field.value && !dateRegex.test(field.value)) {\n    throw new Error(`Date field \"${fieldName}\" has invalid format: \"${field.value}\" (expected MM/DD/YYYY)`);\n  }\n}\n\nreturn true;\n"
+            }
+          ],
+          "options": {},
+          "metadata": {}
+        },
+        "testIdx": 2,
+        "vars": {
+          "key": "images/P95-Meyer req-1.jpeg"
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 1
+      },
+      {
+        "cost": 0,
+        "error": "Custom function threw error: Date field \"Date Received\" has invalid format: \"03/25/24\" (expected MM/DD/YYYY)\nStack Trace: Error: Date field \"Date Received\" has invalid format: \"03/25/24\" (expected MM/DD/YYYY)\n    at eval (eval at handleJavascript (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/promptfoo/src/assertions/javascript.ts:59:30), <anonymous>:14:11)\n    at handleJavascript (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/promptfoo/src/assertions/javascript.ts:60:37)\n    at runAssertion (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/promptfoo/src/assertions/index.ts:325:26)\n    at /Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/promptfoo/src/assertions/index.ts:408:28\n    at /Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:151:38\n    at replenish (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:447:21)\n    at /Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:452:13\n    at Object.eachOfLimit (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:478:36)\n    at /Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:220:25\n    at new Promise (<anonymous>)\nconst data = JSON.parse(output);\nconst fields = data.result?.fields || [];\nconst findField = (name) => fields.find(f => f.fieldName === name);\n\n// Date format validation (MM/DD/YYYY)\nconst dateRegex = /^\\d{2}\\/\\d{2}\\/\\d{4}$/;\nconst dateFields = [\"Patient DOB\", \"Date Received\"];\n\nfor (const fieldName of dateFields) {\n  const field = findField(fieldName);\n  if (field && field.value && !dateRegex.test(field.value)) {\n    throw new Error(`Date field \"${fieldName}\" has invalid format: \"${field.value}\" (expected MM/DD/YYYY)`);\n  }\n}\n\nreturn true;",
+        "gradingResult": {
+          "pass": false,
+          "score": 0.5,
+          "reason": "Custom function threw error: Date field \"Date Received\" has invalid format: \"03/25/24\" (expected MM/DD/YYYY)\nStack Trace: Error: Date field \"Date Received\" has invalid format: \"03/25/24\" (expected MM/DD/YYYY)\n    at eval (eval at handleJavascript (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/promptfoo/src/assertions/javascript.ts:59:30), <anonymous>:14:11)\n    at handleJavascript (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/promptfoo/src/assertions/javascript.ts:60:37)\n    at runAssertion (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/promptfoo/src/assertions/index.ts:325:26)\n    at /Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/promptfoo/src/assertions/index.ts:408:28\n    at /Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:151:38\n    at replenish (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:447:21)\n    at /Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:452:13\n    at Object.eachOfLimit (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:478:36)\n    at /Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:220:25\n    at new Promise (<anonymous>)\nconst data = JSON.parse(output);\nconst fields = data.result?.fields || [];\nconst findField = (name) => fields.find(f => f.fieldName === name);\n\n// Date format validation (MM/DD/YYYY)\nconst dateRegex = /^\\d{2}\\/\\d{2}\\/\\d{4}$/;\nconst dateFields = [\"Patient DOB\", \"Date Received\"];\n\nfor (const fieldName of dateFields) {\n  const field = findField(fieldName);\n  if (field && field.value && !dateRegex.test(field.value)) {\n    throw new Error(`Date field \"${fieldName}\" has invalid format: \"${field.value}\" (expected MM/DD/YYYY)`);\n  }\n}\n\nreturn true;",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "is-json"
+              }
+            },
+            {
+              "pass": false,
+              "score": 0,
+              "reason": "Custom function threw error: Date field \"Date Received\" has invalid format: \"03/25/24\" (expected MM/DD/YYYY)\nStack Trace: Error: Date field \"Date Received\" has invalid format: \"03/25/24\" (expected MM/DD/YYYY)\n    at eval (eval at handleJavascript (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/promptfoo/src/assertions/javascript.ts:59:30), <anonymous>:14:11)\n    at handleJavascript (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/promptfoo/src/assertions/javascript.ts:60:37)\n    at runAssertion (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/promptfoo/src/assertions/index.ts:325:26)\n    at /Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/promptfoo/src/assertions/index.ts:408:28\n    at /Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:151:38\n    at replenish (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:447:21)\n    at /Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:452:13\n    at Object.eachOfLimit (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:478:36)\n    at /Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:220:25\n    at new Promise (<anonymous>)\nconst data = JSON.parse(output);\nconst fields = data.result?.fields || [];\nconst findField = (name) => fields.find(f => f.fieldName === name);\n\n// Date format validation (MM/DD/YYYY)\nconst dateRegex = /^\\d{2}\\/\\d{2}\\/\\d{4}$/;\nconst dateFields = [\"Patient DOB\", \"Date Received\"];\n\nfor (const fieldName of dateFields) {\n  const field = findField(fieldName);\n  if (field && field.value && !dateRegex.test(field.value)) {\n    throw new Error(`Date field \"${fieldName}\" has invalid format: \"${field.value}\" (expected MM/DD/YYYY)`);\n  }\n}\n\nreturn true;",
+              "assertion": {
+                "type": "javascript",
+                "value": "const data = JSON.parse(output);\nconst fields = data.result?.fields || [];\nconst findField = (name) => fields.find(f => f.fieldName === name);\n\n// Date format validation (MM/DD/YYYY)\nconst dateRegex = /^\\d{2}\\/\\d{2}\\/\\d{4}$/;\nconst dateFields = [\"Patient DOB\", \"Date Received\"];\n\nfor (const fieldName of dateFields) {\n  const field = findField(fieldName);\n  if (field && field.value && !dateRegex.test(field.value)) {\n    throw new Error(`Date field \"${fieldName}\" has invalid format: \"${field.value}\" (expected MM/DD/YYYY)`);\n  }\n}\n\nreturn true;\n"
+              }
+            }
+          ],
+          "assertion": null
+        },
+        "id": "4a95b01b-2d2d-4520-9a41-949432be6e38",
+        "latencyMs": 41950,
+        "namedScores": {},
+        "prompt": {
+          "raw": "baseline_structured",
+          "label": "Baseline Structured Extraction"
+        },
+        "promptId": "ac9cfb62cb67f9dada9df23181241f268a0f9ce055e4da30d9c1b83007855323",
+        "promptIdx": 0,
+        "provider": {
+          "id": "./sagemaker-provider.ts",
+          "label": "base_config"
+        },
+        "response": {
+          "output": "{\n  \"result\": {\n    \"fields\": [\n      {\n        \"fieldName\": \"Patient First Name\",\n        \"value\": \"John\",\n        \"tips\": \"Field value can be presented as: Print or printed name, Patient name, Member name, Name on information to be disclosed, Our client, Client Name, Patient.\"\n      },\n      {\n        \"fieldName\": \"Patient Last Name\",\n        \"value\": \"Meyer\",\n        \"tips\": \"If a comma is found in the patient name field take the first value as the last name and the second value after comma as the first name.\"\n      },\n      {\n        \"fieldName\": \"Patient DOB\",\n        \"value\": \"01/28/2005\",\n        \"format\": \"MM/DD/YYYY\"\n      },\n      {\n        \"fieldName\": \"Date Received\",\n        \"value\": \"03/25/24\",\n        \"format\": \"MM/DD/YYYY\"\n      },\n      {\n        \"fieldName\": \"Patient Phone\",\n        \"value\": \"417-293-6056\",\n        \"format\": \"###-###-####\",\n        \"tips\": \"Find a US based phone number near with proximity to the patient name. If you do not find a phone number near the patient name ignore this field and do not extract a value.\"\n      },\n      {\n        \"fieldName\": \"Healthcare Facility\",\n        \"value\": \"WEST PLAINS R-VII SCHOOL DISTRICT\",\n        \"tips\": \"The healthcare facility name and address is typically the return address block on the top left of the patient information. Field value can be presented as: Release From, Facility, PHP Hospital Doctor Name, Provider facility, Name of individual, guardian, legal or personal representative.\"\n      },\n      {\n        \"fieldName\": \"Facility Street Address\",\n        \"value\": \"305 VALLEY VIEW DRIVE\",\n        \"tips\": \"Find a US based street address which is near the healthcare facility name.\"\n      },\n      {\n        \"fieldName\": \"Facility City\",\n        \"value\": \"WEST PLAINS\",\n        \"tips\": \"Find a US based city name which is near the healthcare facility name and street address.\"\n      },\n      {\n        \"fieldName\": \"Facility State\",\n        \"value\": \"MO\",\n        \"tips\": \"Find a US based State name which is near the healthcare facility name, street address and facility city.\"\n      },\n      {\n        \"fieldName\": \"Facility Zip\",\n        \"value\": \"65775\",\n        \"tips\": \"\"\n      },\n      {\n        \"fieldName\": \"Requestor Email\",\n        \"value\": \"\",\n        \"tips\": \"Find an email formatted string that is in close proximity to the requestor name.\"\n      },\n      {\n        \"fieldName\": \"Requester Name\",\n        \"value\": \"WEST PLAINS R-VII SCHOOL DISTRICT\",\n        \"tips\": \"Name of entity or individual holding the records. Company or individual name at typically at top of first page.\"\n      },\n      {\n        \"fieldName\": \"Requester Fax Number\",\n        \"value\": \"417-256-7806\",\n        \"format\": \"###-###-####\",\n        \"tips\": \"Field value can be presented as: Release to fax, Secure Fax, Records can be faxed to, Find a US phone number where you also find this symbol >> as the fax number, Securely faxing, Workers name fax.\"\n      },\n      {\n        \"fieldName\": \"Requester Address\",\n        \"value\": \"305 VALLEY VIEW DRIVE\",\n        \"tips\": \"Field value can be presented as: Release To Address. Address is typically on top of first page in the middle. Mailing the records directly.\"\n      }\n    ]\n  },\n  \"accuracy\": \"95\"\n}",
+          "tokenUsage": {
+            "total": 6990,
+            "prompt": 6196,
+            "completion": 794
+          }
+        },
+        "score": 0.5,
+        "success": false,
+        "testCase": {
+          "name": "Horn Record - Date Format Validation",
+          "vars": {
+            "key": "images/P95-Meyer req-1.jpeg"
+          },
+          "assert": [
+            {
+              "type": "is-json"
+            },
+            {
+              "type": "javascript",
+              "value": "const data = JSON.parse(output);\nconst fields = data.result?.fields || [];\nconst findField = (name) => fields.find(f => f.fieldName === name);\n\n// Date format validation (MM/DD/YYYY)\nconst dateRegex = /^\\d{2}\\/\\d{2}\\/\\d{4}$/;\nconst dateFields = [\"Patient DOB\", \"Date Received\"];\n\nfor (const fieldName of dateFields) {\n  const field = findField(fieldName);\n  if (field && field.value && !dateRegex.test(field.value)) {\n    throw new Error(`Date field \"${fieldName}\" has invalid format: \"${field.value}\" (expected MM/DD/YYYY)`);\n  }\n}\n\nreturn true;\n"
+            }
+          ],
+          "options": {},
+          "metadata": {}
+        },
+        "testIdx": 2,
+        "vars": {
+          "key": "images/P95-Meyer req-1.jpeg"
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 1
+      },
+      {
+        "cost": 0,
+        "error": "Custom function threw error: Date field \"Date Received\" has invalid format: \"03/25/24\" (expected MM/DD/YYYY)\nStack Trace: Error: Date field \"Date Received\" has invalid format: \"03/25/24\" (expected MM/DD/YYYY)\n    at eval (eval at handleJavascript (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/promptfoo/src/assertions/javascript.ts:59:30), <anonymous>:14:11)\n    at handleJavascript (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/promptfoo/src/assertions/javascript.ts:60:37)\n    at runAssertion (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/promptfoo/src/assertions/index.ts:325:26)\n    at /Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/promptfoo/src/assertions/index.ts:408:28\n    at /Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:151:38\n    at replenish (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:447:21)\n    at /Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:452:13\n    at Object.eachOfLimit (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:478:36)\n    at /Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:220:25\n    at new Promise (<anonymous>)\nconst data = JSON.parse(output);\nconst fields = data.result?.fields || [];\nconst findField = (name) => fields.find(f => f.fieldName === name);\n\n// Date format validation (MM/DD/YYYY)\nconst dateRegex = /^\\d{2}\\/\\d{2}\\/\\d{4}$/;\nconst dateFields = [\"Patient DOB\", \"Date Received\"];\n\nfor (const fieldName of dateFields) {\n  const field = findField(fieldName);\n  if (field && field.value && !dateRegex.test(field.value)) {\n    throw new Error(`Date field \"${fieldName}\" has invalid format: \"${field.value}\" (expected MM/DD/YYYY)`);\n  }\n}\n\nreturn true;",
+        "gradingResult": {
+          "pass": false,
+          "score": 0.5,
+          "reason": "Custom function threw error: Date field \"Date Received\" has invalid format: \"03/25/24\" (expected MM/DD/YYYY)\nStack Trace: Error: Date field \"Date Received\" has invalid format: \"03/25/24\" (expected MM/DD/YYYY)\n    at eval (eval at handleJavascript (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/promptfoo/src/assertions/javascript.ts:59:30), <anonymous>:14:11)\n    at handleJavascript (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/promptfoo/src/assertions/javascript.ts:60:37)\n    at runAssertion (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/promptfoo/src/assertions/index.ts:325:26)\n    at /Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/promptfoo/src/assertions/index.ts:408:28\n    at /Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:151:38\n    at replenish (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:447:21)\n    at /Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:452:13\n    at Object.eachOfLimit (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:478:36)\n    at /Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:220:25\n    at new Promise (<anonymous>)\nconst data = JSON.parse(output);\nconst fields = data.result?.fields || [];\nconst findField = (name) => fields.find(f => f.fieldName === name);\n\n// Date format validation (MM/DD/YYYY)\nconst dateRegex = /^\\d{2}\\/\\d{2}\\/\\d{4}$/;\nconst dateFields = [\"Patient DOB\", \"Date Received\"];\n\nfor (const fieldName of dateFields) {\n  const field = findField(fieldName);\n  if (field && field.value && !dateRegex.test(field.value)) {\n    throw new Error(`Date field \"${fieldName}\" has invalid format: \"${field.value}\" (expected MM/DD/YYYY)`);\n  }\n}\n\nreturn true;",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "is-json"
+              }
+            },
+            {
+              "pass": false,
+              "score": 0,
+              "reason": "Custom function threw error: Date field \"Date Received\" has invalid format: \"03/25/24\" (expected MM/DD/YYYY)\nStack Trace: Error: Date field \"Date Received\" has invalid format: \"03/25/24\" (expected MM/DD/YYYY)\n    at eval (eval at handleJavascript (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/promptfoo/src/assertions/javascript.ts:59:30), <anonymous>:14:11)\n    at handleJavascript (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/promptfoo/src/assertions/javascript.ts:60:37)\n    at runAssertion (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/promptfoo/src/assertions/index.ts:325:26)\n    at /Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/promptfoo/src/assertions/index.ts:408:28\n    at /Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:151:38\n    at replenish (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:447:21)\n    at /Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:452:13\n    at Object.eachOfLimit (/Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:478:36)\n    at /Users/macm3pro/Documents/Github Repositories/idp-poc/backend-app/node_modules/async/dist/async.js:220:25\n    at new Promise (<anonymous>)\nconst data = JSON.parse(output);\nconst fields = data.result?.fields || [];\nconst findField = (name) => fields.find(f => f.fieldName === name);\n\n// Date format validation (MM/DD/YYYY)\nconst dateRegex = /^\\d{2}\\/\\d{2}\\/\\d{4}$/;\nconst dateFields = [\"Patient DOB\", \"Date Received\"];\n\nfor (const fieldName of dateFields) {\n  const field = findField(fieldName);\n  if (field && field.value && !dateRegex.test(field.value)) {\n    throw new Error(`Date field \"${fieldName}\" has invalid format: \"${field.value}\" (expected MM/DD/YYYY)`);\n  }\n}\n\nreturn true;",
+              "assertion": {
+                "type": "javascript",
+                "value": "const data = JSON.parse(output);\nconst fields = data.result?.fields || [];\nconst findField = (name) => fields.find(f => f.fieldName === name);\n\n// Date format validation (MM/DD/YYYY)\nconst dateRegex = /^\\d{2}\\/\\d{2}\\/\\d{4}$/;\nconst dateFields = [\"Patient DOB\", \"Date Received\"];\n\nfor (const fieldName of dateFields) {\n  const field = findField(fieldName);\n  if (field && field.value && !dateRegex.test(field.value)) {\n    throw new Error(`Date field \"${fieldName}\" has invalid format: \"${field.value}\" (expected MM/DD/YYYY)`);\n  }\n}\n\nreturn true;\n"
+              }
+            }
+          ],
+          "assertion": null
+        },
+        "id": "74a8d0b3-0834-45ea-8ffb-9e26b6df27ba",
+        "latencyMs": 41911,
+        "namedScores": {},
+        "prompt": {
+          "raw": "baseline_structured",
+          "label": "Baseline Structured Extraction"
+        },
+        "promptId": "ac9cfb62cb67f9dada9df23181241f268a0f9ce055e4da30d9c1b83007855323",
+        "promptIdx": 3,
+        "provider": {
+          "id": "./sagemaker-provider.ts",
+          "label": "balanced"
+        },
+        "response": {
+          "output": "{\n  \"result\": {\n    \"fields\": [\n      {\n        \"fieldName\": \"Patient First Name\",\n        \"value\": \"John\",\n        \"tips\": \"Field value can be presented as: Print or printed name, Patient name, Member name, Name on information to be disclosed, Our client, Client Name, Patient.\"\n      },\n      {\n        \"fieldName\": \"Patient Last Name\",\n        \"value\": \"Meyer\",\n        \"tips\": \"If a comma is found in the patient name field take the first value as the last name and the second value after comma as the first name.\"\n      },\n      {\n        \"fieldName\": \"Patient DOB\",\n        \"value\": \"01/28/2005\",\n        \"format\": \"MM/DD/YYYY\"\n      },\n      {\n        \"fieldName\": \"Date Received\",\n        \"value\": \"03/25/24\",\n        \"format\": \"MM/DD/YYYY\"\n      },\n      {\n        \"fieldName\": \"Patient Phone\",\n        \"value\": \"417-293-6056\",\n        \"format\": \"###-###-####\",\n        \"tips\": \"Find a US based phone number near with proximity to the patient name. If you do not find a phone number near the patient name ignore this field and do not extract a value.\"\n      },\n      {\n        \"fieldName\": \"Healthcare Facility\",\n        \"value\": \"WEST PLAINS R-VII SCHOOL DISTRICT\",\n        \"tips\": \"The healthcare facility name and address is typically the return address block on the top left of the patient information. Field value can be presented as: Release From, Facility, PHP Hospital Doctor Name, Provider facility, Name of individual, guardian, legal or personal representative.\"\n      },\n      {\n        \"fieldName\": \"Facility Street Address\",\n        \"value\": \"305 VALLEY VIEW DRIVE\",\n        \"tips\": \"Find a US based street address which is near the healthcare facility name.\"\n      },\n      {\n        \"fieldName\": \"Facility City\",\n        \"value\": \"WEST PLAINS\",\n        \"tips\": \"Find a US based city name which is near the healthcare facility name and street address.\"\n      },\n      {\n        \"fieldName\": \"Facility State\",\n        \"value\": \"MO\",\n        \"tips\": \"Find a US based State name which is near the healthcare facility name, street address and facility city.\"\n      },\n      {\n        \"fieldName\": \"Facility Zip\",\n        \"value\": \"65775\",\n        \"tips\": \"\"\n      },\n      {\n        \"fieldName\": \"Requestor Email\",\n        \"value\": \"\",\n        \"tips\": \"Find an email formatted string that is in close proximity to the requestor name.\"\n      },\n      {\n        \"fieldName\": \"Requester Name\",\n        \"value\": \"WEST PLAINS R-VII SCHOOL DISTRICT\",\n        \"tips\": \"Name of entity or individual holding the records. Company or individual name at typically at top of first page.\"\n      },\n      {\n        \"fieldName\": \"Requester Fax Number\",\n        \"value\": \"417-256-7806\",\n        \"format\": \"###-###-####\",\n        \"tips\": \"Field value can be presented as: Release to fax, Secure Fax, Records can be faxed to, Find a US phone number where you also find this symbol >> as the fax number, Securely faxing, Workers name fax.\"\n      },\n      {\n        \"fieldName\": \"Requester Address\",\n        \"value\": \"305 VALLEY VIEW DRIVE\",\n        \"tips\": \"Field value can be presented as: Release To Address. Address is typically on top of first page in the middle. Mailing the records directly.\"\n      }\n    ]\n  },\n  \"accuracy\": \"95\"\n}",
+          "tokenUsage": {
+            "total": 6990,
+            "prompt": 6196,
+            "completion": 794
+          }
+        },
+        "score": 0.5,
+        "success": false,
+        "testCase": {
+          "name": "Horn Record - Date Format Validation",
+          "vars": {
+            "key": "images/P95-Meyer req-1.jpeg"
+          },
+          "assert": [
+            {
+              "type": "is-json"
+            },
+            {
+              "type": "javascript",
+              "value": "const data = JSON.parse(output);\nconst fields = data.result?.fields || [];\nconst findField = (name) => fields.find(f => f.fieldName === name);\n\n// Date format validation (MM/DD/YYYY)\nconst dateRegex = /^\\d{2}\\/\\d{2}\\/\\d{4}$/;\nconst dateFields = [\"Patient DOB\", \"Date Received\"];\n\nfor (const fieldName of dateFields) {\n  const field = findField(fieldName);\n  if (field && field.value && !dateRegex.test(field.value)) {\n    throw new Error(`Date field \"${fieldName}\" has invalid format: \"${field.value}\" (expected MM/DD/YYYY)`);\n  }\n}\n\nreturn true;\n"
+            }
+          ],
+          "options": {},
+          "metadata": {}
+        },
+        "testIdx": 2,
+        "vars": {
+          "key": "images/P95-Meyer req-1.jpeg"
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 1
+      },
+      {
+        "cost": 0,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "is-json"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "const data = JSON.parse(output);\nconst accuracy = parseInt(data.accuracy || \"0\");\n\n// Performance benchmarks\nif (accuracy < 85) {\n  console.warn(`Warning: Accuracy below target (${accuracy}% < 85%)`);\n}\n\n// Check for completeness\nconst fields = data.result?.fields || [];\nconst nonEmptyFields = fields.filter(f => f.value && f.value.trim() !== \"\");\nconst completeness = (nonEmptyFields.length / fields.length) * 100;\n\nif (completeness < 60) {\n  throw new Error(`Field completeness too low: ${completeness.toFixed(1)}% (minimum 60%)`);\n}\n\nreturn true;\n"
+              }
+            }
+          ],
+          "assertion": null
+        },
+        "id": "8805866e-5dd3-440f-add6-a45d32101052",
+        "latencyMs": 42056,
+        "namedScores": {},
+        "prompt": {
+          "raw": "baseline_structured",
+          "label": "Baseline Structured Extraction"
+        },
+        "promptId": "ac9cfb62cb67f9dada9df23181241f268a0f9ce055e4da30d9c1b83007855323",
+        "promptIdx": 3,
+        "provider": {
+          "id": "./sagemaker-provider.ts",
+          "label": "balanced"
+        },
+        "response": {
+          "output": "{\n  \"result\": {\n    \"fields\": [\n      {\n        \"fieldName\": \"Patient First Name\",\n        \"value\": \"John\",\n        \"tips\": \"Field value can be presented as: Print or printed name, Patient name, Member name, Name on information to be disclosed, Our client, Client Name, Patient.\"\n      },\n      {\n        \"fieldName\": \"Patient Last Name\",\n        \"value\": \"Meyer\",\n        \"tips\": \"If a comma is found in the patient name field take the first value as the last name and the second value after comma as the first name.\"\n      },\n      {\n        \"fieldName\": \"Patient DOB\",\n        \"value\": \"01/28/2005\",\n        \"format\": \"MM/DD/YYYY\"\n      },\n      {\n        \"fieldName\": \"Date Received\",\n        \"value\": \"03/25/24\",\n        \"format\": \"MM/DD/YYYY\"\n      },\n      {\n        \"fieldName\": \"Patient Phone\",\n        \"value\": \"417-293-6056\",\n        \"format\": \"###-###-####\",\n        \"tips\": \"Find a US based phone number near with proximity to the patient name. If you do not find a phone number near the patient name ignore this field and do not extract a value.\"\n      },\n      {\n        \"fieldName\": \"Healthcare Facility\",\n        \"value\": \"WEST PLAINS R-VII SCHOOL DISTRICT\",\n        \"tips\": \"The healthcare facility name and address is typically the return address block on the top left of the patient information. Field value can be presented as: Release From, Facility, PHP Hospital Doctor Name, Provider facility, Name of individual, guardian, legal or personal representative.\"\n      },\n      {\n        \"fieldName\": \"Facility Street Address\",\n        \"value\": \"305 VALLEY VIEW DRIVE\",\n        \"tips\": \"Find a US based street address which is near the healthcare facility name.\"\n      },\n      {\n        \"fieldName\": \"Facility City\",\n        \"value\": \"WEST PLAINS\",\n        \"tips\": \"Find a US based city name which is near the healthcare facility name and street address.\"\n      },\n      {\n        \"fieldName\": \"Facility State\",\n        \"value\": \"MO\",\n        \"tips\": \"Find a US based State name which is near the healthcare facility name, street address and facility city.\"\n      },\n      {\n        \"fieldName\": \"Facility Zip\",\n        \"value\": \"65775\",\n        \"tips\": \"\"\n      },\n      {\n        \"fieldName\": \"Requestor Email\",\n        \"value\": \"\",\n        \"tips\": \"Find an email formatted string that is in close proximity to the requestor name.\"\n      },\n      {\n        \"fieldName\": \"Requester Name\",\n        \"value\": \"WEST PLAINS R-VII SCHOOL DISTRICT\",\n        \"tips\": \"Name of entity or individual holding the records. Company or individual name at typically at top of first page.\"\n      },\n      {\n        \"fieldName\": \"Requester Fax Number\",\n        \"value\": \"417-256-7806\",\n        \"format\": \"###-###-####\",\n        \"tips\": \"Field value can be presented as: Release to fax, Secure Fax, Records can be faxed to, Find a US phone number where you also find this symbol >> as the fax number, Securely faxing, Workers name fax.\"\n      },\n      {\n        \"fieldName\": \"Requester Address\",\n        \"value\": \"305 VALLEY VIEW DRIVE\",\n        \"tips\": \"Field value can be presented as: Release To Address. Address is typically on top of first page in the middle. Mailing the records directly.\"\n      }\n    ]\n  },\n  \"accuracy\": \"95\"\n}",
+          "tokenUsage": {
+            "total": 6990,
+            "prompt": 6196,
+            "completion": 794
+          }
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "name": "Horn Record - Performance Test",
+          "vars": {
+            "key": "images/P95-Meyer req-1.jpeg"
+          },
+          "assert": [
+            {
+              "type": "is-json"
+            },
+            {
+              "type": "javascript",
+              "value": "const data = JSON.parse(output);\nconst accuracy = parseInt(data.accuracy || \"0\");\n\n// Performance benchmarks\nif (accuracy < 85) {\n  console.warn(`Warning: Accuracy below target (${accuracy}% < 85%)`);\n}\n\n// Check for completeness\nconst fields = data.result?.fields || [];\nconst nonEmptyFields = fields.filter(f => f.value && f.value.trim() !== \"\");\nconst completeness = (nonEmptyFields.length / fields.length) * 100;\n\nif (completeness < 60) {\n  throw new Error(`Field completeness too low: ${completeness.toFixed(1)}% (minimum 60%)`);\n}\n\nreturn true;\n"
+            }
+          ],
+          "options": {},
+          "metadata": {}
+        },
+        "testIdx": 3,
+        "vars": {
+          "key": "images/P95-Meyer req-1.jpeg"
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      },
+      {
+        "cost": 0,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "is-json"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "const data = JSON.parse(output);\nconst accuracy = parseInt(data.accuracy || \"0\");\n\n// Performance benchmarks\nif (accuracy < 85) {\n  console.warn(`Warning: Accuracy below target (${accuracy}% < 85%)`);\n}\n\n// Check for completeness\nconst fields = data.result?.fields || [];\nconst nonEmptyFields = fields.filter(f => f.value && f.value.trim() !== \"\");\nconst completeness = (nonEmptyFields.length / fields.length) * 100;\n\nif (completeness < 60) {\n  throw new Error(`Field completeness too low: ${completeness.toFixed(1)}% (minimum 60%)`);\n}\n\nreturn true;\n"
+              }
+            }
+          ],
+          "assertion": null
+        },
+        "id": "7b383dd5-336d-4947-a78f-e8c08daad9fb",
+        "latencyMs": 42085,
+        "namedScores": {},
+        "prompt": {
+          "raw": "baseline_structured",
+          "label": "Baseline Structured Extraction"
+        },
+        "promptId": "ac9cfb62cb67f9dada9df23181241f268a0f9ce055e4da30d9c1b83007855323",
+        "promptIdx": 2,
+        "provider": {
+          "id": "./sagemaker-provider.ts",
+          "label": "creative"
+        },
+        "response": {
+          "output": "{\n  \"result\": {\n    \"fields\": [\n      {\n        \"fieldName\": \"Patient First Name\",\n        \"value\": \"John\",\n        \"tips\": \"Field value can be presented as: Print or printed name, Patient name, Member name, Name on information to be disclosed, Our client, Client Name, Patient.\"\n      },\n      {\n        \"fieldName\": \"Patient Last Name\",\n        \"value\": \"Meyer\",\n        \"tips\": \"If a comma is found in the patient name field take the first value as the last name and the second value after comma as the first name.\"\n      },\n      {\n        \"fieldName\": \"Patient DOB\",\n        \"value\": \"01/28/2005\",\n        \"format\": \"MM/DD/YYYY\"\n      },\n      {\n        \"fieldName\": \"Date Received\",\n        \"value\": \"03/25/24\",\n        \"format\": \"MM/DD/YYYY\"\n      },\n      {\n        \"fieldName\": \"Patient Phone\",\n        \"value\": \"417-293-6054\",\n        \"format\": \"###-###-####\",\n        \"tips\": \"Find a US based phone number near with proximity to the patient name. If you do not find a phone number near the patient name ignore this field and do not extract a value.\"\n      },\n      {\n        \"fieldName\": \"Healthcare Facility\",\n        \"value\": \"WEST PLAINS R-VII SCHOOL DISTRICT\",\n        \"tips\": \"The healthcare facility name and address is typically the return address block on the top left of the patient information. Field value can be presented as: Release From, Facility, PHP Hospital Doctor Name, Provider facility, Name of individual, guardian, legal or personal representative.\"\n      },\n      {\n        \"fieldName\": \"Facility Street Address\",\n        \"value\": \"305 VALLEY VIEW DRIVE\",\n        \"tips\": \"Find a US based street address which is near the healthcare facility name.\"\n      },\n      {\n        \"fieldName\": \"Facility City\",\n        \"value\": \"WEST PLAINS\",\n        \"tips\": \"Find a US based city name which is near the healthcare facility name and street address.\"\n      },\n      {\n        \"fieldName\": \"Facility State\",\n        \"value\": \"MO\",\n        \"tips\": \"Find a US based State name which is near the healthcare facility name, street address and facility city.\"\n      },\n      {\n        \"fieldName\": \"Facility Zip\",\n        \"value\": \"65775\",\n        \"tips\": \"\"\n      },\n      {\n        \"fieldName\": \"Requestor Email\",\n        \"value\": \"\",\n        \"tips\": \"Find an email formatted string that is in close proximity to the requestor name.\"\n      },\n      {\n        \"fieldName\": \"Requester Name\",\n        \"value\": \"WEST PLAINS R-VII SCHOOL DISTRICT\",\n        \"tips\": \"Name of entity or individual holding the records. Company or individual name at typically at top of first page.\"\n      },\n      {\n        \"fieldName\": \"Requester Fax Number\",\n        \"value\": \"417-256-7806\",\n        \"format\": \"###-###-####\",\n        \"tips\": \"Field value can be presented as: Release to fax, Secure Fax, Records can be faxed to, Find a US phone number where you also find this symbol >> as the fax number, Securely faxing, Workers name fax.\"\n      },\n      {\n        \"fieldName\": \"Requester Address\",\n        \"value\": \"305 VALLEY VIEW DRIVE\",\n        \"tips\": \"Field value can be presented as: Release To Address. Address is typically on top of first page in the middle. Mailing the records directly.\"\n      }\n    ]\n  },\n  \"accuracy\": \"95\"\n}",
+          "tokenUsage": {
+            "total": 6990,
+            "prompt": 6196,
+            "completion": 794
+          }
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "name": "Horn Record - Performance Test",
+          "vars": {
+            "key": "images/P95-Meyer req-1.jpeg"
+          },
+          "assert": [
+            {
+              "type": "is-json"
+            },
+            {
+              "type": "javascript",
+              "value": "const data = JSON.parse(output);\nconst accuracy = parseInt(data.accuracy || \"0\");\n\n// Performance benchmarks\nif (accuracy < 85) {\n  console.warn(`Warning: Accuracy below target (${accuracy}% < 85%)`);\n}\n\n// Check for completeness\nconst fields = data.result?.fields || [];\nconst nonEmptyFields = fields.filter(f => f.value && f.value.trim() !== \"\");\nconst completeness = (nonEmptyFields.length / fields.length) * 100;\n\nif (completeness < 60) {\n  throw new Error(`Field completeness too low: ${completeness.toFixed(1)}% (minimum 60%)`);\n}\n\nreturn true;\n"
+            }
+          ],
+          "options": {},
+          "metadata": {}
+        },
+        "testIdx": 3,
+        "vars": {
+          "key": "images/P95-Meyer req-1.jpeg"
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      },
+      {
+        "cost": 0,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "is-json"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "const data = JSON.parse(output);\nconst accuracy = parseInt(data.accuracy || \"0\");\n\n// Performance benchmarks\nif (accuracy < 85) {\n  console.warn(`Warning: Accuracy below target (${accuracy}% < 85%)`);\n}\n\n// Check for completeness\nconst fields = data.result?.fields || [];\nconst nonEmptyFields = fields.filter(f => f.value && f.value.trim() !== \"\");\nconst completeness = (nonEmptyFields.length / fields.length) * 100;\n\nif (completeness < 60) {\n  throw new Error(`Field completeness too low: ${completeness.toFixed(1)}% (minimum 60%)`);\n}\n\nreturn true;\n"
+              }
+            }
+          ],
+          "assertion": null
+        },
+        "id": "79951df7-3466-4c0a-9c80-beded1a4105e",
+        "latencyMs": 42103,
+        "namedScores": {},
+        "prompt": {
+          "raw": "baseline_structured",
+          "label": "Baseline Structured Extraction"
+        },
+        "promptId": "ac9cfb62cb67f9dada9df23181241f268a0f9ce055e4da30d9c1b83007855323",
+        "promptIdx": 1,
+        "provider": {
+          "id": "./sagemaker-provider.ts",
+          "label": "high_precision"
+        },
+        "response": {
+          "output": "{\n  \"result\": {\n    \"fields\": [\n      {\n        \"fieldName\": \"Patient First Name\",\n        \"value\": \"John\",\n        \"tips\": \"Field value can be presented as: Print or printed name, Patient name, Member name, Name on information to be disclosed, Our client, Client Name, Patient.\"\n      },\n      {\n        \"fieldName\": \"Patient Last Name\",\n        \"value\": \"Meyer\",\n        \"tips\": \"If a comma is found in the patient name field take the first value as the last name and the second value after comma as the first name.\"\n      },\n      {\n        \"fieldName\": \"Patient DOB\",\n        \"value\": \"01/28/2005\",\n        \"format\": \"MM/DD/YYYY\"\n      },\n      {\n        \"fieldName\": \"Date Received\",\n        \"value\": \"03/25/2024\",\n        \"format\": \"MM/DD/YYYY\"\n      },\n      {\n        \"fieldName\": \"Patient Phone\",\n        \"value\": \"417-293-6056\",\n        \"format\": \"###-###-####\",\n        \"tips\": \"Find a US based phone number near with proximity to the patient name. If you do not find a phone number near the patient name ignore this field and do not extract a value.\"\n      },\n      {\n        \"fieldName\": \"Healthcare Facility\",\n        \"value\": \"WEST PLAINS R-VII SCHOOL DISTRICT\",\n        \"tips\": \"The healthcare facility name and address is typically the return address block on the top left of the patient information. Field value can be presented as: Release From, Facility, PHP Hospital Doctor Name, Provider facility, Name of individual, guardian, legal or personal representative.\"\n      },\n      {\n        \"fieldName\": \"Facility Street Address\",\n        \"value\": \"305 VALLEY VIEW DRIVE\",\n        \"tips\": \"Find a US based street address which is near the healthcare facility name.\"\n      },\n      {\n        \"fieldName\": \"Facility City\",\n        \"value\": \"WEST PLAINS\",\n        \"tips\": \"Find a US based city name which is near the healthcare facility name and street address.\"\n      },\n      {\n        \"fieldName\": \"Facility State\",\n        \"value\": \"MO\",\n        \"tips\": \"Find a US based State name which is near the healthcare facility name, street address and facility city.\"\n      },\n      {\n        \"fieldName\": \"Facility Zip\",\n        \"value\": \"65775\",\n        \"tips\": \"\"\n      },\n      {\n        \"fieldName\": \"Requestor Email\",\n        \"value\": \"\",\n        \"tips\": \"Find an email formatted string that is in close proximity to the requestor name.\"\n      },\n      {\n        \"fieldName\": \"Requester Name\",\n        \"value\": \"WEST PLAINS R-VII SCHOOL DISTRICT\",\n        \"tips\": \"Name of entity or individual holding the records. Company or individual name at typically at top of first page.\"\n      },\n      {\n        \"fieldName\": \"Requester Fax Number\",\n        \"value\": \"417-256-7806\",\n        \"format\": \"###-###-####\",\n        \"tips\": \"Field value can be presented as: Release to fax, Secure Fax, Records can be faxed to, Find a US phone number where you also find this symbol >> as the fax number, Securely faxing, Workers name fax.\"\n      },\n      {\n        \"fieldName\": \"Requester Address\",\n        \"value\": \"305 VALLEY VIEW DRIVE\",\n        \"tips\": \"Field value can be presented as: Release To Address. Address is typically on top of first page in the middle. Mailing the records directly.\"\n      }\n    ]\n  },\n  \"accuracy\": \"95\"\n}",
+          "tokenUsage": {
+            "total": 6988,
+            "prompt": 6196,
+            "completion": 792
+          }
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "name": "Horn Record - Performance Test",
+          "vars": {
+            "key": "images/P95-Meyer req-1.jpeg"
+          },
+          "assert": [
+            {
+              "type": "is-json"
+            },
+            {
+              "type": "javascript",
+              "value": "const data = JSON.parse(output);\nconst accuracy = parseInt(data.accuracy || \"0\");\n\n// Performance benchmarks\nif (accuracy < 85) {\n  console.warn(`Warning: Accuracy below target (${accuracy}% < 85%)`);\n}\n\n// Check for completeness\nconst fields = data.result?.fields || [];\nconst nonEmptyFields = fields.filter(f => f.value && f.value.trim() !== \"\");\nconst completeness = (nonEmptyFields.length / fields.length) * 100;\n\nif (completeness < 60) {\n  throw new Error(`Field completeness too low: ${completeness.toFixed(1)}% (minimum 60%)`);\n}\n\nreturn true;\n"
+            }
+          ],
+          "options": {},
+          "metadata": {}
+        },
+        "testIdx": 3,
+        "vars": {
+          "key": "images/P95-Meyer req-1.jpeg"
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      },
+      {
+        "cost": 0,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "is-json"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "const data = JSON.parse(output);\nconst accuracy = parseInt(data.accuracy || \"0\");\n\n// Performance benchmarks\nif (accuracy < 85) {\n  console.warn(`Warning: Accuracy below target (${accuracy}% < 85%)`);\n}\n\n// Check for completeness\nconst fields = data.result?.fields || [];\nconst nonEmptyFields = fields.filter(f => f.value && f.value.trim() !== \"\");\nconst completeness = (nonEmptyFields.length / fields.length) * 100;\n\nif (completeness < 60) {\n  throw new Error(`Field completeness too low: ${completeness.toFixed(1)}% (minimum 60%)`);\n}\n\nreturn true;\n"
+              }
+            }
+          ],
+          "assertion": null
+        },
+        "id": "4e8b5f9b-e729-4ae0-a8e7-d2087286de96",
+        "latencyMs": 42135,
+        "namedScores": {},
+        "prompt": {
+          "raw": "baseline_structured",
+          "label": "Baseline Structured Extraction"
+        },
+        "promptId": "ac9cfb62cb67f9dada9df23181241f268a0f9ce055e4da30d9c1b83007855323",
+        "promptIdx": 0,
+        "provider": {
+          "id": "./sagemaker-provider.ts",
+          "label": "base_config"
+        },
+        "response": {
+          "output": "{\n  \"result\": {\n    \"fields\": [\n      {\n        \"fieldName\": \"Patient First Name\",\n        \"value\": \"John\",\n        \"tips\": \"Field value can be presented as: Print or printed name, Patient name, Member name, Name on information to be disclosed, Our client, Client Name, Patient.\"\n      },\n      {\n        \"fieldName\": \"Patient Last Name\",\n        \"value\": \"Meyer\",\n        \"tips\": \"If a comma is found in the patient name field take the first value as the last name and the second value after comma as the first name.\"\n      },\n      {\n        \"fieldName\": \"Patient DOB\",\n        \"value\": \"01/28/2005\",\n        \"format\": \"MM/DD/YYYY\"\n      },\n      {\n        \"fieldName\": \"Date Received\",\n        \"value\": \"03/25/24\",\n        \"format\": \"MM/DD/YYYY\"\n      },\n      {\n        \"fieldName\": \"Patient Phone\",\n        \"value\": \"417-293-6056\",\n        \"format\": \"###-###-####\",\n        \"tips\": \"Find a US based phone number near with proximity to the patient name. If you do not find a phone number near the patient name ignore this field and do not extract a value.\"\n      },\n      {\n        \"fieldName\": \"Healthcare Facility\",\n        \"value\": \"WEST PLAINS R-VII SCHOOL DISTRICT\",\n        \"tips\": \"The healthcare facility name and address is typically the return address block on the top left of the patient information. Field value can be presented as: Release From, Facility, PHP Hospital Doctor Name, Provider facility, Name of individual, guardian, legal or personal representative.\"\n      },\n      {\n        \"fieldName\": \"Facility Street Address\",\n        \"value\": \"305 VALLEY VIEW DRIVE\",\n        \"tips\": \"Find a US based street address which is near the healthcare facility name.\"\n      },\n      {\n        \"fieldName\": \"Facility City\",\n        \"value\": \"WEST PLAINS\",\n        \"tips\": \"Find a US based city name which is near the healthcare facility name and street address.\"\n      },\n      {\n        \"fieldName\": \"Facility State\",\n        \"value\": \"MO\",\n        \"tips\": \"Find a US based State name which is near the healthcare facility name, street address and facility city.\"\n      },\n      {\n        \"fieldName\": \"Facility Zip\",\n        \"value\": \"65775\",\n        \"tips\": \"\"\n      },\n      {\n        \"fieldName\": \"Requestor Email\",\n        \"value\": \"\",\n        \"tips\": \"Find an email formatted string that is in close proximity to the requestor name.\"\n      },\n      {\n        \"fieldName\": \"Requester Name\",\n        \"value\": \"WEST PLAINS R-VII SCHOOL DISTRICT\",\n        \"tips\": \"Name of entity or individual holding the records. Company or individual name at typically at top of first page.\"\n      },\n      {\n        \"fieldName\": \"Requester Fax Number\",\n        \"value\": \"417-256-7806\",\n        \"format\": \"###-###-####\",\n        \"tips\": \"Field value can be presented as: Release to fax, Secure Fax, Records can be faxed to, Find a US phone number where you also find this symbol >> as the fax number, Securely faxing, Workers name fax.\"\n      },\n      {\n        \"fieldName\": \"Requester Address\",\n        \"value\": \"305 VALLEY VIEW DRIVE\",\n        \"tips\": \"Field value can be presented as: Release To Address. Address is typically on top of first page in the middle. Mailing the records directly.\"\n      }\n    ]\n  },\n  \"accuracy\": \"95\"\n}",
+          "tokenUsage": {
+            "total": 6990,
+            "prompt": 6196,
+            "completion": 794
+          }
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "name": "Horn Record - Performance Test",
+          "vars": {
+            "key": "images/P95-Meyer req-1.jpeg"
+          },
+          "assert": [
+            {
+              "type": "is-json"
+            },
+            {
+              "type": "javascript",
+              "value": "const data = JSON.parse(output);\nconst accuracy = parseInt(data.accuracy || \"0\");\n\n// Performance benchmarks\nif (accuracy < 85) {\n  console.warn(`Warning: Accuracy below target (${accuracy}% < 85%)`);\n}\n\n// Check for completeness\nconst fields = data.result?.fields || [];\nconst nonEmptyFields = fields.filter(f => f.value && f.value.trim() !== \"\");\nconst completeness = (nonEmptyFields.length / fields.length) * 100;\n\nif (completeness < 60) {\n  throw new Error(`Field completeness too low: ${completeness.toFixed(1)}% (minimum 60%)`);\n}\n\nreturn true;\n"
+            }
+          ],
+          "options": {},
+          "metadata": {}
+        },
+        "testIdx": 3,
+        "vars": {
+          "key": "images/P95-Meyer req-1.jpeg"
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      },
+      {
+        "cost": 0,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "is-json"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "const data = JSON.parse(output);\n\n// Structure validation\nif (!data.result || !data.result.fields) {\n  throw new Error(\"Missing required result structure\");\n}\n\nif (!data.accuracy) {\n  throw new Error(\"Missing accuracy score\");\n}\n\n// Field structure validation\nconst fields = data.result.fields;\nfor (const field of fields) {\n  if (!field.fieldName || field.value === undefined) {\n    throw new Error(`Invalid field structure: ${JSON.stringify(field)}`);\n  }\n}\n\nreturn true;\n"
+              }
+            }
+          ],
+          "assertion": null
+        },
+        "id": "0f329c30-6dae-4be0-8c74-5b35889941c0",
+        "latencyMs": 41892,
+        "namedScores": {},
+        "prompt": {
+          "raw": "baseline_structured",
+          "label": "Baseline Structured Extraction"
+        },
+        "promptId": "ac9cfb62cb67f9dada9df23181241f268a0f9ce055e4da30d9c1b83007855323",
+        "promptIdx": 2,
+        "provider": {
+          "id": "./sagemaker-provider.ts",
+          "label": "creative"
+        },
+        "response": {
+          "output": "{\n  \"result\": {\n    \"fields\": [\n      {\n        \"fieldName\": \"Patient First Name\",\n        \"value\": \"John\",\n        \"tips\": \"Field value can be presented as: Print or printed name, Patient name, Member name, Name on information to be disclosed, Our client, Client Name, Patient.\"\n      },\n      {\n        \"fieldName\": \"Patient Last Name\",\n        \"value\": \"Meyer\",\n        \"tips\": \"If a comma is found in the patient name field take the first value as the last name and the second value after comma as the first name.\"\n      },\n      {\n        \"fieldName\": \"Patient DOB\",\n        \"value\": \"01/28/2005\",\n        \"format\": \"MM/DD/YYYY\"\n      },\n      {\n        \"fieldName\": \"Date Received\",\n        \"value\": \"03/25/24\",\n        \"format\": \"MM/DD/YYYY\"\n      },\n      {\n        \"fieldName\": \"Patient Phone\",\n        \"value\": \"417-293-6054\",\n        \"format\": \"###-###-####\",\n        \"tips\": \"Find a US based phone number near with proximity to the patient name. If you do not find a phone number near the patient name ignore this field and do not extract a value.\"\n      },\n      {\n        \"fieldName\": \"Healthcare Facility\",\n        \"value\": \"WEST PLAINS R-VII SCHOOL DISTRICT\",\n        \"tips\": \"The healthcare facility name and address is typically the return address block on the top left of the patient information. Field value can be presented as: Release From, Facility, PHP Hospital Doctor Name, Provider facility, Name of individual, guardian, legal or personal representative.\"\n      },\n      {\n        \"fieldName\": \"Facility Street Address\",\n        \"value\": \"305 VALLEY VIEW DRIVE\",\n        \"tips\": \"Find a US based street address which is near the healthcare facility name.\"\n      },\n      {\n        \"fieldName\": \"Facility City\",\n        \"value\": \"WEST PLAINS\",\n        \"tips\": \"Find a US based city name which is near the healthcare facility name and street address.\"\n      },\n      {\n        \"fieldName\": \"Facility State\",\n        \"value\": \"MO\",\n        \"tips\": \"Find a US based State name which is near the healthcare facility name, street address and facility city.\"\n      },\n      {\n        \"fieldName\": \"Facility Zip\",\n        \"value\": \"65775\",\n        \"tips\": \"\"\n      },\n      {\n        \"fieldName\": \"Requestor Email\",\n        \"value\": \"\",\n        \"tips\": \"Find an email formatted string that is in close proximity to the requestor name.\"\n      },\n      {\n        \"fieldName\": \"Requester Name\",\n        \"value\": \"WEST PLAINS R-VII SCHOOL DISTRICT\",\n        \"tips\": \"Name of entity or individual holding the records. Company or individual name at typically at top of first page.\"\n      },\n      {\n        \"fieldName\": \"Requester Fax Number\",\n        \"value\": \"417-256-7806\",\n        \"format\": \"###-###-####\",\n        \"tips\": \"Field value can be presented as: Release to fax, Secure Fax, Records can be faxed to, Find a US phone number where you also find this symbol >> as the fax number, Securely faxing, Workers name fax.\"\n      },\n      {\n        \"fieldName\": \"Requester Address\",\n        \"value\": \"305 VALLEY VIEW DRIVE\",\n        \"tips\": \"Field value can be presented as: Release To Address. Address is typically on top of first page in the middle. Mailing the records directly.\"\n      }\n    ]\n  },\n  \"accuracy\": \"95\"\n}",
+          "tokenUsage": {
+            "total": 6990,
+            "prompt": 6196,
+            "completion": 794
+          }
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "name": "Horn Record - Robustness Test",
+          "vars": {
+            "key": "images/P95-Meyer req-1.jpeg"
+          },
+          "assert": [
+            {
+              "type": "is-json"
+            },
+            {
+              "type": "javascript",
+              "value": "const data = JSON.parse(output);\n\n// Structure validation\nif (!data.result || !data.result.fields) {\n  throw new Error(\"Missing required result structure\");\n}\n\nif (!data.accuracy) {\n  throw new Error(\"Missing accuracy score\");\n}\n\n// Field structure validation\nconst fields = data.result.fields;\nfor (const field of fields) {\n  if (!field.fieldName || field.value === undefined) {\n    throw new Error(`Invalid field structure: ${JSON.stringify(field)}`);\n  }\n}\n\nreturn true;\n"
+            }
+          ],
+          "options": {},
+          "metadata": {}
+        },
+        "testIdx": 4,
+        "vars": {
+          "key": "images/P95-Meyer req-1.jpeg"
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      },
+      {
+        "cost": 0,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "is-json"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "const data = JSON.parse(output);\n\n// Structure validation\nif (!data.result || !data.result.fields) {\n  throw new Error(\"Missing required result structure\");\n}\n\nif (!data.accuracy) {\n  throw new Error(\"Missing accuracy score\");\n}\n\n// Field structure validation\nconst fields = data.result.fields;\nfor (const field of fields) {\n  if (!field.fieldName || field.value === undefined) {\n    throw new Error(`Invalid field structure: ${JSON.stringify(field)}`);\n  }\n}\n\nreturn true;\n"
+              }
+            }
+          ],
+          "assertion": null
+        },
+        "id": "e547b3c8-e263-4502-b19c-431e8cce0398",
+        "latencyMs": 41885,
+        "namedScores": {},
+        "prompt": {
+          "raw": "baseline_structured",
+          "label": "Baseline Structured Extraction"
+        },
+        "promptId": "ac9cfb62cb67f9dada9df23181241f268a0f9ce055e4da30d9c1b83007855323",
+        "promptIdx": 3,
+        "provider": {
+          "id": "./sagemaker-provider.ts",
+          "label": "balanced"
+        },
+        "response": {
+          "output": "{\n  \"result\": {\n    \"fields\": [\n      {\n        \"fieldName\": \"Patient First Name\",\n        \"value\": \"John\",\n        \"tips\": \"Field value can be presented as: Print or printed name, Patient name, Member name, Name on information to be disclosed, Our client, Client Name, Patient.\"\n      },\n      {\n        \"fieldName\": \"Patient Last Name\",\n        \"value\": \"Meyer\",\n        \"tips\": \"If a comma is found in the patient name field take the first value as the last name and the second value after comma as the first name.\"\n      },\n      {\n        \"fieldName\": \"Patient DOB\",\n        \"value\": \"01/28/2005\",\n        \"format\": \"MM/DD/YYYY\"\n      },\n      {\n        \"fieldName\": \"Date Received\",\n        \"value\": \"03/25/24\",\n        \"format\": \"MM/DD/YYYY\"\n      },\n      {\n        \"fieldName\": \"Patient Phone\",\n        \"value\": \"417-293-6560\",\n        \"format\": \"###-###-####\",\n        \"tips\": \"Find a US based phone number near with proximity to the patient name. If you do not find a phone number near the patient name ignore this field and do not extract a value.\"\n      },\n      {\n        \"fieldName\": \"Healthcare Facility\",\n        \"value\": \"WEST PLAINS R-VII SCHOOL DISTRICT\",\n        \"tips\": \"The healthcare facility name and address is typically the return address block on the top left of the patient information. Field value can be presented as: Release From, Facility, PHP Hospital Doctor Name, Provider facility, Name of individual, guardian, legal or personal representative.\"\n      },\n      {\n        \"fieldName\": \"Facility Street Address\",\n        \"value\": \"305 VALLEY VIEW DRIVE\",\n        \"tips\": \"Find a US based street address which is near the healthcare facility name.\"\n      },\n      {\n        \"fieldName\": \"Facility City\",\n        \"value\": \"WEST PLAINS\",\n        \"tips\": \"Find a US based city name which is near the healthcare facility name and street address.\"\n      },\n      {\n        \"fieldName\": \"Facility State\",\n        \"value\": \"MO\",\n        \"tips\": \"Find a US based State name which is near the healthcare facility name, street address and facility city.\"\n      },\n      {\n        \"fieldName\": \"Facility Zip\",\n        \"value\": \"65775\",\n        \"tips\": \"\"\n      },\n      {\n        \"fieldName\": \"Requestor Email\",\n        \"value\": \"\",\n        \"tips\": \"Find an email formatted string that is in close proximity to the requestor name.\"\n      },\n      {\n        \"fieldName\": \"Requester Name\",\n        \"value\": \"WEST PLAINS R-VII SCHOOL DISTRICT\",\n        \"tips\": \"Name of entity or individual holding the records. Company or individual name at typically at top of first page.\"\n      },\n      {\n        \"fieldName\": \"Requester Fax Number\",\n        \"value\": \"417-256-7806\",\n        \"format\": \"###-###-####\",\n        \"tips\": \"Field value can be presented as: Release to fax, Secure Fax, Records can be faxed to, Find a US phone number where you also find this symbol >> as the fax number, Securely faxing, Workers name fax.\"\n      },\n      {\n        \"fieldName\": \"Requester Address\",\n        \"value\": \"305 VALLEY VIEW DRIVE\",\n        \"tips\": \"Field value can be presented as: Release To Address. Address is typically on top of first page in the middle. Mailing the records directly.\"\n      }\n    ]\n  },\n  \"accuracy\": \"95\"\n}",
+          "tokenUsage": {
+            "total": 6990,
+            "prompt": 6196,
+            "completion": 794
+          }
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "name": "Horn Record - Robustness Test",
+          "vars": {
+            "key": "images/P95-Meyer req-1.jpeg"
+          },
+          "assert": [
+            {
+              "type": "is-json"
+            },
+            {
+              "type": "javascript",
+              "value": "const data = JSON.parse(output);\n\n// Structure validation\nif (!data.result || !data.result.fields) {\n  throw new Error(\"Missing required result structure\");\n}\n\nif (!data.accuracy) {\n  throw new Error(\"Missing accuracy score\");\n}\n\n// Field structure validation\nconst fields = data.result.fields;\nfor (const field of fields) {\n  if (!field.fieldName || field.value === undefined) {\n    throw new Error(`Invalid field structure: ${JSON.stringify(field)}`);\n  }\n}\n\nreturn true;\n"
+            }
+          ],
+          "options": {},
+          "metadata": {}
+        },
+        "testIdx": 4,
+        "vars": {
+          "key": "images/P95-Meyer req-1.jpeg"
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      },
+      {
+        "cost": 0,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "is-json"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "const data = JSON.parse(output);\n\n// Structure validation\nif (!data.result || !data.result.fields) {\n  throw new Error(\"Missing required result structure\");\n}\n\nif (!data.accuracy) {\n  throw new Error(\"Missing accuracy score\");\n}\n\n// Field structure validation\nconst fields = data.result.fields;\nfor (const field of fields) {\n  if (!field.fieldName || field.value === undefined) {\n    throw new Error(`Invalid field structure: ${JSON.stringify(field)}`);\n  }\n}\n\nreturn true;\n"
+              }
+            }
+          ],
+          "assertion": null
+        },
+        "id": "e1a42f19-d418-4471-87c8-e82797d4a80f",
+        "latencyMs": 41940,
+        "namedScores": {},
+        "prompt": {
+          "raw": "baseline_structured",
+          "label": "Baseline Structured Extraction"
+        },
+        "promptId": "ac9cfb62cb67f9dada9df23181241f268a0f9ce055e4da30d9c1b83007855323",
+        "promptIdx": 1,
+        "provider": {
+          "id": "./sagemaker-provider.ts",
+          "label": "high_precision"
+        },
+        "response": {
+          "output": "{\n  \"result\": {\n    \"fields\": [\n      {\n        \"fieldName\": \"Patient First Name\",\n        \"value\": \"John\",\n        \"tips\": \"Field value can be presented as: Print or printed name, Patient name, Member name, Name on information to be disclosed, Our client, Client Name, Patient.\"\n      },\n      {\n        \"fieldName\": \"Patient Last Name\",\n        \"value\": \"Meyer\",\n        \"tips\": \"If a comma is found in the patient name field take the first value as the last name and the second value after comma as the first name.\"\n      },\n      {\n        \"fieldName\": \"Patient DOB\",\n        \"value\": \"01/28/2005\",\n        \"format\": \"MM/DD/YYYY\"\n      },\n      {\n        \"fieldName\": \"Date Received\",\n        \"value\": \"03/25/24\",\n        \"format\": \"MM/DD/YYYY\"\n      },\n      {\n        \"fieldName\": \"Patient Phone\",\n        \"value\": \"417-293-165660\",\n        \"format\": \"###-###-####\",\n        \"tips\": \"Find a US based phone number near with proximity to the patient name. If you do not find a phone number near the patient name ignore this field and do not extract a value.\"\n      },\n      {\n        \"fieldName\": \"Healthcare Facility\",\n        \"value\": \"WEST PLAINS R-VII SCHOOL DISTRICT\",\n        \"tips\": \"The healthcare facility name and address is typically the return address block on the top left of the patient information. Field value can be presented as: Release From, Facility, PHP Hospital Doctor Name, Provider facility, Name of individual, guardian, legal or personal representative.\"\n      },\n      {\n        \"fieldName\": \"Facility Street Address\",\n        \"value\": \"305 Valley View Drive\",\n        \"tips\": \"Find a US based street address which is near the healthcare facility name.\"\n      },\n      {\n        \"fieldName\": \"Facility City\",\n        \"value\": \"WEST PLAINS\",\n        \"tips\": \"Find a US based city name which is near the healthcare facility name and street address.\"\n      },\n      {\n        \"fieldName\": \"Facility State\",\n        \"value\": \"MO\",\n        \"tips\": \"Find a US based State name which is near the healthcare facility name, street address and facility city.\"\n      },\n      {\n        \"fieldName\": \"Facility Zip\",\n        \"value\": \"65775\",\n        \"tips\": \"\"\n      },\n      {\n        \"fieldName\": \"Requestor Email\",\n        \"value\": \"www.zizzers.org\",\n        \"tips\": \"Find an email formatted string that is in close proximity to the requestor name.\"\n      },\n      {\n        \"fieldName\": \"Requester Name\",\n        \"value\": \"WEST PLAINS R-VII SCHOOL DISTRICT\",\n        \"tips\": \"Name of entity or individual holding the records. Company or individual name at typically at top of first page.\"\n      },\n      {\n        \"fieldName\": \"Requester Fax Number\",\n        \"value\": \"417-256-7806\",\n        \"format\": \"###-###-####\",\n        \"tips\": \"Field value can be presented as: Release to fax, Secure Fax, Records can be faxed to, Find a US phone number where you also find this symbol >> as the fax number, Securely faxing, Workers name fax.\"\n      },\n      {\n        \"fieldName\": \"Requester Address\",\n        \"value\": \"305 Valley View Drive, West Plains, MO 65775\",\n        \"tips\": \"Field value can be presented as: Release To Address. Address is typically on top of first page in the middle. Mailing the records directly.\"\n      }\n    ]\n  },\n  \"accuracy\": \"95\"\n}",
+          "tokenUsage": {
+            "total": 7003,
+            "prompt": 6196,
+            "completion": 807
+          }
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "name": "Horn Record - Robustness Test",
+          "vars": {
+            "key": "images/P95-Meyer req-1.jpeg"
+          },
+          "assert": [
+            {
+              "type": "is-json"
+            },
+            {
+              "type": "javascript",
+              "value": "const data = JSON.parse(output);\n\n// Structure validation\nif (!data.result || !data.result.fields) {\n  throw new Error(\"Missing required result structure\");\n}\n\nif (!data.accuracy) {\n  throw new Error(\"Missing accuracy score\");\n}\n\n// Field structure validation\nconst fields = data.result.fields;\nfor (const field of fields) {\n  if (!field.fieldName || field.value === undefined) {\n    throw new Error(`Invalid field structure: ${JSON.stringify(field)}`);\n  }\n}\n\nreturn true;\n"
+            }
+          ],
+          "options": {},
+          "metadata": {}
+        },
+        "testIdx": 4,
+        "vars": {
+          "key": "images/P95-Meyer req-1.jpeg"
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      },
+      {
+        "cost": 0,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "is-json"
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "javascript",
+                "value": "const data = JSON.parse(output);\n\n// Structure validation\nif (!data.result || !data.result.fields) {\n  throw new Error(\"Missing required result structure\");\n}\n\nif (!data.accuracy) {\n  throw new Error(\"Missing accuracy score\");\n}\n\n// Field structure validation\nconst fields = data.result.fields;\nfor (const field of fields) {\n  if (!field.fieldName || field.value === undefined) {\n    throw new Error(`Invalid field structure: ${JSON.stringify(field)}`);\n  }\n}\n\nreturn true;\n"
+              }
+            }
+          ],
+          "assertion": null
+        },
+        "id": "68d429fd-8055-49e0-92b4-c57a2d262d14",
+        "latencyMs": 41978,
+        "namedScores": {},
+        "prompt": {
+          "raw": "baseline_structured",
+          "label": "Baseline Structured Extraction"
+        },
+        "promptId": "ac9cfb62cb67f9dada9df23181241f268a0f9ce055e4da30d9c1b83007855323",
+        "promptIdx": 0,
+        "provider": {
+          "id": "./sagemaker-provider.ts",
+          "label": "base_config"
+        },
+        "response": {
+          "output": "{\n  \"result\": {\n    \"fields\": [\n      {\n        \"fieldName\": \"Patient First Name\",\n        \"value\": \"John\",\n        \"tips\": \"Field value can be presented as: Print or printed name, Patient name, Member name, Name on information to be disclosed, Our client, Client Name, Patient.\"\n      },\n      {\n        \"fieldName\": \"Patient Last Name\",\n        \"value\": \"Meyer\",\n        \"tips\": \"If a comma is found in the patient name field take the first value as the last name and the second value after comma as the first name.\"\n      },\n      {\n        \"fieldName\": \"Patient DOB\",\n        \"value\": \"01/28/2005\",\n        \"format\": \"MM/DD/YYYY\"\n      },\n      {\n        \"fieldName\": \"Date Received\",\n        \"value\": \"03/25/24\",\n        \"format\": \"MM/DD/YYYY\"\n      },\n      {\n        \"fieldName\": \"Patient Phone\",\n        \"value\": \"417-293-6054\",\n        \"format\": \"###-###-####\",\n        \"tips\": \"Find a US based phone number near with proximity to the patient name. If you do not find a phone number near the patient name ignore this field and do not extract a value.\"\n      },\n      {\n        \"fieldName\": \"Healthcare Facility\",\n        \"value\": \"WEST PLAINS R-VII SCHOOL DISTRICT\",\n        \"tips\": \"The healthcare facility name and address is typically the return address block on the top left of the patient information. Field value can be presented as: Release From, Facility, PHP Hospital Doctor Name, Provider facility, Name of individual, guardian, legal or personal representative.\"\n      },\n      {\n        \"fieldName\": \"Facility Street Address\",\n        \"value\": \"305 VALLEY VIEW DRIVE\",\n        \"tips\": \"Find a US based street address which is near the healthcare facility name.\"\n      },\n      {\n        \"fieldName\": \"Facility City\",\n        \"value\": \"WEST PLAINS\",\n        \"tips\": \"Find a US based city name which is near the healthcare facility name and street address.\"\n      },\n      {\n        \"fieldName\": \"Facility State\",\n        \"value\": \"MO\",\n        \"tips\": \"Find a US based State name which is near the healthcare facility name, street address and facility city.\"\n      },\n      {\n        \"fieldName\": \"Facility Zip\",\n        \"value\": \"65775\",\n        \"tips\": \"\"\n      },\n      {\n        \"fieldName\": \"Requestor Email\",\n        \"value\": \"\",\n        \"tips\": \"Find an email formatted string that is in close proximity to the requestor name.\"\n      },\n      {\n        \"fieldName\": \"Requester Name\",\n        \"value\": \"WEST PLAINS R-VII SCHOOL DISTRICT\",\n        \"tips\": \"Name of entity or individual holding the records. Company or individual name at typically at top of first page.\"\n      },\n      {\n        \"fieldName\": \"Requester Fax Number\",\n        \"value\": \"417-256-7806\",\n        \"format\": \"###-###-####\",\n        \"tips\": \"Field value can be presented as: Release to fax, Secure Fax, Records can be faxed to, Find a US phone number where you also find this symbol >> as the fax number, Securely faxing, Workers name fax.\"\n      },\n      {\n        \"fieldName\": \"Requester Address\",\n        \"value\": \"305 VALLEY VIEW DRIVE\",\n        \"tips\": \"Field value can be presented as: Release To Address. Address is typically on top of first page in the middle. Mailing the records directly.\"\n      }\n    ]\n  },\n  \"accuracy\": \"95\"\n}",
+          "tokenUsage": {
+            "total": 6990,
+            "prompt": 6196,
+            "completion": 794
+          }
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "name": "Horn Record - Robustness Test",
+          "vars": {
+            "key": "images/P95-Meyer req-1.jpeg"
+          },
+          "assert": [
+            {
+              "type": "is-json"
+            },
+            {
+              "type": "javascript",
+              "value": "const data = JSON.parse(output);\n\n// Structure validation\nif (!data.result || !data.result.fields) {\n  throw new Error(\"Missing required result structure\");\n}\n\nif (!data.accuracy) {\n  throw new Error(\"Missing accuracy score\");\n}\n\n// Field structure validation\nconst fields = data.result.fields;\nfor (const field of fields) {\n  if (!field.fieldName || field.value === undefined) {\n    throw new Error(`Invalid field structure: ${JSON.stringify(field)}`);\n  }\n}\n\nreturn true;\n"
+            }
+          ],
+          "options": {},
+          "metadata": {}
+        },
+        "testIdx": 4,
+        "vars": {
+          "key": "images/P95-Meyer req-1.jpeg"
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      }
+    ],
+    "stats": {
+      "successes": 16,
+      "failures": 4,
+      "errors": 0,
+      "tokenUsage": {
+        "cached": 0,
+        "completion": 15951,
+        "prompt": 123920,
+        "total": 139871,
+        "numRequests": 20,
+        "completionDetails": {
+          "reasoning": 0,
+          "acceptedPrediction": 0,
+          "rejectedPrediction": 0
+        },
+        "assertions": {
+          "total": 0,
+          "prompt": 0,
+          "completion": 0,
+          "cached": 0
+        }
+      }
+    }
+  },
+  "config": {
+    "tags": {},
+    "description": "Testing Qwen2-VL-7B-Instruct vision model with different prompts",
+    "prompts": [
+      {
+        "id": "baseline_structured",
+        "label": "Baseline Structured Extraction",
+        "content": "You are an expert data extraction assistant. Extract ALL meaningful structured data from this medical record document.\n\nEXTRACTION RULES:\n1. Extract what's actually there - don't assume any specific fields will be present\n2. Identify data patterns - look for any structured information (names, dates, numbers, codes, addresses)\n3. Create appropriate field names - dynamically name fields based on the actual content found\n4. Be document-agnostic - work with any document type (forms, letters, reports, statements)\n5. Preserve original context - maintain the meaning and format of the source data\n"
+      }
+    ],
+    "providers": [
+      {
+        "id": "./sagemaker-provider.ts",
+        "label": "base_config",
+        "config": {
+          "endpoint": "ai-dev-sagemaker-qwen-endpoint",
+          "region": "us-east-2",
+          "modelType": "huggingface",
+          "temperature": 0.1,
+          "max_tokens": 2000
+        }
+      },
+      {
+        "id": "./sagemaker-provider.ts",
+        "label": "high_precision",
+        "config": {
+          "endpoint": "ai-dev-sagemaker-qwen-endpoint",
+          "region": "us-east-2",
+          "modelType": "huggingface",
+          "temperature": 0,
+          "max_tokens": 1500,
+          "top_p": 0.9
+        }
+      },
+      {
+        "id": "./sagemaker-provider.ts",
+        "label": "creative",
+        "config": {
+          "endpoint": "ai-dev-sagemaker-qwen-endpoint",
+          "region": "us-east-2",
+          "modelType": "huggingface",
+          "temperature": 0.3,
+          "max_tokens": 2500,
+          "top_p": 0.95
+        }
+      },
+      {
+        "id": "./sagemaker-provider.ts",
+        "label": "balanced",
+        "config": {
+          "endpoint": "ai-dev-sagemaker-qwen-endpoint",
+          "region": "us-east-2",
+          "modelType": "huggingface",
+          "temperature": 0.2,
+          "max_tokens": 2000,
+          "top_p": 0.92
+        }
+      }
+    ],
+    "tests": [
+      {
+        "name": "Horn Record - Basic Extraction",
+        "vars": {
+          "key": "images/P95-Meyer req-1.jpeg"
+        },
+        "assert": [
+          {
+            "type": "is-json"
+          },
+          {
+            "type": "javascript",
+            "value": "const data = JSON.parse(output);\nconst fields = data.result?.fields || [];\nconst findField = (name) => fields.find(f => f.fieldName === name);\n\n// Required fields check\nconst requiredFields = [\n  \"Patient First Name\",\n  \"Patient Last Name\", \n  \"Healthcare Facility\"\n];\n\nfor (const fieldName of requiredFields) {\n  const field = findField(fieldName);\n  if (!field || !field.value) {\n    throw new Error(`Required field \"${fieldName}\" is missing or empty`);\n  }\n}\n\n// Accuracy check\nconst accuracy = parseInt(data.accuracy || \"0\");\nif (accuracy < 70) {\n  throw new Error(`Accuracy too low: ${accuracy}% (minimum 70%)`);\n}\n\nreturn true;\n"
+          }
+        ]
+      },
+      {
+        "name": "Horn Record - Field Validation",
+        "vars": {
+          "key": "images/P95-Meyer req-1.jpeg"
+        },
+        "assert": [
+          {
+            "type": "is-json"
+          },
+          {
+            "type": "javascript",
+            "value": "const data = JSON.parse(output);\nconst fields = data.result?.fields || [];\nconst findField = (name) => fields.find(f => f.fieldName === name);\n\n// Specific value checks (adjust based on actual document content)\nconst checks = [\n  { field: \"Patient First Name\", expected: \"John\" },\n  { field: \"Patient Last Name\", expected: \"Meyer\" },\n  { field: \"Healthcare Facility\", expected: \"WEST PLAINS R-VII SCHOOL DISTRICT\" },\n  { field: \"Facility State\", expected: \"MO\" },\n  { field: \"Facility City\", expected: \"WEST PLAINS\" }\n];\n\nconst errors = [];\nfor (const check of checks) {\n  const field = findField(check.field);\n  if (!field) {\n    errors.push(`Field \"${check.field}\" not found`);\n  } else if (field.value !== check.expected) {\n    errors.push(`Field \"${check.field}\": expected \"${check.expected}\", got \"${field.value}\"`);\n  }\n}\n\nif (errors.length > 0) {\n  throw new Error(`Field validation failed: ${errors.join(\"; \")}`);\n}\n\nreturn true;\n"
+          }
+        ]
+      },
+      {
+        "name": "Horn Record - Date Format Validation",
+        "vars": {
+          "key": "images/P95-Meyer req-1.jpeg"
+        },
+        "assert": [
+          {
+            "type": "is-json"
+          },
+          {
+            "type": "javascript",
+            "value": "const data = JSON.parse(output);\nconst fields = data.result?.fields || [];\nconst findField = (name) => fields.find(f => f.fieldName === name);\n\n// Date format validation (MM/DD/YYYY)\nconst dateRegex = /^\\d{2}\\/\\d{2}\\/\\d{4}$/;\nconst dateFields = [\"Patient DOB\", \"Date Received\"];\n\nfor (const fieldName of dateFields) {\n  const field = findField(fieldName);\n  if (field && field.value && !dateRegex.test(field.value)) {\n    throw new Error(`Date field \"${fieldName}\" has invalid format: \"${field.value}\" (expected MM/DD/YYYY)`);\n  }\n}\n\nreturn true;\n"
+          }
+        ]
+      },
+      {
+        "name": "Horn Record - Performance Test",
+        "vars": {
+          "key": "images/P95-Meyer req-1.jpeg"
+        },
+        "assert": [
+          {
+            "type": "is-json"
+          },
+          {
+            "type": "javascript",
+            "value": "const data = JSON.parse(output);\nconst accuracy = parseInt(data.accuracy || \"0\");\n\n// Performance benchmarks\nif (accuracy < 85) {\n  console.warn(`Warning: Accuracy below target (${accuracy}% < 85%)`);\n}\n\n// Check for completeness\nconst fields = data.result?.fields || [];\nconst nonEmptyFields = fields.filter(f => f.value && f.value.trim() !== \"\");\nconst completeness = (nonEmptyFields.length / fields.length) * 100;\n\nif (completeness < 60) {\n  throw new Error(`Field completeness too low: ${completeness.toFixed(1)}% (minimum 60%)`);\n}\n\nreturn true;\n"
+          }
+        ]
+      },
+      {
+        "name": "Horn Record - Robustness Test",
+        "vars": {
+          "key": "images/P95-Meyer req-1.jpeg"
+        },
+        "assert": [
+          {
+            "type": "is-json"
+          },
+          {
+            "type": "javascript",
+            "value": "const data = JSON.parse(output);\n\n// Structure validation\nif (!data.result || !data.result.fields) {\n  throw new Error(\"Missing required result structure\");\n}\n\nif (!data.accuracy) {\n  throw new Error(\"Missing accuracy score\");\n}\n\n// Field structure validation\nconst fields = data.result.fields;\nfor (const field of fields) {\n  if (!field.fieldName || field.value === undefined) {\n    throw new Error(`Invalid field structure: ${JSON.stringify(field)}`);\n  }\n}\n\nreturn true;\n"
+          }
+        ]
+      }
+    ],
+    "scenarios": [],
+    "env": {},
+    "sharing": true,
+    "outputPath": [
+      "./promptfoo-results.json"
+    ],
+    "extensions": [],
+    "metadata": {}
+  },
+  "shareableUrl": null
+}

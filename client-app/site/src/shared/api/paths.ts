@@ -1,0 +1,31 @@
+export const API_NAME = 'restAPI'
+export const API_PATH_FILES = '/files'
+export const API_PATH_DELETE_FILES = `${API_PATH_FILES}/delete-files`
+export const API_PATH_TEMPLATE_FILES = '/template-files'
+export const API_PATH_SCHEMES = '/schemes'
+export const API_PATH_PROCESSING = '/processing/tab'
+export const API_PATH_PROCESSING_RAG = '/processing/tab/rag/pdf'
+export const API_PATH_PROCESSING_MULTIFILE_RAG = '/processing/tab/rag/multi-file'
+export const API_PATH_PROCESSING_MULTIFILE_RAG_RESULT = '/set-of-files'
+export const API_PATH_TEXT_EXTRACTION_PROCESSING = '/processing/tab/map/pdf'
+export const API_PATH_TEXT_EXTRACTION_PROCESSING_MULTIFILE = '/processing/tab/map/multi-file'
+export const API_PRESIGNER_INPUTS = '/presigner/inputs'
+export const API_PRESIGNER_OUTPUTS = '/presigner/outputs'
+export const API_PRESIGNER_AVATARS = '/presigner/avatars'
+export const API_USER = '/users'
+export const API_COMPANY = '/companies'
+export const API_PROCESSING_TEMPLATE = '/processing/template'
+export const API_PROCESSING_TEMPLATE_RAG = '/processing/template-rag'
+
+export const API_TEMPLATE = '/templates'
+
+export const API_GMAIL_CALLBACK = '/gmail/refresh-token-url'
+export const API_GMAIL_MESSAGES = '/gmail/messages'
+export const API_GMAIL_PROFILE = '/gmail/profile'
+export const API_GMAIL_SIGN_OUT = '/gmail/sign-out'
+export const API_GMAIL_ATTACHMENTS = '/gmail/messages/attachments'
+
+export const API_EMAIL_SES_SUBSCRIBE = '/email-ses/subscribe'
+export const API_GET_EMAIL_SES_MESSAGES = '/email-ses/messages'
+
+export const API_TRIGGER = '/triggers'

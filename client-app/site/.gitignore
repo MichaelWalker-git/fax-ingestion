@@ -22,14 +22,3 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-
-
-*.js
-!jest.config.js
-*.d.ts
-
-# CDK asset staging directory
-.cdk.staging
-cdk.out
-.idea/
-!/backend-app/.env

@@ -1,0 +1,9 @@
+# General Dependencies
+boto3==1.37.1
+boto3-stubs==1.35.71
+sagemaker==2.243.3
+sagemaker-core==1.0.29
+transformers
+
+# AWS Services
+aws-lambda-powertools==2.36.0

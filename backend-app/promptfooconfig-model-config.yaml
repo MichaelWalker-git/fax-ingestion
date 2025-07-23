@@ -1,0 +1,219 @@
+# promptfooconfig.yaml - Alternative approach
+description: "Testing Qwen2-VL-7B-Instruct vision model with different prompts"
+
+# Define multiple prompt variations to test different approaches
+prompts:
+  # Baseline prompt - Direct and structured
+  - id: "baseline_structured"
+    label: "Baseline Structured Extraction"
+    content: |
+      You are an expert data extraction assistant. Extract ALL meaningful structured data from this medical record document.
+
+      EXTRACTION RULES:
+      1. Extract what's actually there - don't assume any specific fields will be present
+      2. Identify data patterns - look for any structured information (names, dates, numbers, codes, addresses)
+      3. Create appropriate field names - dynamically name fields based on the actual content found
+      4. Be document-agnostic - work with any document type (forms, letters, reports, statements)
+      5. Preserve original context - maintain the meaning and format of the source data
+
+# Define different model configurations
+providers:
+  # Base configuration
+  - id: ./sagemaker-provider.ts
+    label: "base_config"
+    config:
+      endpoint: ai-dev-sagemaker-qwen-endpoint
+      region: "us-east-2"
+      modelType: 'huggingface'
+      temperature: 0.1
+      max_tokens: 2000
+
+  # High precision configuration
+  - id: ./sagemaker-provider.ts
+    label: "high_precision"
+    config:
+      endpoint: ai-dev-sagemaker-qwen-endpoint
+      region: "us-east-2"
+      modelType: 'huggingface'
+      temperature: 0.0
+      max_tokens: 1500
+      top_p: 0.9
+
+  # Creative configuration
+  - id: ./sagemaker-provider.ts
+    label: "creative"
+    config:
+      endpoint: ai-dev-sagemaker-qwen-endpoint
+      region: "us-east-2"
+      modelType: 'huggingface'
+      temperature: 0.6
+      max_tokens: 2500
+      top_p: 0.95
+
+  # Balanced configuration
+  - id: ./sagemaker-provider.ts
+    label: "balanced"
+    config:
+      endpoint: ai-dev-sagemaker-qwen-endpoint
+      region: "us-east-2"
+      modelType: 'huggingface'
+      temperature: 0.2
+      max_tokens: 2000
+      top_p: 0.92
+
+# Define comprehensive test cases
+tests:
+  # Primary test case with multiple document types
+  - name: "Horn Record - Basic Extraction"
+    vars:
+      key: "images/P95-Meyer req-1.jpeg"
+    assert:
+      - type: is-json
+      - type: javascript
+        value: |
+          const data = JSON.parse(output);
+          const fields = data.result?.fields || [];
+          const findField = (name) => fields.find(f => f.fieldName === name);
+          
+          // Required fields check
+          const requiredFields = [
+            "Patient First Name",
+            "Patient Last Name", 
+            "Healthcare Facility"
+          ];
+          
+          for (const fieldName of requiredFields) {
+            const field = findField(fieldName);
+            if (!field || !field.value) {
+              throw new Error(`Required field "${fieldName}" is missing or empty`);
+            }
+          }
+          
+          // Accuracy check
+          const accuracy = parseInt(data.accuracy || "0");
+          if (accuracy < 70) {
+            throw new Error(`Accuracy too low: ${accuracy}% (minimum 70%)`);
+          }
+          
+          return true;
+
+  # Specific field validation test
+  - name: "Horn Record - Field Validation"
+    vars:
+      key: "images/P95-Meyer req-1.jpeg"
+    assert:
+      - type: is-json
+      - type: javascript
+        value: |
+          const data = JSON.parse(output);
+          const fields = data.result?.fields || [];
+          const findField = (name) => fields.find(f => f.fieldName === name);
+
+          // Specific value checks (adjust based on actual document content)
+          const checks = [
+            { field: "Patient First Name", expected: "John" },
+            { field: "Patient Last Name", expected: "Meyer" },
+            { field: "Healthcare Facility", expected: "WEST PLAINS R-VII SCHOOL DISTRICT" },
+            { field: "Facility State", expected: "MO" },
+            { field: "Facility City", expected: "WEST PLAINS" }
+          ];
+
+          const errors = [];
+          for (const check of checks) {
+            const field = findField(check.field);
+            if (!field) {
+              errors.push(`Field "${check.field}" not found`);
+            } else if (field.value !== check.expected) {
+              errors.push(`Field "${check.field}": expected "${check.expected}", got "${field.value}"`);
+            }
+          }
+
+          if (errors.length > 0) {
+            throw new Error(`Field validation failed: ${errors.join("; ")}`);
+          }
+
+          return true;
+
+  # Date format validation test
+  - name: "Horn Record - Date Format Validation"
+    vars:
+      key: "images/P95-Meyer req-1.jpeg"
+    assert:
+      - type: is-json
+      - type: javascript
+        value: |
+          const data = JSON.parse(output);
+          const fields = data.result?.fields || [];
+          const findField = (name) => fields.find(f => f.fieldName === name);
+
+          // Date format validation (MM/DD/YYYY)
+          const dateRegex = /^\d{2}\/\d{2}\/\d{4}$/;
+          const dateFields = ["Patient DOB", "Date Received"];
+
+          for (const fieldName of dateFields) {
+            const field = findField(fieldName);
+            if (field && field.value && !dateRegex.test(field.value)) {
+              throw new Error(`Date field "${fieldName}" has invalid format: "${field.value}" (expected MM/DD/YYYY)`);
+            }
+          }
+
+          return true;
+
+  # Performance test
+  - name: "Horn Record - Performance Test"
+    vars:
+      key: "images/P95-Meyer req-1.jpeg"
+    assert:
+      - type: is-json
+      - type: javascript
+        value: |
+          const data = JSON.parse(output);
+          const accuracy = parseInt(data.accuracy || "0");
+
+          // Performance benchmarks
+          if (accuracy < 85) {
+            console.warn(`Warning: Accuracy below target (${accuracy}% < 85%)`);
+          }
+
+          // Check for completeness
+          const fields = data.result?.fields || [];
+          const nonEmptyFields = fields.filter(f => f.value && f.value.trim() !== "");
+          const completeness = (nonEmptyFields.length / fields.length) * 100;
+
+          if (completeness < 60) {
+            throw new Error(`Field completeness too low: ${completeness.toFixed(1)}% (minimum 60%)`);
+          }
+
+          return true;
+
+  # Robustness test with edge cases
+  - name: "Horn Record - Robustness Test"
+    vars:
+      key: "images/P95-Meyer req-1.jpeg"
+    assert:
+      - type: is-json
+      - type: javascript
+        value: |
+          const data = JSON.parse(output);
+
+          // Structure validation
+          if (!data.result || !data.result.fields) {
+            throw new Error("Missing required result structure");
+          }
+
+          if (!data.accuracy) {
+            throw new Error("Missing accuracy score");
+          }
+
+          // Field structure validation
+          const fields = data.result.fields;
+          for (const field of fields) {
+            if (!field.fieldName || field.value === undefined) {
+              throw new Error(`Invalid field structure: ${JSON.stringify(field)}`);
+            }
+          }
+
+          return true;
+
+outputPath: ./promptfoo-results.json
+
