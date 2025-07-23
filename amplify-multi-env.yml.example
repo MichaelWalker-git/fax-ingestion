@@ -1,0 +1,31 @@
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - cd client-app
+        - npm install --legacy-peer-deps
+    build:
+      commands:
+        - npm run build
+  artifacts:
+    baseDirectory: client-app/dist
+    files:
+      - "**/*"
+  cache:
+    paths:
+      - node_modules/**/*
+env:
+  variables:
+    # Default (dev) environment
+    VITE_API_ENDPOINT: https://5ixbxj0h8f.execute-api.us-east-2.amazonaws.com/dev/
+    VITE_USER_POOL_CLIENT_ID: 22i4k5gevmbvb9ih20djucur6d
+    VITE_USER_POOL_ID: us-east-2_wGqSBLDyW
+    VITE_IDENTITY_POOL_ID: us-east-2:832ee5d5-e59d-4c76-905d-8a5285f13958
+  # Production branch overrides (if needed)
+  production:
+    variables:
+      VITE_API_ENDPOINT: https://your-prod-api.amazonaws.com/prod/
+      VITE_USER_POOL_CLIENT_ID: your-prod-client-id
+      VITE_USER_POOL_ID: your-prod-user-pool-id
+      VITE_IDENTITY_POOL_ID: your-prod-identity-pool-id
