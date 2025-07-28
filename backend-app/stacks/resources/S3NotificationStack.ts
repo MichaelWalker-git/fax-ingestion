@@ -35,11 +35,17 @@ export class S3NotificationStack extends NestedStack {
     this.securityGroup = props.securityGroup;
     this.dataTable = props.dataTable;
 
-    const inputBucketName = Fn.importValue(`${props.labels.name()}-input-bucket-name`);
-    const outputBucketName = Fn.importValue(`${props.labels.name()}-output-bucket-name`);
+    const importInputBucketName = getCdkConstructId({ context: 'input', resourceName: 'bucket-name' }, this);
+    const importOutputBucketName = getCdkConstructId({ context: 'output', resourceName: 'bucket-name' }, this);
+
+    const inputBucketName = Fn.importValue(importInputBucketName);
+    const outputBucketName = Fn.importValue(importOutputBucketName);
 
     const inputBucket = Bucket.fromBucketName(this, 'InputBucket', inputBucketName);
     const outputBucket = Bucket.fromBucketName(this, 'OutputBucket', outputBucketName);
+
+    const importProcessingStateMachineArn = getCdkConstructId({ context: 'processing', resourceName: 'state-machine-arn' }, this);
+    const processingStateMachineArn = Fn.importValue(importProcessingStateMachineArn);
 
     this.sageMakerAsyncBucket = props.sageMakerAsyncBucket;
 
@@ -72,9 +78,8 @@ export class S3NotificationStack extends NestedStack {
     }));
 
     // Lambdas
-    const processingStateMachineArn = Fn.importValue(`${process.env.STAGE}-ProcessingStateMachineArn`);
     const startProcessingLambda = startProcessing(this, {
-      REGION: this.region || 'us-east-2',
+      REGION: this.region || 'eu-central-1',
       STATE_MACHINE_ARN: processingStateMachineArn,
       TABLE_NAME: this.dataTable.tableName,
       OUTPUT_BUCKET: outputBucketName,

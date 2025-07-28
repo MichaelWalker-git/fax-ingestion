@@ -327,7 +327,7 @@ export const pollAsyncResult = async (
     retryInterval?: number; // milliseconds
   } = {},
 ): Promise<AsyncModelResponse> => {
-  const { maxRetries = 30, retryInterval = 10000 } = options; // Default: 5 minutes total (30 * 10s)
+  const { maxRetries = 50, retryInterval = 10000 } = options; // Default: 5 minutes total (30 * 10s)
 
   let retries = 0;
 

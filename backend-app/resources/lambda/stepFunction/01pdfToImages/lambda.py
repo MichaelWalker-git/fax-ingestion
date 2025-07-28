@@ -14,7 +14,7 @@ import urllib.parse
 
 logger = Logger(service="FILE_DB_REPRESENTATION")
 
-REGION = os.environ.get('REGION', 'us-east-2')
+REGION = os.environ.get('REGION', 'eu-central-1')
 
 s3_client = boto3.client('s3')
 

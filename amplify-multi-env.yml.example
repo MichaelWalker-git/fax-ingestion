@@ -18,10 +18,10 @@ frontend:
 env:
   variables:
     # Default (dev) environment
-    VITE_API_ENDPOINT: https://5ixbxj0h8f.execute-api.us-east-2.amazonaws.com/dev/
+    VITE_API_ENDPOINT: https://5ixbxj0h8f.execute-api.eu-central-1.amazonaws.com/dev/
     VITE_USER_POOL_CLIENT_ID: 22i4k5gevmbvb9ih20djucur6d
-    VITE_USER_POOL_ID: us-east-2_wGqSBLDyW
-    VITE_IDENTITY_POOL_ID: us-east-2:832ee5d5-e59d-4c76-905d-8a5285f13958
+    VITE_USER_POOL_ID: eu-central-1_wGqSBLDyW
+    VITE_IDENTITY_POOL_ID: eu-central-1:832ee5d5-e59d-4c76-905d-8a5285f13958
   # Production branch overrides (if needed)
   production:
     variables:

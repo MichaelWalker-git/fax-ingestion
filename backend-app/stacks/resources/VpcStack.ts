@@ -9,7 +9,7 @@ interface IProps {
   kmsKey: Key;
 }
 
-const EXISTING_VPC_NAME = process.env.EXISTING_VPC_NAME;
+const EXISTING_VPC_ID = process.env.EXISTING_VPC_ID;
 
 export class VpcStack extends NestedStack {
   public readonly removalPolicy = RemovalPolicy.DESTROY;
@@ -29,7 +29,7 @@ export class VpcStack extends NestedStack {
     // Use existing VPC instead of creating a new one to avoid hitting AWS limits
     this.vpc = Vpc.fromLookup(this, getCdkConstructId({ context: 'existing', resourceName: 'vpc' }, this), {
       isDefault: false,
-      vpcName: EXISTING_VPC_NAME,
+      vpcId: EXISTING_VPC_ID,
     });
 
     // this.vpc = new Vpc(this, vpcId, {

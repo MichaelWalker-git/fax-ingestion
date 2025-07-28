@@ -1855,7 +1855,7 @@
         "label": "base_config",
         "config": {
           "endpoint": "ai-dev-sagemaker-qwen-endpoint",
-          "region": "us-east-2",
+          "region": "eu-central-1",
           "modelType": "huggingface",
           "temperature": 0.1,
           "max_tokens": 2000
@@ -1866,7 +1866,7 @@
         "label": "high_precision",
         "config": {
           "endpoint": "ai-dev-sagemaker-qwen-endpoint",
-          "region": "us-east-2",
+          "region": "eu-central-1",
           "modelType": "huggingface",
           "temperature": 0,
           "max_tokens": 1500,
@@ -1878,7 +1878,7 @@
         "label": "creative",
         "config": {
           "endpoint": "ai-dev-sagemaker-qwen-endpoint",
-          "region": "us-east-2",
+          "region": "eu-central-1",
           "modelType": "huggingface",
           "temperature": 0.3,
           "max_tokens": 2500,
@@ -1890,7 +1890,7 @@
         "label": "balanced",
         "config": {
           "endpoint": "ai-dev-sagemaker-qwen-endpoint",
-          "region": "us-east-2",
+          "region": "eu-central-1",
           "modelType": "huggingface",
           "temperature": 0.2,
           "max_tokens": 2000,
