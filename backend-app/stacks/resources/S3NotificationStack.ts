@@ -12,7 +12,7 @@ import { createDefaultLambdaRole, getCdkConstructId, getPolicyStatement } from '
 import { Labels } from '../../shared/labels';
 
 interface IProps {
-  vpc: IVpc;
+  vpc: Vpc;
   dataTable: Table;
   kmsKey: Key;
   securityGroup: SecurityGroup;
@@ -22,7 +22,7 @@ interface IProps {
 
 export class S3NotificationStack extends NestedStack {
   public readonly kmsKey: Key;
-  public readonly vpc: IVpc;
+  public readonly vpc: Vpc;
   public readonly dataTable: Table;
   public readonly securityGroup: SecurityGroup;
   public readonly sageMakerAsyncBucket: Bucket;

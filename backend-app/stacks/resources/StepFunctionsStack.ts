@@ -2,12 +2,11 @@ import * as path from 'path';
 import { Duration, NestedStack, RemovalPolicy } from 'aws-cdk-lib';
 import * as cdk from 'aws-cdk-lib';
 import { Table } from 'aws-cdk-lib/aws-dynamodb';
-import { IVpc, SecurityGroup, Vpc } from 'aws-cdk-lib/aws-ec2';
+import {  SecurityGroup, Vpc } from 'aws-cdk-lib/aws-ec2';
 import { Role } from 'aws-cdk-lib/aws-iam';
 import { Key } from 'aws-cdk-lib/aws-kms';
 import { Architecture, DockerImageCode, DockerImageFunction } from 'aws-cdk-lib/aws-lambda';
 import { LogGroup } from 'aws-cdk-lib/aws-logs';
-import { Domain } from 'aws-cdk-lib/aws-opensearchservice';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { Chain, IntegrationPattern, StateMachine, StateMachineType } from 'aws-cdk-lib/aws-stepfunctions';
 import * as sfn from 'aws-cdk-lib/aws-stepfunctions';
@@ -19,7 +18,7 @@ import { fileProcessing } from '../../resources/lambda/stepFunction/03fileProces
 import { createDefaultLambdaRole, getCdkConstructId, getPolicyStatement } from '../../shared/helpers';
 
 interface IProps {
-  vpc: IVpc;
+  vpc: Vpc;
   inputBucket: Bucket;
   outputBucket: Bucket;
   sageMakerAsyncBucket: Bucket;
@@ -34,7 +33,7 @@ export class StepFunctionsStack extends NestedStack {
   public readonly kmsKey: Key;
   public readonly lambdaRole: Role;
   public readonly stateMachine: StateMachine;
-  public readonly vpc: IVpc;
+  public readonly vpc: Vpc;
   public readonly dataTable: Table;
   public readonly inputBucket: Bucket;
   public readonly outputBucket: Bucket;

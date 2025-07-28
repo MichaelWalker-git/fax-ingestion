@@ -1,7 +1,7 @@
 import * as path from 'path';
 import { CustomResource, Duration, NestedStack, RemovalPolicy } from 'aws-cdk-lib';
 import * as cdk from 'aws-cdk-lib';
-import { IVpc, SecurityGroup } from 'aws-cdk-lib/aws-ec2';
+import { SecurityGroup, Vpc } from 'aws-cdk-lib/aws-ec2';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import { Key } from 'aws-cdk-lib/aws-kms';
 import { Architecture, DockerImageCode, DockerImageFunction } from 'aws-cdk-lib/aws-lambda';
@@ -20,7 +20,7 @@ export interface LlamaNemotronStackProps extends cdk.StackProps {
   inferenceType?: string;
   initialInstanceCount?: number;
   kmsKey: Key;
-  vpc: IVpc;
+  vpc: Vpc;
   sageMakerAsyncBucket: Bucket;
   labels: Labels;
 }
@@ -31,7 +31,7 @@ export class SageMakerStack extends NestedStack {
   public readonly modelId: string;
   public readonly inferenceType?: string;
   public readonly kmsKey: Key;
-  public readonly vpc: IVpc;
+  public readonly vpc: Vpc;
   public readonly instanceType?: string;
   public readonly initialInstanceCount?: number;
   public readonly removalPolicy = RemovalPolicy.DESTROY;
@@ -149,7 +149,7 @@ export class SageMakerStack extends NestedStack {
     // Lambdas
     const deployModelTOSageMakerName = getCdkConstructId({ context: 'deploy-model-to-sagemaker', resourceName: 'lambda' }, this);
     const deployModelToSageMakerLambda = new DockerImageFunction(this, deployModelTOSageMakerName, {
-      functionName: `${props.labels.name()}-${deployModelTOSageMakerName}`,
+      functionName: deployModelTOSageMakerName,
       code: DockerImageCode.fromImageAsset(path.join(__dirname, '../../resources/lambda/sageMaker/deployModel')),
       timeout: Duration.minutes(15),
       memorySize: 2048,

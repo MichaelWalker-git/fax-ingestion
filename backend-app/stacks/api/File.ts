@@ -1,7 +1,7 @@
 import { NestedStack } from 'aws-cdk-lib';
 import { AuthorizationType, LambdaIntegration, RestApi, CognitoUserPoolsAuthorizer } from 'aws-cdk-lib/aws-apigateway';
 import { UserPool } from 'aws-cdk-lib/aws-cognito';
-import { IVpc, SecurityGroup, Port } from 'aws-cdk-lib/aws-ec2';
+import {IVpc, SecurityGroup, Port, Vpc} from 'aws-cdk-lib/aws-ec2';
 import { Key } from 'aws-cdk-lib/aws-kms';
 import { NodejsFunctionProps } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { HttpMethods } from 'aws-cdk-lib/aws-s3';
@@ -14,7 +14,7 @@ interface NestedApiStackProps {
   restApi: RestApi;
   tableName: string;
   tableArn: string;
-  vpc: IVpc;
+  vpc: Vpc;
   securityGroup: SecurityGroup;
   inputBucketName: string;
   outputBucketName: string;
@@ -26,7 +26,7 @@ export class FileApiStack extends NestedStack {
   public readonly restApi: RestApi;
   public readonly tableName: string;
   public readonly tableArn: string;
-  public readonly vpc: IVpc;
+  public readonly vpc: Vpc;
   public readonly securityGroup: SecurityGroup;
   public readonly inputBucketName: string;
   public readonly outputBucketName: string;

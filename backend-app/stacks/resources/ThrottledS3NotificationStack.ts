@@ -1,6 +1,6 @@
 import { Duration, Fn, NestedStack, CfnOutput } from 'aws-cdk-lib';
 import { Table } from 'aws-cdk-lib/aws-dynamodb';
-import { IVpc, SecurityGroup } from 'aws-cdk-lib/aws-ec2';
+import { SecurityGroup, Vpc} from 'aws-cdk-lib/aws-ec2';
 import {
   PolicyStatement,
   Effect,
@@ -18,7 +18,7 @@ import { getCdkConstructId, createDefaultLambdaRole, getPolicyStatement } from '
 import { Labels } from '../../shared/labels';
 
 interface IProps {
-  vpc: IVpc;
+  vpc: Vpc;
   dataTable: Table;
   kmsKey: Key;
   securityGroup: SecurityGroup;

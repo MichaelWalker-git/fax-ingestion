@@ -29,6 +29,7 @@
     "test": "jest",
     "synth:dev": "cdk synth 'dev/*'",
     "synth:prod": "cdk synth 'prod/*'",
+    "synth:prod:template": "npx cdk synth MarketplaceStack --no-staging --json > template.json\nyq -P < template.json > template.yaml\n",
     "cdk": "cdk"
   },
   "devDependencies": {

@@ -20,7 +20,7 @@ export type ApiStackProps = {
   outputBucketName: string;
   tableName: string;
   tableArn: string;
-  vpc: IVpc;
+  vpc: Vpc;
   kmsKey: Key;
   userPool: UserPool;
 }
@@ -48,5 +48,5 @@ export interface LambdaHandlerEvent<
 }
 
 export interface LambdaHandler {
-  (scope: Construct, env: Record<string, string> | undefined, role: Role, vpc: IVpc, securityGroup: SecurityGroup): IFunction;
+  (scope: Construct, env: Record<string, string> | undefined, role: Role, vpc: Vpc, securityGroup: SecurityGroup): IFunction;
 }

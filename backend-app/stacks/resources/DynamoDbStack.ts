@@ -1,6 +1,6 @@
 import { NestedStack, RemovalPolicy } from 'aws-cdk-lib';
 import { AttributeType, BillingMode, ProjectionType, StreamViewType, Table } from 'aws-cdk-lib/aws-dynamodb';
-import { IVpc, SecurityGroup } from 'aws-cdk-lib/aws-ec2';
+import { SecurityGroup, Vpc } from 'aws-cdk-lib/aws-ec2';
 import { Key } from 'aws-cdk-lib/aws-kms';
 import { NagSuppressions } from 'cdk-nag';
 import { Construct } from 'constructs';
@@ -13,14 +13,14 @@ interface IProps {
   kmsKey: Key;
   labels: Labels;
   securityGroup: SecurityGroup;
-  vpc: IVpc;
+  vpc: Vpc;
 }
 
 export class DynamoDbStack extends NestedStack {
   public readonly removalPolicy: RemovalPolicy = RemovalPolicy.DESTROY;
   public readonly kmsKey: Key;
   public readonly dataTable: Table;
-  public readonly vpc: IVpc;
+  public readonly vpc: Vpc;
   public readonly securityGroup: SecurityGroup;
 
   constructor(scope: Construct, id: string, props: IProps) {

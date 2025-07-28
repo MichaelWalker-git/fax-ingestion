@@ -1,7 +1,7 @@
 import { CfnOutput, NestedStack, RemovalPolicy } from 'aws-cdk-lib';
 import * as cdk from 'aws-cdk-lib';
 import { Table } from 'aws-cdk-lib/aws-dynamodb';
-import { IVpc } from 'aws-cdk-lib/aws-ec2';
+import { Vpc } from 'aws-cdk-lib/aws-ec2';
 import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { Key } from 'aws-cdk-lib/aws-kms';
 import { BlockPublicAccess, Bucket, BucketEncryption, CorsRule, HttpMethods } from 'aws-cdk-lib/aws-s3';
@@ -14,7 +14,7 @@ import { Labels } from '../../shared/labels';
 interface IProps {
   kmsKey: Key;
   dataTable: Table;
-  vpc: IVpc;
+  vpc: Vpc;
   labels: Labels;
 }
 
@@ -24,7 +24,7 @@ export class S3Stack extends NestedStack {
   public readonly inputBucket: Bucket;
   public readonly outputBucket: Bucket;
   public readonly sageMakerAsyncBucket: Bucket;
-  public readonly vpc: IVpc;
+  public readonly vpc: Vpc;
   public readonly dataTable: Table;
 
   constructor(scope: Construct, id: string, props: IProps) {

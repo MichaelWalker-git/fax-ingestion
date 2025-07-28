@@ -3,15 +3,13 @@ import {
   RestApi,
 } from 'aws-cdk-lib/aws-apigateway';
 import { UserPool } from 'aws-cdk-lib/aws-cognito';
-import { IVpc, SecurityGroup } from 'aws-cdk-lib/aws-ec2';
+import { SecurityGroup, Vpc } from 'aws-cdk-lib/aws-ec2';
 import { Key } from 'aws-cdk-lib/aws-kms';
 import { NodejsFunctionProps } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Domain } from 'aws-cdk-lib/aws-opensearchservice';
 import { NagSuppressions } from 'cdk-nag';
 import { Construct } from 'constructs';
-import {
-  getCdkConstructId,
-} from '../shared/helpers';
+import { getCdkConstructId } from '../shared/helpers';
 import { ApiStackProps } from '../shared/types';
 import { FileApiStack } from './api/File';
 
@@ -23,7 +21,7 @@ export class ApiStack extends NestedStack {
   public readonly tableName: string;
   public readonly tableArn: string;
   public readonly openSearchDomain: Domain;
-  public readonly vpc: IVpc;
+  public readonly vpc: Vpc;
   public readonly kmsKey: Key;
   public readonly securityGroup: SecurityGroup;
   public readonly userPool: UserPool;

@@ -7,7 +7,7 @@ import {
   UserPoolClient,
   UserPoolDomain,
 } from 'aws-cdk-lib/aws-cognito';
-import { IVpc, SecurityGroup, Vpc } from 'aws-cdk-lib/aws-ec2';
+import { SecurityGroup, Vpc } from 'aws-cdk-lib/aws-ec2';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import { Key } from 'aws-cdk-lib/aws-kms';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
@@ -20,7 +20,7 @@ import { createDefaultLambdaRole, getCdkConstructId, getPolicyStatement } from '
 import { Labels } from '../../shared/labels';
 
 interface IProps {
-  vpc: IVpc;
+  vpc: Vpc;
   inputBucket: Bucket;
   outputBucket: Bucket;
   kmsKey: Key;
@@ -37,7 +37,7 @@ export class CognitoStack extends NestedStack {
   public readonly authenticatedRole: iam.Role;
   public readonly clientUrl: string;
   public readonly inputBucket: Bucket;
-  public readonly vpc: IVpc;
+  public readonly vpc: Vpc;
   public readonly outputBucket: Bucket;
 
   constructor(scope: Construct, id: string, props: IProps) {
