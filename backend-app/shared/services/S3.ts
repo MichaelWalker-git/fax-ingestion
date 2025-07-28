@@ -10,7 +10,7 @@ import {
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 // Environment variables
-const region = process.env.CDK_DEFAULT_REGION || 'us-east-2';
+const region = process.env.CDK_DEFAULT_REGION || 'eu-central-1';
 
 // Error types
 type S3ErrorType =

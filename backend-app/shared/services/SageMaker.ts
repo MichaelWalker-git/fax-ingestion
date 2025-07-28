@@ -2,7 +2,7 @@ import { SageMakerRuntime } from '@aws-sdk/client-sagemaker-runtime';
 import { v4 as uuid } from 'uuid';
 import { getFileAsJson, getFileAsString, uploadFile } from './S3';
 
-const REGION = process.env.CDK_DEFAULT_REGION || 'us-east-2';
+const REGION = process.env.CDK_DEFAULT_REGION || 'eu-central-1';
 const ASYNC_S3_BUCKET = process.env.ASYNC_S3_BUCKET;
 
 const client = new SageMakerRuntime({ region: REGION });

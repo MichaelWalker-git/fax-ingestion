@@ -116,7 +116,7 @@ export class StepFunctionsStack extends NestedStack {
       securityGroups: [this.securityGroup],
       reservedConcurrentExecutions: 40,
       environment: {
-        REGION: this.region || 'us-east-2',
+        REGION: this.region || 'eu-central-1',
       },
     });
 
@@ -199,7 +199,7 @@ export class StepFunctionsStack extends NestedStack {
     });
 
     // Outputs ---------------------------------------------------------------------------------------------
-    const processingStateMachineArn = `${process.env.STAGE}-ProcessingStateMachineArn`;
+    const processingStateMachineArn = getCdkConstructId({ context: 'processing', resourceName: 'state-machine-arn' }, this);
     new cdk.CfnOutput(this, processingStateMachineArn, {
       value: this.stateMachine.stateMachineArn,
       exportName: processingStateMachineArn,

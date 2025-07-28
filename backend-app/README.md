@@ -23,7 +23,7 @@ Create a `.env` file in the project root with the following variables:
 
 ```env
 APP_PREFIX=IDP-POC
-CDK_DEFAULT_REGION=us-east-2
+CDK_DEFAULT_REGION=eu-central-1
 CDK_DEFAULT_ACCOUNT=your-aws-account-id
 HUGGINGFACE_HUB_TOKEN=your-huggingface-token
 

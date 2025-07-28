@@ -163,7 +163,7 @@ export class FileApiStack extends NestedStack {
     const deleteFileLambda = deleteFile(this, {
       INPUT_BUCKET: this.inputBucketName,
       TABLE_NAME: this.tableName,
-      REGION: this.region || 'us-east-2',
+      REGION: this.region || 'eu-central-1',
     }, deleteFileRole, this.vpc, this.securityGroup);
 
     // Authorizer

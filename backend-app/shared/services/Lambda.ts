@@ -13,7 +13,7 @@ export interface InvokeLambdaParams<T = any> {
   functionName: string;
   /** Payload to send to the Lambda function */
   payload: T;
-  /** AWS region to use (defaults to process.env.AWS_REGION or 'us-east-2') */
+  /** AWS region to use (defaults to process.env.AWS_REGION or 'eu-central-1') */
   region?: string;
   /** Invocation type */
   invocationType?: InvocationType;

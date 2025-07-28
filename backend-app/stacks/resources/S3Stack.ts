@@ -166,37 +166,37 @@ export class S3Stack extends NestedStack {
     const exportInputBucketName = getCdkConstructId({ context: 'input', resourceName: 'bucket-name' }, this);
     new CfnOutput(this, exportInputBucketName, {
       value: this.inputBucket.bucketName,
-      exportName: `${props.labels.name()}-input-bucket-name`,
+      exportName: exportInputBucketName,
     });
 
     const exportInputBucketArn = getCdkConstructId({ context: 'input', resourceName: 'bucket-arn' }, this);
     new CfnOutput(this, exportInputBucketArn, {
       value: this.inputBucket.bucketArn,
-      exportName: `${props.labels.name()}-input-bucket-arn`,
+      exportName: exportInputBucketArn,
     });
 
     const exportOutputBucketName = getCdkConstructId({ context: 'output', resourceName: 'bucket-name' }, this);
     new CfnOutput(this, exportOutputBucketName, {
       value: this.outputBucket.bucketName,
-      exportName: `${props.labels.name()}-output-bucket-name`,
+      exportName: exportOutputBucketName,
     });
 
     const exportOutputBucketArn = getCdkConstructId({ context: 'output', resourceName: 'bucket-arn' }, this);
     new CfnOutput(this, exportOutputBucketArn, {
       value: this.outputBucket.bucketArn,
-      exportName: `${props.labels.name()}-output-bucket-arn`,
+      exportName: exportOutputBucketArn,
     });
 
     const exportSageMakerAsyncBucketName = getCdkConstructId({ context: 'sagemaker-async', resourceName: 'bucket-name' }, this);
     new CfnOutput(this, exportSageMakerAsyncBucketName, {
       value: this.sageMakerAsyncBucket.bucketName,
-      exportName: `${props.labels.name()}-sagemaker-async-bucket-name`,
+      exportName: exportSageMakerAsyncBucketName,
     });
 
     const exportSageMakerAsyncBucketArn = getCdkConstructId({ context: 'sagemaker-async', resourceName: 'bucket-arn' }, this);
     new CfnOutput(this, exportSageMakerAsyncBucketArn, {
       value: this.sageMakerAsyncBucket.bucketArn,
-      exportName: `${props.labels.name()}-sagemaker-async-bucket-arn`,
+      exportName: exportSageMakerAsyncBucketArn,
     });
 
     // NagSuppressions
@@ -235,7 +235,7 @@ export class S3Stack extends NestedStack {
             'Action::kms:GenerateDataKey*',
             'Action::kms:ReEncrypt*',
             `Resource::arn:aws:s3:::cdk-hnb659fds-assets-${this.account}-${this.region}/*`,
-            'Resource::<aidevinputbucket1B8F5E94.Arn>/*',
+            'Resource::<devinputbucketED4AB496.Arn>/*',
             'Resource::<aitestinputbucketE595EB0B.Arn>/*',
             'Resource::<*inputbucket*.Arn>/*',
             'Resource::<*InputBucket*.Arn>/*',

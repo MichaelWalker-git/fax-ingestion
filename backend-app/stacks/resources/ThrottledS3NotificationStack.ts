@@ -33,14 +33,18 @@ export class ThrottledS3NotificationStack extends NestedStack {
   constructor(scope: Construct, id: string, props: IProps) {
     super(scope, id);
 
+    const importInputBucketName = getCdkConstructId({ context: 'input', resourceName: 'bucket-name' }, this);
+    const importOutputBucketName = getCdkConstructId({ context: 'output', resourceName: 'bucket-name' }, this);
+
     // Import required resources
-    const inputBucketName = Fn.importValue(`${props.labels.name()}-input-bucket-name`);
-    const outputBucketName = Fn.importValue(`${props.labels.name()}-output-bucket-name`);
+    const inputBucketName = Fn.importValue(importInputBucketName);
+    const outputBucketName = Fn.importValue(importOutputBucketName);
 
     const inputBucket = Bucket.fromBucketName(this, 'InputBucket', inputBucketName);
     const outputBucket = Bucket.fromBucketName(this, 'OutputBucket', outputBucketName);
 
-    const processingStateMachineArn = Fn.importValue(`${process.env.STAGE}-ProcessingStateMachineArn`);
+    const importProcessingStateMachineArn = getCdkConstructId({ context: 'processing', resourceName: 'state-machine-arn' }, this);
+    const processingStateMachineArn = Fn.importValue(importProcessingStateMachineArn);
 
     // Create IAM role for Lambda
     const startProcessingRole = createDefaultLambdaRole(this, getCdkConstructId({ context: 'file-processing', resourceName: 'role' }, this));
@@ -132,7 +136,7 @@ export class ThrottledS3NotificationStack extends NestedStack {
 
     // Create Lambda with conservative concurrency
     this.startProcessingLambda = startProcessing(this, {
-      REGION: this.region || 'us-east-2',
+      REGION: this.region || 'eu-central-1',
       STATE_MACHINE_ARN: processingStateMachineArn,
       TABLE_NAME: props.dataTable.tableName,
       OUTPUT_BUCKET: outputBucketName,

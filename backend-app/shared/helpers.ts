@@ -17,7 +17,7 @@ export const getCdkConstructId = (
     throw new Error('Missing required env vars: STAGE');
   }
 
-  const baseName = `ai-${stage}-${context}-${resourceName}`;
+  const baseName = `${stage}-${context}-${resourceName}`;
   const formatted = baseName.toLowerCase();
 
   return addId ? `${formatted}-${Names.uniqueId(scope)}` : formatted;
