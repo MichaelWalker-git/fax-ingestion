@@ -29,7 +29,8 @@
     "test": "jest",
     "synth:dev": "cdk synth 'dev/*'",
     "synth:prod": "cdk synth 'prod/*'",
-    "cdk": "cdk"
+    "cdk": "cdk",
+    "synth:prod:template": "STAGE=prod npx cdk synth \"prod/-ce2-prod-\" --no-staging --quiet --json > template.yaml"
   },
   "devDependencies": {
     "@aws-cdk/aws-scheduler-alpha": "^2.145.0-alpha.0",
