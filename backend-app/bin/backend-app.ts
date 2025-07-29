@@ -3,7 +3,7 @@ import { config } from 'dotenv';
 config();
 
 import * as cdk from 'aws-cdk-lib';
-import { MarketplaceStage } from '../lib/stages';
+import { ProdStage } from '../lib/stages';
 import { STAGES } from '../shared/constants';
 import { Labels } from '../shared/labels';
 
@@ -24,15 +24,14 @@ const app = new cdk.App();
 // Create labels for the marketplace deployment
 const labels = new Labels(
   APP_LABEL,
-  STAGES.MARKETPLACE,
+  STAGES.prod,
   APP_REGION,
   APP_NAME,
   'marketplace',
   '-',
 );
 
-// Marketplace deployment configuration
-const marketplaceProps = {
+const prodProps = {
   labels,
   complianceFramework: COMPLIANCE_FRAMEWORK,
   description: `AI Document Processing Platform v${MARKETPLACE_VERSION} - AWS Marketplace Edition`,
@@ -56,10 +55,10 @@ app.node.setContext('marketplace:supportEmail', process.env.SUPPORT_EMAIL || 'su
 app.node.setContext('marketplace:documentationUrl', process.env.DOCS_URL || 'https://docs.your-company.com');
 
 // Deploy the marketplace stage
-new MarketplaceStage(
+new ProdStage(
   app,
-  STAGES.MARKETPLACE,
-  marketplaceProps,
+  STAGES.prod,
+  prodProps,
   {
     env: { region: CDK_DEFAULT_REGION, account: CDK_DEFAULT_ACCOUNT },
   },

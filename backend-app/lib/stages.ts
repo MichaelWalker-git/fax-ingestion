@@ -11,7 +11,7 @@ export interface StackInputs extends StackProps {
   complianceFramework?: string;
 }
 
-export class MarketplaceStage extends Stage {
+export class ProdStage extends Stage {
   public readonly backendAppStack: BackendAppStack;
 
   constructor(
