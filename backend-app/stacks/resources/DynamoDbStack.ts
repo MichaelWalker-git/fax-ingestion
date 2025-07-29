@@ -31,8 +31,8 @@ export class DynamoDbStack extends NestedStack {
 
 
     const dataTableId = getCdkConstructId({ context: 'data', resourceName: 'table' }, this);
-    this.dataTable = new Table(this, `${props.labels.name()}-${dataTableId}`, {
-      tableName: `${props.labels.name()}-dataTableId`,
+    this.dataTable = new Table(this, `${props.labels.application}-${dataTableId}`, {
+      tableName: `${props.labels.application}-dataTableId`,
       partitionKey: { name: PARTITION_KEY_NAME, type: AttributeType.STRING },
       sortKey: { name: SORT_KEY_NAME, type: AttributeType.STRING },
       removalPolicy: this.removalPolicy,

@@ -27,27 +27,61 @@ import { ThrottledS3NotificationStack } from '../stacks/resources/ThrottledS3Not
 import { VpcStack } from '../stacks/resources/VpcStack';
 import { SharedResourcesStack } from '../stacks/SharedResourcesStack';
 
-export interface StackProps {
-  labels: Labels;
-}
+const APP_NAME = 'FaxIngestionApplication';
 
 export class BackendAppStack extends cdk.Stack {
-  constructor(scope: Construct, id: string, args: StackProps, props?: cdk.StackProps) {
+  constructor(scope: Construct, id: string, args?: {}, props?: cdk.StackProps) {
     super(scope, id, props);
 
+    const APP_REGION = new cdk.CfnParameter(this, 'AppRegion', {
+      type: 'String',
+      description: 'Logical application region (for naming)',
+      default: 'ce2',
+    });
+
+    const APP_LABEL = new cdk.CfnParameter(this, 'AppLabel', {
+      type: 'String',
+      description: 'Application label (environment label)',
+      default: process.env.APP_LABEL || this.node.tryGetContext('APP_LABEL') || 'Prod',
+    });
+
+    new cdk.CfnParameter(this, 'CustomerIdentifier', {
+      type: 'String',
+      description: 'The identifier for the customer',
+    });
+
+    new cdk.CfnParameter(this, 'ProductCode', {
+      type: 'String',
+      description: 'The product code for metering',
+    });
+
+
+    const adminEmail = new cdk.CfnParameter(this, 'AdminEmail', {
+      type: 'String',
+      description: 'Admin email for the application',
+    });
+
+    const labels = new Labels(
+      APP_LABEL.valueAsString,
+      process.env.STAGE || 'dev',
+      APP_REGION.valueAsString,
+      APP_NAME,
+      'private',
+      '-',
+    );
     // IAM Stack
     const iamStack = new IamStack(this, 'Iam-Stack');
 
     // KMS Stack
     const kmsStack = new KmsStack(this, 'Kms-Stack', {
-      labels: args.labels,
+      labels: labels,
     });
     const { kmsKey } = kmsStack;
 
     // Create secrets manager
     const secret = new Secret(this, `${process.env.STAGE}-scrt`, {
       name: `${process.env.STAGE}-secret`,
-      environment: args.labels.environment,
+      environment: labels.environment,
     });
 
     // VPC Stack
@@ -63,7 +97,7 @@ export class BackendAppStack extends cdk.Stack {
     // DynamoDB Stack
     const dynamoDbStack = new DynamoDbStack(this, 'DynamoDb-Stack', {
       kmsKey,
-      labels: args.labels,
+      labels: labels,
       vpc,
       securityGroup: securityGroupOpenSearch,
     });
@@ -74,7 +108,7 @@ export class BackendAppStack extends cdk.Stack {
       kmsKey,
       dataTable,
       vpc,
-      labels: args.labels,
+      labels: labels,
     });
     const { inputBucket, outputBucket, sageMakerAsyncBucket } = s3Stack;
 
@@ -93,7 +127,7 @@ export class BackendAppStack extends cdk.Stack {
       vpc,
       sageMakerAsyncBucket,
       inferenceType: 'ASYNC', // 'ASYNC', 'SYNC',
-      labels: args.labels,
+      labels: labels,
     });
 
     // StepFunctions Stack
@@ -115,7 +149,7 @@ export class BackendAppStack extends cdk.Stack {
       kmsKey,
       securityGroup: securityGroupS3,
       sageMakerAsyncBucket,
-      labels: args.labels,
+      labels: labels,
     });
 
     s3NotificationStack.addDependency(stepFunctionsStack);
@@ -124,7 +158,7 @@ export class BackendAppStack extends cdk.Stack {
     // Shared Resources Stack
     const sharedResourcesStack = new SharedResourcesStack(this, 'Shared-Resources-Stack', {
       kmsKey,
-      labels: args.labels,
+      labels: labels,
     });
     const { restApiLogGroup } = sharedResourcesStack;
 
@@ -135,7 +169,8 @@ export class BackendAppStack extends cdk.Stack {
       inputBucket,
       outputBucket,
       kmsKey,
-      labels: args.labels,
+      labels: labels,
+      adminEmail: adminEmail.valueAsString,
     });
     const { userPool, userPoolDomain, cognitoClient, identityPool, authenticatedRole, clientUrl } = cognitoStack;
 
@@ -188,40 +223,40 @@ export class BackendAppStack extends cdk.Stack {
     const restApiUri = getCdkConstructId({ context: 'rest-api', resourceName: 'uri' }, this);
     new CfnOutput(this, restApiUri, {
       value: apiStack.restApi.url,
-      exportName: `${args.labels.name()}-rest-api-uri`,
+      exportName: `${labels.name()}-rest-api-uri`,
     });
 
     const userPoolIdOutput = getCdkConstructId({ context: 'cognito', resourceName: 'user-pool-id' }, this);
     new CfnOutput(this, userPoolIdOutput, {
       value: userPool.userPoolId,
-      exportName: `${args.labels.name()}-user-pool-id`,
+      exportName: `${labels.name()}-user-pool-id`,
     });
 
     const cognitoDomainOutput = getCdkConstructId({ context: 'cognito', resourceName: 'domain' }, this);
     new CfnOutput(this, cognitoDomainOutput, {
       value: 'https://'+userPoolDomain.domainName+'.auth.'+this.region+'.amazoncognito.com',
-      exportName: `${args.labels.name()}-cognito-domain`,
+      exportName: `${labels.name()}-cognito-domain`,
     });
 
     const clientIdOutput = getCdkConstructId({ context: 'cognito', resourceName: 'client-id' }, this);
     new CfnOutput(this, clientIdOutput, {
       value: cognitoClient.userPoolClientId,
-      exportName: `${args.labels.name()}-client-id`,
+      exportName: `${labels.name()}-client-id`,
     });
 
-    new CfnOutput(this, `${args.labels.name()}-identity-pool-id`, {
+    new CfnOutput(this, `${labels.application}-identity-pool-id`, {
       value: identityPool.ref,
     });
 
-    new CfnOutput(this, `${args.labels.name()}-authenticated-role-arn`, {
+    new CfnOutput(this, `${labels.application}-authenticated-role-arn`, {
       value: authenticatedRole.roleArn,
     });
 
-    new CfnOutput(this, `${args.labels.name()}-app-uri`, {
+    new CfnOutput(this, `${labels.application}-app-uri`, {
       value: clientUrl,
     });
 
-    new CfnOutput(this, `${args.labels.name()}-secret-manager`, {
+    new CfnOutput(this, `${labels.application}-secret-manager`, {
       value: secret.secretArn,
     });
 

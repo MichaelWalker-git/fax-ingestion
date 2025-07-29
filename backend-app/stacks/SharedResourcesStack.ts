@@ -22,7 +22,7 @@ export class SharedResourcesStack extends NestedStack {
 
     // Log Groups
     const restApiLogGroupName = getCdkConstructId({ context: 'rest-api', resourceName: 'log-group', addId: true }, this);
-    this.restApiLogGroup = new LogGroup(this, `${props.labels.name()}-restApiLogGroup`, {
+    this.restApiLogGroup = new LogGroup(this, `${props.labels.application}-restApiLogGroup`, {
       logGroupName: restApiLogGroupName,
       removalPolicy: this.removalPolicy,
       encryptionKey: this.kmsKey,
