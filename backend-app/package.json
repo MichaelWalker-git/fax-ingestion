@@ -20,7 +20,7 @@
     "test": "jest",
     "synth:marketplace": "cdk synth 'marketplace/*'",
     "cdk": "cdk",
-    "synth:prod:template": "STAGE=prod npx cdk synth \"prod/-ce2-prod-\" --no-staging --quiet"
+    "synth:prod:template": "STAGE=prod npx cdk synth --no-staging --quiet"
   },
   "devDependencies": {
     "@aws-cdk/aws-scheduler-alpha": "^2.145.0-alpha.0",
