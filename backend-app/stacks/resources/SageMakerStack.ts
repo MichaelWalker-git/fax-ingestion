@@ -156,7 +156,7 @@ export class SageMakerStack extends NestedStack {
     // Lambdas
     const deployModelTOSageMakerName = getCdkConstructId({ context: 'deploy-model-to-sagemaker', resourceName: 'lambda' }, this);
     const deployModelToSageMakerLambda = new DockerImageFunction(this, deployModelTOSageMakerName, {
-      functionName: `${props.labels.name()}-${deployModelTOSageMakerName}`,
+      functionName: deployModelTOSageMakerName,
       code: DockerImageCode.fromImageAsset(path.join(__dirname, '../../resources/lambda/sageMaker/deployModel')),
       timeout: Duration.minutes(15),
       memorySize: 2048,

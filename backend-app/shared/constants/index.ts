@@ -44,6 +44,7 @@ export const STAGES = {
   prod: 'prod',
   test: 'test',
   FTR: 'FTR',
+  MARKETPLACE: 'marketplace',
 };
 
 export const USER_ROLES = {
