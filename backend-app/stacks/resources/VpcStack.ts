@@ -1,8 +1,7 @@
-import { CfnParameter, Fn, Aws, RemovalPolicy } from 'aws-cdk-lib';
+import { CfnParameter, Fn, Aws, RemovalPolicy, NestedStack } from 'aws-cdk-lib';
 import { IVpc, Vpc, SubnetType, SecurityGroup, Port } from 'aws-cdk-lib/aws-ec2';
 import { Key } from 'aws-cdk-lib/aws-kms';
 import { Construct } from 'constructs';
-import { NestedStack } from 'aws-cdk-lib';
 
 interface IProps {
   kmsKey: Key;
@@ -66,9 +65,9 @@ export class VpcStack extends NestedStack {
 
     // Add ingress rule
     this.securityGroupOpenSearch.addIngressRule(
-        this.securityGroupStepFunctions,
-        Port.tcp(443),
-        'Allow HTTPS from StepFunctions',
+      this.securityGroupStepFunctions,
+      Port.tcp(443),
+      'Allow HTTPS from StepFunctions',
     );
   }
 

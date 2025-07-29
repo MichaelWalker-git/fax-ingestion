@@ -146,6 +146,13 @@ export class SageMakerStack extends NestedStack {
       resources: ['*'],
     }));
 
+    const huggingfaceHubTokenParam = new cdk.CfnParameter(this, 'HuggingFaceHubToken', {
+      type: 'String',
+      // noEcho: true, // hides it in the console
+      description: 'HuggingFace Hub token for model access',
+      default: process.env.HUGGINGFACE_HUB_TOKEN || '',
+    });
+
     // Lambdas
     const deployModelTOSageMakerName = getCdkConstructId({ context: 'deploy-model-to-sagemaker', resourceName: 'lambda' }, this);
     const deployModelToSageMakerLambda = new DockerImageFunction(this, deployModelTOSageMakerName, {
@@ -160,7 +167,7 @@ export class SageMakerStack extends NestedStack {
       reservedConcurrentExecutions: 5,
       environment: {
         ROLE_ARN: sageMakerRole.roleArn,
-        HUGGINGFACE_HUB_TOKEN: process.env.HUGGINGFACE_HUB_TOKEN || '',
+        HUGGINGFACE_HUB_TOKEN: huggingfaceHubTokenParam.valueAsString,
         ENDPOINT_NAME: this.endpointName, // 'llama-nemotron-nano-endpoint',
         MODEL_NAME: this.modelName, // 'llama-nemotron-nano-model',
         HF_MODEL_ID: this.modelId, // 'nvidia/Llama-3.1-Nemotron-Nano-8B-v1', // 'Qwen/Qwen2.5-VL-7B-Instruct'

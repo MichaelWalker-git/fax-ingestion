@@ -25,6 +25,7 @@ interface IProps {
   outputBucket: Bucket;
   kmsKey: Key;
   labels: Labels;
+  adminEmail: string;
 }
 
 export class CognitoStack extends NestedStack {
@@ -190,9 +191,9 @@ export class CognitoStack extends NestedStack {
       serviceToken: customResourceProvider.serviceToken,
       properties: {
         UserPoolId: this.userPool.userPoolId,
-        FamilyName: process.env.ADMIN_FAMILY_NAME,
-        GivenName: process.env.ADMIN_GIVEN_NAME,
-        Email: process.env.ADMIN_EMAIL,
+        FamilyName: process.env.ADMIN_FAMILY_NAME || 'Admin',
+        GivenName: process.env.ADMIN_GIVEN_NAME || 'Super',
+        Email: props.adminEmail,
         UserRole: USER_ROLES.SUPER_ADMIN,
         UpdateTimestamp: Date.now(),
         CreatedByName: 'System',

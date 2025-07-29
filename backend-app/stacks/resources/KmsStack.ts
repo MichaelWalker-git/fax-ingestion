@@ -14,7 +14,7 @@ export class KmsStack extends NestedStack {
 
     const aliasName = getCdkConstructId({ context: 'kms', resourceName: 'alias', addId: true }, this);
 
-    this.kmsKey = new Key(this, `${args.labels.name()}-kmsKeyId`, {
+    this.kmsKey = new Key(this, `${args.labels.application}-kmsKeyId`, {
       alias: aliasName,
       removalPolicy: this.removalPolicy,
       enableKeyRotation: true,
