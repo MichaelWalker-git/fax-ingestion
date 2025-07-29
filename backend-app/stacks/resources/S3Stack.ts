@@ -14,7 +14,6 @@ import { Labels } from '../../shared/labels';
 interface IProps {
   kmsKey: Key;
   dataTable: Table;
-  vpc: IVpc;
   labels: Labels;
 }
 
@@ -24,14 +23,12 @@ export class S3Stack extends NestedStack {
   public readonly inputBucket: Bucket;
   public readonly outputBucket: Bucket;
   public readonly sageMakerAsyncBucket: Bucket;
-  public readonly vpc: IVpc;
   public readonly dataTable: Table;
 
   constructor(scope: Construct, id: string, props: IProps) {
     super(scope, id);
 
     this.kmsKey = props.kmsKey;
-    this.vpc = props.vpc;
     this.dataTable = props.dataTable;
 
     // S3 buckets
@@ -221,25 +218,10 @@ export class S3Stack extends NestedStack {
         {
           id: 'AwsSolutions-IAM4',
           reason: 'BucketDeployment requires AWS managed policies',
-          appliesTo: ['Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'],
         },
         {
           id: 'AwsSolutions-IAM5',
           reason: 'BucketDeployment requires wildcard permissions for S3 and KMS operations',
-          appliesTo: [
-            'Action::s3:GetBucket*',
-            'Action::s3:GetObject*',
-            'Action::s3:List*',
-            'Action::s3:Abort*',
-            'Action::s3:DeleteObject*',
-            'Action::kms:GenerateDataKey*',
-            'Action::kms:ReEncrypt*',
-            `Resource::arn:aws:s3:::cdk-hnb659fds-assets-${this.account}-${this.region}/*`,
-            'Resource::<prodinputbucket33BD59D3.Arn>/*',
-            'Resource::<prodinputbucket33BD59D3.Arn>/*',
-            'Resource::<*inputbucket*.Arn>/*',
-            'Resource::<*InputBucket*.Arn>/*',
-          ],
         },
         {
           id: 'HIPAA.Security-IAMNoInlinePolicy',
