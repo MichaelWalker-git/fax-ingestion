@@ -7,10 +7,10 @@
   "scripts": {
     "build": "tsc",
     "bootstrap": "cdk bootstrap",
-    "diff:marketplace": "cdk diff 'marketplace/*'",
-    "deploy:marketplace": "STAGE=marketplace cdk deploy 'marketplace/*' --parameters CustomerIdentifier=abc123 --parameters ProductCode=my-product --parameters AdminEmail=admin@example.com",
-    "deploy:marketplace:watch": "STAGE=marketplace cdk deploy 'marketplace/*' --watch",
-    "destroy:marketplace": "STAGE=marketplace cdk destroy 'marketplace/*'",
+    "diff:prod": "cdk diff 'prod/*'",
+    "deploy:prod": "STAGE=prod cdk deploy 'prod/*' --parameters CustomerIdentifier=abc123 --parameters ProductCode=my-product --parameters AdminEmail=admin@example.com",
+    "deploy:prod:watch": "STAGE=prod cdk deploy 'prod/*' --watch",
+    "destroy:prod": "STAGE=prod cdk destroy 'prod/*'",
     "test:prompts": "promptfoo eval -c promptfooconfig-prompt.yaml",
     "test:modelConfig": "promptfoo eval -c promptfooconfig-model-config.yaml",
     "test:prompts:watch": "promptfoo eval --watch",
@@ -18,7 +18,7 @@
     "test:prompts:share": "promptfoo share",
     "watch": "tsc -w",
     "test": "jest",
-    "synth:marketplace": "cdk synth 'marketplace/*'",
+    "synth:prod": "cdk synth 'prod/*'",
     "cdk": "cdk",
     "synth:prod:template": "STAGE=prod npx cdk synth --no-staging --quiet"
   },

@@ -198,13 +198,6 @@ export class StepFunctionsStack extends NestedStack {
       },
     });
 
-    // Outputs ---------------------------------------------------------------------------------------------
-    const processingStateMachineArn = getCdkConstructId({ context: 'processing', resourceName: 'state-machine-arn' }, this);
-    new cdk.CfnOutput(this, processingStateMachineArn, {
-      value: this.stateMachine.stateMachineArn,
-      exportName: processingStateMachineArn,
-    });
-
     // Nag Suppressions ---------------------------------------------------------------------------------------------
     // Lambda
     NagSuppressions.addResourceSuppressions(

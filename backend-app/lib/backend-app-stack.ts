@@ -10,7 +10,6 @@ import {
 } from 'aws-cdk-lib/aws-apigateway';
 import { NagSuppressions } from 'cdk-nag';
 import { Construct } from 'constructs';
-import { STAGES } from '../shared/constants';
 import { getCdkConstructId } from '../shared/helpers';
 import { Labels } from '../shared/labels';
 import { ApiStack } from '../stacks/ApiStack';
@@ -120,6 +119,8 @@ export class BackendAppStack extends cdk.Stack {
     });
     const { inputBucket, outputBucket, sageMakerAsyncBucket } = s3Stack;
 
+    s3Stack.addDependency(dynamoDbStack);
+
     // SageMaker Stack with configurable parameters
     const modelName = getCdkConstructId({ context: 'sagemaker', resourceName: 'qwen-model' }, this);
     const endpointName = getCdkConstructId({ context: 'sagemaker', resourceName: 'qwen-endpoint' }, this);
@@ -149,6 +150,9 @@ export class BackendAppStack extends cdk.Stack {
       securityGroup: securityGroupStepFunctions,
       sageMakerEndpoint: endpointName,
     });
+    const { stateMachine } = stepFunctionsStack;
+
+    stepFunctionsStack.addDependency(s3Stack);
 
     // Throttled S3Notification Stack
     const s3NotificationStack = new ThrottledS3NotificationStack(this, 'S3-Notification-Stack', {
@@ -158,7 +162,11 @@ export class BackendAppStack extends cdk.Stack {
       securityGroup: securityGroupS3,
       sageMakerAsyncBucket,
       labels: labels,
+      inputBucket,
+      outputBucket,
+      stateMachineArn: stateMachine.stateMachineArn,
     });
+    const { processingQueue } = s3NotificationStack;
 
     s3NotificationStack.addDependency(stepFunctionsStack);
     s3NotificationStack.addDependency(s3Stack);
