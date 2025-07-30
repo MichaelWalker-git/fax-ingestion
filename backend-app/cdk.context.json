@@ -104,5 +104,10 @@
     "us-east-2a",
     "us-east-2b",
     "us-east-2c"
+  ],
+  "availability-zones:account=039885961427:region=eu-central-1": [
+    "eu-central-1a",
+    "eu-central-1b",
+    "eu-central-1c"
   ]
 }
