@@ -8,7 +8,7 @@
     "build": "tsc",
     "bootstrap": "cdk bootstrap",
     "diff:prod": "cdk diff 'prod/*'",
-    "deploy:prod": "STAGE=prod cdk deploy 'prod/*' --parameters CustomerIdentifier=abc123 --parameters ProductCode=my-product --parameters AdminEmail=admin@example.com",
+    "deploy:prod": "STAGE=prod cdk deploy 'prod/*'",
     "deploy:prod:watch": "STAGE=prod cdk deploy 'prod/*' --watch",
     "destroy:prod": "STAGE=prod cdk destroy 'prod/*'",
     "test:prompts": "promptfoo eval -c promptfooconfig-prompt.yaml",
@@ -20,7 +20,7 @@
     "test": "jest",
     "synth:prod": "cdk synth 'prod/*'",
     "cdk": "cdk",
-    "synth:prod:template": "STAGE=prod npx cdk synth --no-staging --quiet"
+    "synth:prod:template": "STAGE=prod npx cdk synth --parameters CustomerIdentifier=abc123 --parameters ProductCode=my-product --parameters AdminEmail=admin@example.com --no-staging --quiet"
   },
   "devDependencies": {
     "@aws-cdk/aws-scheduler-alpha": "^2.145.0-alpha.0",

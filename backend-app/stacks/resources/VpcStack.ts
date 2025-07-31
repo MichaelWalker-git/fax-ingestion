@@ -99,7 +99,6 @@ export class VpcStack extends NestedStack {
       'Allow API Lambdas to access OpenSearch over HTTPS',
     );
 
-    // Add ingress rule
     this.securityGroupOpenSearch.addIngressRule(
       this.securityGroupStepFunctions,
       Port.tcp(443),

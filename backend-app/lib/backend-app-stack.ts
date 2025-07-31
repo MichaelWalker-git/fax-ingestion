@@ -1,5 +1,5 @@
 import * as cdk from 'aws-cdk-lib';
-import { CfnOutput, CfnParameter } from 'aws-cdk-lib';
+import { CfnCondition, CfnOutput, CfnParameter, Fn } from 'aws-cdk-lib';
 import {
   AccessLogFormat,
   Cors,
@@ -41,29 +41,32 @@ export class BackendAppStack extends cdk.Stack {
       description: 'Administrator email address for Cognito user pool',
       constraintDescription: 'Must be a valid email address',
       allowedPattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$',
+      default: 'admin@example.com',
     });
 
     const customerIdentifier = new cdk.CfnParameter(this, 'CustomerIdentifier', {
       type: 'String',
       description: 'The identifier for the customer',
+      default: '',
     });
 
     const productCode = new cdk.CfnParameter(this, 'ProductCode', {
       type: 'String',
       description: 'The product code for metering',
+      default: '',
     });
 
     // Define the parameters
     const vpcIdParam = new CfnParameter(this, 'ExistingVpcId', {
       type: 'String',
       description: 'Optional: The ID of an existing VPC. Leave blank to create a new VPC.',
-      default: '', // Default value to make it optional
+      default: '',
     });
 
     const subnetIdsParam = new CfnParameter(this, 'PrivateSubnetIds', {
       type: 'String',
       description: 'Optional: Comma-separated list of private subnet IDs in the existing VPC. Leave blank if creating a new VPC.',
-      default: '', // Default value to make it optional
+      default: '',
     });
 
     const sageMakerInstanceType = new CfnParameter(this, 'SageMakerInstanceType', {
@@ -200,7 +203,7 @@ export class BackendAppStack extends cdk.Stack {
       outputBucket,
       kmsKey,
       labels: labels,
-      adminEmail: adminEmail.valueAsString,
+      adminEmail,
     });
     const { userPool, userPoolDomain, cognitoClient, identityPool, authenticatedRole, clientUrl } = cognitoStack;
 

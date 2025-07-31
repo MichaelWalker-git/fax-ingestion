@@ -1,4 +1,4 @@
-import { Aws, CustomResource, Fn, NestedStack, RemovalPolicy } from 'aws-cdk-lib';
+import { Aws, CfnCondition, CfnParameter, CustomResource, Fn, NestedStack, RemovalPolicy } from 'aws-cdk-lib';
 import {
   AccountRecovery,
   CfnIdentityPool, CfnIdentityPoolRoleAttachment,
@@ -25,7 +25,7 @@ interface IProps {
   outputBucket: Bucket;
   kmsKey: Key;
   labels: Labels;
-  adminEmail: string;
+  adminEmail: CfnParameter;
 }
 
 export class CognitoStack extends NestedStack {
@@ -187,13 +187,19 @@ export class CognitoStack extends NestedStack {
       securityGroups: [securityGroup],
     });
 
+    const hasExistingAdminEmail = new CfnCondition(this, 'HasAdminEmail', {
+      expression: Fn.conditionNot(Fn.conditionEquals(props.adminEmail.valueAsString, 'admin@example.com')),
+    });
+    const hasAdminEmail = Fn.conditionIf('HasAdminEmail', true, false).toString() === 'true';
+    const adminEmail = hasAdminEmail ? props.adminEmail.valueAsString : process.env.ADMIN_EMAIL;
+
     const customResource = new CustomResource(this, getCdkConstructId({ context: 'cognito', resourceName: 'custom-resource' }, this), {
       serviceToken: customResourceProvider.serviceToken,
       properties: {
         UserPoolId: this.userPool.userPoolId,
         FamilyName: process.env.ADMIN_FAMILY_NAME || 'Admin',
         GivenName: process.env.ADMIN_GIVEN_NAME || 'Super',
-        Email: props.adminEmail,
+        Email: adminEmail,
         UserRole: USER_ROLES.SUPER_ADMIN,
         UpdateTimestamp: Date.now(),
         CreatedByName: 'System',
