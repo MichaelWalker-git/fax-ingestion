@@ -53,6 +53,19 @@ export class BackendAppStack extends cdk.Stack {
       description: 'The product code for metering',
     });
 
+    // Define the parameters
+    const vpcIdParam = new CfnParameter(this, 'ExistingVpcId', {
+      type: 'String',
+      description: 'Optional: The ID of an existing VPC. Leave blank to create a new VPC.',
+      default: '', // Default value to make it optional
+    });
+
+    const subnetIdsParam = new CfnParameter(this, 'PrivateSubnetIds', {
+      type: 'String',
+      description: 'Optional: Comma-separated list of private subnet IDs in the existing VPC. Leave blank if creating a new VPC.',
+      default: '', // Default value to make it optional
+    });
+
     const sageMakerInstanceType = new CfnParameter(this, 'SageMakerInstanceType', {
       type: 'String',
       description: 'SageMaker endpoint instance type',
@@ -101,6 +114,8 @@ export class BackendAppStack extends cdk.Stack {
     // VPC Stack - Use existing VPC if available, create new if not
     const vpcStack = new VpcStack(this, 'Vpc-Stack', {
       kmsKey,
+      vpcIdParam,
+      subnetIdsParam,
     });
     const { vpc, securityGroupStepFunctions, securityGroupAPI, securityGroupS3 } = vpcStack;
 

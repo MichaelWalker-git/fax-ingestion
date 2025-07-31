@@ -8,6 +8,8 @@ import { createVpcCloudwatchLogs, getCdkConstructId } from '../../shared/helpers
 
 interface IProps {
   kmsKey: Key;
+  vpcIdParam: CfnParameter;
+  subnetIdsParam: CfnParameter;
 }
 
 export class VpcStack extends NestedStack {
@@ -23,26 +25,17 @@ export class VpcStack extends NestedStack {
     super(scope, id);
     this.kmsKey = props.kmsKey;
 
-    const vpcIdParam = new CfnParameter(this, 'ExistingVpcId', {
-      type: 'String',
-      description: 'Optional: The ID of an existing VPC. Leave blank to create a new VPC.',
-    });
-
-    // Change this to String type instead of List
-    const subnetIdsParam = new CfnParameter(this, 'PrivateSubnetIds', {
-      type: 'String',
-      description: 'Optional: Comma-separated list of private subnet IDs in the existing VPC. Leave blank if creating a new VPC.',
-    });
-
     const vpcId = getCdkConstructId({ context: 'processing', resourceName: 'vpc' }, this);
 
-    // Choose between existing VPC or new one
+    // Check if the ExistingVpcId parameter is provided
     const hasExistingVpc = new CfnCondition(this, 'HasExistingVpc', {
-      expression: Fn.conditionNot(Fn.conditionEquals(vpcIdParam.valueAsString, '')),
+      expression: Fn.conditionNot(Fn.conditionEquals(props.vpcIdParam.valueAsString, '')),
     });
 
+    // If ExistingVpcId is provided, import the VPC, otherwise create a new one
     if (Fn.conditionIf('HasExistingVpc', true, false).toString() === 'true') {
-      const privateSubnetIds = Fn.split(',', subnetIdsParam.valueAsString)
+      // Using an existing VPC
+      const privateSubnetIds = Fn.split(',', props.subnetIdsParam.valueAsString)
         .map((subnetId: string) => subnetId.trim())
         .filter((subnetId: string) => subnetId !== '');
 
@@ -51,12 +44,12 @@ export class VpcStack extends NestedStack {
       }
 
       this.vpc = Vpc.fromVpcAttributes(this, 'ImportedVpc', {
-        vpcId: vpcIdParam.valueAsString,
+        vpcId: props.vpcIdParam.valueAsString,
         availabilityZones: Fn.getAzs(Aws.REGION),
         privateSubnetIds,
       });
     } else {
-      // Create a new VPC
+      // Create a new VPC if no ExistingVpcId is provided
       this.vpc = new Vpc(this, vpcId, {
         maxAzs: 2,
         natGateways: 1,
