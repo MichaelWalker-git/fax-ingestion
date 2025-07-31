@@ -4,7 +4,6 @@ import { Table } from 'aws-cdk-lib/aws-dynamodb';
 import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { Key } from 'aws-cdk-lib/aws-kms';
 import { BlockPublicAccess, Bucket, BucketEncryption, CorsRule, HttpMethods } from 'aws-cdk-lib/aws-s3';
-import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment';
 import { NagSuppressions } from 'cdk-nag';
 import { Construct } from 'constructs';
 import { createDefaultLambdaRole, getCdkConstructId, getPolicyStatement } from '../../shared/helpers';
@@ -15,6 +14,8 @@ interface IProps {
   dataTable: Table;
   labels: Labels;
 }
+
+const IS_CDK_DEPLOY = process.env.DEPLOYMENT_TYPE === 'CDK';
 
 export class S3Stack extends NestedStack {
   public readonly removalPolicy: RemovalPolicy = RemovalPolicy.DESTROY;
@@ -43,7 +44,7 @@ export class S3Stack extends NestedStack {
       encryption: BucketEncryption.KMS,
       versioned: true,
       enforceSSL: true,
-      autoDeleteObjects: this.removalPolicy === RemovalPolicy.DESTROY,
+      autoDeleteObjects: IS_CDK_DEPLOY && this.removalPolicy === RemovalPolicy.DESTROY,
     });
 
     loggingBucket.addToResourcePolicy(
@@ -72,13 +73,7 @@ export class S3Stack extends NestedStack {
       blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
       enforceSSL: true,
       notificationsHandlerRole: inputBucketNotificationRole,
-      autoDeleteObjects: this.removalPolicy === RemovalPolicy.DESTROY,
-    });
-
-    const inputBucketDeployment = new BucketDeployment(this, getCdkConstructId({ context: 'input', resourceName: 'deployment' }, this), {
-      sources: [Source.asset('./assets')], // Local directory with empty folders
-      destinationBucket: this.inputBucket,
-      destinationKeyPrefix: 'files/',
+      autoDeleteObjects: IS_CDK_DEPLOY && this.removalPolicy === RemovalPolicy.DESTROY,
     });
 
     this.inputBucket.addToResourcePolicy(
@@ -119,7 +114,7 @@ export class S3Stack extends NestedStack {
       serverAccessLogsPrefix: 'outputBucketLogs/',
       blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
       enforceSSL: true,
-      autoDeleteObjects: this.removalPolicy === RemovalPolicy.DESTROY,
+      autoDeleteObjects: IS_CDK_DEPLOY && this.removalPolicy === RemovalPolicy.DESTROY,
     });
 
     this.outputBucket.addToResourcePolicy(
@@ -143,7 +138,7 @@ export class S3Stack extends NestedStack {
       serverAccessLogsPrefix: 'sageMakerAsyncBucketLogs/',
       blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
       enforceSSL: true,
-      autoDeleteObjects: this.removalPolicy === RemovalPolicy.DESTROY,
+      autoDeleteObjects: IS_CDK_DEPLOY && this.removalPolicy === RemovalPolicy.DESTROY,
     });
 
     this.sageMakerAsyncBucket.addToResourcePolicy(
@@ -250,7 +245,6 @@ export class S3Stack extends NestedStack {
     NagSuppressions.addResourceSuppressions(
       [
         inputBucketNotificationRole,
-        inputBucketDeployment,
       ],
       [
         {
@@ -268,30 +262,6 @@ export class S3Stack extends NestedStack {
         {
           id: 'HIPAA.Security-IAMPolicyNoStatementsWithFullAccess',
           reason: 'these policies is used by CDK Customer Resource lambda',
-        },
-      ],
-      true,
-    );
-
-    NagSuppressions.addResourceSuppressions(
-      inputBucketDeployment,
-      [
-        {
-          id: 'AwsSolutions-IAM5',
-          reason: 'BucketDeployment construct requires wildcard permissions for S3 bucket operations',
-          appliesTo: [
-            'Action::s3:GetBucket*',
-            'Action::s3:GetObject*',
-            'Action::s3:List*',
-            'Action::s3:Abort*',
-            'Action::s3:DeleteObject*',
-            'Action::kms:GenerateDataKey*',
-            'Action::kms:ReEncrypt*',
-            `Resource::<${this.inputBucket.node.id}.Arn>/*`,
-            // Generic pattern to catch any input bucket ARN pattern
-            'Resource::<*inputbucket*.Arn>/*',
-            'Resource::<*InputBucket*.Arn>/*',
-          ],
         },
       ],
       true,
