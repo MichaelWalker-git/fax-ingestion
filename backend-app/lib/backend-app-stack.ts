@@ -1,5 +1,5 @@
 import * as cdk from 'aws-cdk-lib';
-import { CfnCondition, CfnOutput, CfnParameter, Fn } from 'aws-cdk-lib';
+import { Fn } from 'aws-cdk-lib';
 import {
   AccessLogFormat,
   Cors,
@@ -8,6 +8,7 @@ import {
   MethodLoggingLevel,
   RestApi,
 } from 'aws-cdk-lib/aws-apigateway';
+import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { NagSuppressions } from 'cdk-nag';
 import { Construct } from 'constructs';
 import { getCdkConstructId } from '../shared/helpers';
@@ -17,9 +18,9 @@ import { CognitoStack } from '../stacks/resources/CognitoStack';
 import { DynamoDbStack } from '../stacks/resources/DynamoDbStack';
 import { IamStack } from '../stacks/resources/IamStack';
 import { KmsStack } from '../stacks/resources/KmsStack';
-import { S3Stack } from '../stacks/resources/S3Stack';
 import { SageMakerStack } from '../stacks/resources/SageMakerStack';
 import { Secret } from '../stacks/resources/SecretStack';
+import { SqsStack } from '../stacks/resources/SQS';
 import { StepFunctionsStack } from '../stacks/resources/StepFunctionsStack';
 import { ThrottledS3NotificationStack } from '../stacks/resources/ThrottledS3NotificationStack';
 import { VpcStack } from '../stacks/resources/VpcStack';
@@ -35,67 +36,17 @@ export class BackendAppStack extends cdk.Stack {
 
     const labels = args.labels;
 
-    // Marketplace Parameters - Allow users to customize the deployment
-    const adminEmail = new CfnParameter(this, 'AdminEmail', {
-      type: 'String',
-      description: 'Administrator email address for Cognito user pool',
-      constraintDescription: 'Must be a valid email address',
-      allowedPattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$',
-      default: 'admin@example.com',
-    });
+    const importInputBucketName = 'ExportInputBucketName';
+    const importOutputBucketName = 'ExportOutputBucketName';
+    const importSageMakerAsyncBucketName = 'ExportSageMakerAsyncBucketName';
 
-    const customerIdentifier = new cdk.CfnParameter(this, 'CustomerIdentifier', {
-      type: 'String',
-      description: 'The identifier for the customer',
-      default: '',
-    });
+    const inputBucketName = Fn.importValue(importInputBucketName);
+    const outputBucketName = Fn.importValue(importOutputBucketName);
+    const sageMakerAsyncBucketName = Fn.importValue(importSageMakerAsyncBucketName);
 
-    const productCode = new cdk.CfnParameter(this, 'ProductCode', {
-      type: 'String',
-      description: 'The product code for metering',
-      default: '',
-    });
-
-    // Define the parameters
-    const vpcIdParam = new CfnParameter(this, 'ExistingVpcId', {
-      type: 'String',
-      description: 'Optional: The ID of an existing VPC. Leave blank to create a new VPC.',
-      default: '',
-    });
-
-    const subnetIdsParam = new CfnParameter(this, 'PrivateSubnetIds', {
-      type: 'String',
-      description: 'Optional: Comma-separated list of private subnet IDs in the existing VPC. Leave blank if creating a new VPC.',
-      default: '',
-    });
-
-    const sageMakerInstanceType = new CfnParameter(this, 'SageMakerInstanceType', {
-      type: 'String',
-      description: 'SageMaker endpoint instance type',
-      default: 'ml.g5.xlarge',
-      allowedValues: [
-        'ml.g5.xlarge',
-        'ml.g5.2xlarge',
-        'ml.g5.4xlarge',
-        'ml.g5.8xlarge',
-        'ml.g5.16xlarge',
-      ],
-    });
-
-    const initialInstanceCount = new CfnParameter(this, 'InitialInstanceCount', {
-      type: 'Number',
-      description: 'Initial number of SageMaker endpoint instances',
-      default: 1,
-      minValue: 1,
-      maxValue: 10,
-    });
-
-    const enableHipaaCompliance = new CfnParameter(this, 'EnableHIPAACompliance', {
-      type: 'String',
-      description: 'Enable HIPAA compliance features (additional security configurations)',
-      default: 'false',
-      allowedValues: ['true', 'false'],
-    });
+    const inputBucket = Bucket.fromBucketName(this, 'InputBucket', inputBucketName);
+    const outputBucket = Bucket.fromBucketName(this, 'OutputBucket', outputBucketName);
+    const sageMakerAsyncBucket = Bucket.fromBucketName(this, 'SageMakerAsyncBucket', sageMakerAsyncBucketName);
 
     // IAM Stack
     const iamStack = new IamStack(this, 'Iam-Stack');
@@ -117,8 +68,6 @@ export class BackendAppStack extends cdk.Stack {
     // VPC Stack - Use existing VPC if available, create new if not
     const vpcStack = new VpcStack(this, 'Vpc-Stack', {
       kmsKey,
-      vpcIdParam,
-      subnetIdsParam,
     });
     const { vpc, securityGroupStepFunctions, securityGroupAPI, securityGroupS3 } = vpcStack;
 
@@ -129,15 +78,11 @@ export class BackendAppStack extends cdk.Stack {
     });
     const { dataTable } = dynamoDbStack;
 
-    // S3 Stack with enhanced security for marketplace
-    const s3Stack = new S3Stack(this, 'S3-Stack', {
+    const sqsStack = new SqsStack(this, 'SQS-Stack', {
       kmsKey,
-      dataTable,
       labels: labels,
     });
-    const { inputBucket, outputBucket, sageMakerAsyncBucket } = s3Stack;
-
-    s3Stack.addDependency(dynamoDbStack);
+    const { processingQueue } = sqsStack;
 
     // SageMaker Stack with configurable parameters
     const modelName = getCdkConstructId({ context: 'sagemaker', resourceName: 'qwen-model' }, this);
@@ -148,8 +93,6 @@ export class BackendAppStack extends cdk.Stack {
       modelName,
       endpointName,
       modelId,
-      instanceType: sageMakerInstanceType.valueAsString,
-      initialInstanceCount: initialInstanceCount.valueAsNumber,
       kmsKey,
       vpc,
       sageMakerAsyncBucket,
@@ -170,8 +113,6 @@ export class BackendAppStack extends cdk.Stack {
     });
     const { stateMachine } = stepFunctionsStack;
 
-    stepFunctionsStack.addDependency(s3Stack);
-
     // Throttled S3Notification Stack
     const s3NotificationStack = new ThrottledS3NotificationStack(this, 'S3-Notification-Stack', {
       vpc,
@@ -183,11 +124,8 @@ export class BackendAppStack extends cdk.Stack {
       inputBucket,
       outputBucket,
       stateMachineArn: stateMachine.stateMachineArn,
+      processingQueue,
     });
-    const { processingQueue } = s3NotificationStack;
-
-    s3NotificationStack.addDependency(stepFunctionsStack);
-    s3NotificationStack.addDependency(s3Stack);
 
     // Shared Resources Stack
     const sharedResourcesStack = new SharedResourcesStack(this, 'Shared-Resources-Stack', {
@@ -203,9 +141,8 @@ export class BackendAppStack extends cdk.Stack {
       outputBucket,
       kmsKey,
       labels: labels,
-      adminEmail,
     });
-    const { userPool, userPoolDomain, cognitoClient, identityPool, authenticatedRole, clientUrl } = cognitoStack;
+    const { userPool } = cognitoStack;
 
     // API Stack with enhanced security
     const restApiName = getCdkConstructId({ context: 'processing', resourceName: 'rest-api' }, this);
@@ -234,7 +171,7 @@ export class BackendAppStack extends cdk.Stack {
         accessLogDestination: new LogGroupLogDestination(restApiLogGroup),
         accessLogFormat: AccessLogFormat.jsonWithStandardFields(),
       },
-      policy: enableHipaaCompliance.valueAsString === 'true' ? this.createRestrictiveApiPolicy() : undefined,
+      policy: this.createRestrictiveApiPolicy(),
     });
 
     const stackProps = {
@@ -253,121 +190,11 @@ export class BackendAppStack extends cdk.Stack {
     // Api Stack
     const apiStack = new ApiStack(this, 'Api-Stack', stackProps);
 
-    // Marketplace-specific CloudFormation Outputs
-    new CfnOutput(this, 'ApplicationName', {
-      value: labels.application,
-      description: 'Name of the deployed application',
-      exportName: `${labels.name()}-application-name`,
-    });
-
-    new CfnOutput(this, 'ApplicationVersion', {
-      value: '1.0.0', // Update this with your actual version
-      description: 'Version of the deployed application',
-    });
-
-    new CfnOutput(this, 'RestApiUrl', {
-      value: apiStack.restApi.url,
-      description: 'REST API Gateway URL for the application',
-      exportName: `${labels.name()}-rest-api-uri`,
-    });
-
-    new CfnOutput(this, 'RestApiId', {
-      value: apiStack.restApi.restApiId,
-      description: 'REST API Gateway ID',
-      exportName: `${labels.name()}-rest-api-id`,
-    });
-
-    new CfnOutput(this, 'UserPoolId', {
-      value: userPool.userPoolId,
-      description: 'Cognito User Pool ID for authentication',
-      exportName: `${labels.name()}-user-pool-id`,
-    });
-
-    new CfnOutput(this, 'UserPoolClientId', {
-      value: cognitoClient.userPoolClientId,
-      description: 'Cognito User Pool Client ID',
-      exportName: `${labels.name()}-client-id`,
-    });
-
-    new CfnOutput(this, 'CognitoDomainUrl', {
-      value: `https://${userPoolDomain.domainName}.auth.${this.region}.amazoncognito.com`,
-      description: 'Cognito hosted UI domain URL',
-      exportName: `${labels.name()}-cognito-domain`,
-    });
-
-    new CfnOutput(this, 'IdentityPoolId', {
-      value: identityPool.ref,
-      description: 'Cognito Identity Pool ID',
-      exportName: `${labels.name()}-identity-pool-id`,
-    });
-
-    new CfnOutput(this, 'AuthenticatedRoleArn', {
-      value: authenticatedRole.roleArn,
-      description: 'IAM role ARN for authenticated users',
-      exportName: `${labels.name()}-authenticated-role-arn`,
-    });
-
-    new CfnOutput(this, 'ApplicationUrl', {
-      value: clientUrl,
-      description: 'Application client URL',
-      exportName: `${labels.name()}-app-uri`,
-    });
-
-    new CfnOutput(this, 'SecretManagerArn', {
-      value: secret.secretArn,
-      description: 'AWS Secrets Manager ARN for application secrets',
-      exportName: `${labels.name()}-secret-manager-arn`,
-    });
-
-    new CfnOutput(this, 'InputS3BucketName', {
-      value: inputBucket.bucketName,
-      description: 'S3 bucket name for input files',
-      exportName: `${labels.name()}-input-bucket`,
-    });
-
-    new CfnOutput(this, 'OutputS3BucketName', {
-      value: outputBucket.bucketName,
-      description: 'S3 bucket name for output files',
-      exportName: `${labels.name()}-output-bucket`,
-    });
-
-    new CfnOutput(this, 'SageMakerEndpointName', {
-      value: endpointName,
-      description: 'SageMaker endpoint name for AI inference',
-      exportName: `${labels.name()}-sagemaker-endpoint`,
-    });
-
-    new CfnOutput(this, 'DynamoDBTableName', {
-      value: dataTable.tableName,
-      description: 'DynamoDB table name for application data',
-      exportName: `${labels.name()}-dynamodb-table`,
-    });
-
-    new CfnOutput(this, 'KMSKeyId', {
-      value: kmsKey.keyId,
-      description: 'KMS key ID used for encryption',
-      exportName: `${labels.name()}-kms-key-id`,
-    });
-
-    new CfnOutput(this, 'VpcId', {
-      value: vpc.vpcId,
-      description: 'VPC ID where resources are deployed',
-      exportName: `${labels.name()}-vpc-id`,
-    });
-
-    // Deployment guidance outputs
-    new CfnOutput(this, 'GetStartedGuide', {
-      value: 'https://your-documentation-url.com/getting-started',
-      description: 'Link to getting started guide',
-    });
-
-    new CfnOutput(this, 'SupportContact', {
-      value: 'support@your-company.com',
-      description: 'Support contact for this solution',
-    });
-
     // Enhanced CDK Nag suppressions for marketplace compliance
     this.addMarketplaceNagSuppressions(restApi, iamStack, s3NotificationStack, sageMakerStack);
+
+    // Add suppressions for BucketNotificationsHandler (auto-generated by CDK)
+    this.addBucketNotificationHandlerSuppressions();
   }
 
   private createRestrictiveApiPolicy(): any {
@@ -393,6 +220,38 @@ export class BackendAppStack extends cdk.Stack {
         },
       ],
     };
+  }
+
+  private addBucketNotificationHandlerSuppressions(): void {
+    // Suppress violations for the auto-generated BucketNotificationsHandler
+    // This construct is created automatically when using S3 bucket notifications
+    NagSuppressions.addResourceSuppressionsByPath(
+      this,
+      '/prod/fax-eu-central-1-prod-fax-ingestion-backend-app/BucketNotificationsHandler050a0587b7544547bf325f094a3db834/Role',
+      [
+        {
+          id: 'AwsSolutions-IAM4',
+          reason: 'BucketNotificationsHandler is an auto-generated CDK construct that requires AWS managed policies for S3 bucket notification configuration. This is necessary for the CDK to manage S3 event notifications.',
+          appliesTo: ['Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'],
+        },
+      ],
+    );
+
+    NagSuppressions.addResourceSuppressionsByPath(
+      this,
+      '/prod/fax-eu-central-1-prod-fax-ingestion-backend-app/BucketNotificationsHandler050a0587b7544547bf325f094a3db834/Role/DefaultPolicy',
+      [
+        {
+          id: 'AwsSolutions-IAM5',
+          reason: 'BucketNotificationsHandler is an auto-generated CDK construct that requires wildcard permissions to configure S3 bucket notifications across different buckets and regions.',
+          appliesTo: ['Resource::*'],
+        },
+        {
+          id: 'HIPAA.Security-IAMNoInlinePolicy',
+          reason: 'BucketNotificationsHandler is an auto-generated CDK construct that uses inline policies for S3 bucket notification configuration. This is managed by the CDK framework and cannot be changed to managed policies.',
+        },
+      ],
+    );
   }
 
   private addMarketplaceNagSuppressions(

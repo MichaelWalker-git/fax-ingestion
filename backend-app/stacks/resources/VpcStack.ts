@@ -1,4 +1,4 @@
-import { CfnParameter, Fn, Aws, RemovalPolicy, NestedStack, CfnCondition } from 'aws-cdk-lib';
+import { RemovalPolicy, NestedStack } from 'aws-cdk-lib';
 import { IVpc, Vpc, SubnetType, SecurityGroup, Port } from 'aws-cdk-lib/aws-ec2';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import { Key } from 'aws-cdk-lib/aws-kms';
@@ -8,8 +8,6 @@ import { createVpcCloudwatchLogs, getCdkConstructId } from '../../shared/helpers
 
 interface IProps {
   kmsKey: Key;
-  vpcIdParam: CfnParameter;
-  subnetIdsParam: CfnParameter;
 }
 
 export class VpcStack extends NestedStack {
@@ -27,58 +25,35 @@ export class VpcStack extends NestedStack {
 
     const vpcId = getCdkConstructId({ context: 'processing', resourceName: 'vpc' }, this);
 
-    // Check if the ExistingVpcId parameter is provided
-    const hasExistingVpc = new CfnCondition(this, 'HasExistingVpc', {
-      expression: Fn.conditionNot(Fn.conditionEquals(props.vpcIdParam.valueAsString, '')),
+    this.vpc = new Vpc(this, vpcId, {
+      maxAzs: 2,
+      natGateways: 1,
+      subnetConfiguration: [
+        {
+          name: 'PrivateSubnet',
+          subnetType: SubnetType.PRIVATE_WITH_EGRESS,
+          cidrMask: 24,
+        },
+        {
+          name: 'PublicSubnet',
+          subnetType: SubnetType.PUBLIC,
+          cidrMask: 24,
+          mapPublicIpOnLaunch: false,
+        },
+      ],
     });
 
-    // If ExistingVpcId is provided, import the VPC, otherwise create a new one
-    if (Fn.conditionIf('HasExistingVpc', true, false).toString() === 'true') {
-      // Using an existing VPC
-      const privateSubnetIds = Fn.split(',', props.subnetIdsParam.valueAsString)
-        .map((subnetId: string) => subnetId.trim())
-        .filter((subnetId: string) => subnetId !== '');
+    // Skip VPC flow logs for existing VPC (may already be configured)
+    const { flowLog, flowLogRole } = createVpcCloudwatchLogs({
+      scope: this,
+      vpc: this.vpc as Vpc,
+      kmsKey: this.kmsKey,
+      removalPolicy: this.removalPolicy,
+    });
 
-      if (privateSubnetIds.length === 0) {
-        throw new Error('You must provide at least one PrivateSubnetId when using an ExistingVpcId.');
-      }
+    //CDK-Nag Suppressions
+    this.addNagSuppressions(flowLogRole);
 
-      this.vpc = Vpc.fromVpcAttributes(this, 'ImportedVpc', {
-        vpcId: props.vpcIdParam.valueAsString,
-        availabilityZones: Fn.getAzs(Aws.REGION),
-        privateSubnetIds,
-      });
-    } else {
-      // Create a new VPC if no ExistingVpcId is provided
-      this.vpc = new Vpc(this, vpcId, {
-        maxAzs: 2,
-        natGateways: 1,
-        subnetConfiguration: [
-          {
-            name: 'PrivateSubnet',
-            subnetType: SubnetType.PRIVATE_WITH_EGRESS,
-            cidrMask: 24,
-          },
-          {
-            name: 'PublicSubnet',
-            subnetType: SubnetType.PUBLIC,
-            cidrMask: 24,
-            mapPublicIpOnLaunch: false,
-          },
-        ],
-      });
-
-      // Skip VPC flow logs for existing VPC (may already be configured)
-      const { flowLog, flowLogRole } = createVpcCloudwatchLogs({
-        scope: this,
-        vpc: this.vpc as Vpc,
-        kmsKey: this.kmsKey,
-        removalPolicy: this.removalPolicy,
-      });
-
-      //CDK-Nag Suppressions
-      this.addNagSuppressions(flowLogRole);
-    }
 
     // Create security groups (always created inside whichever VPC is active)
     this.securityGroupStepFunctions = this.createSecurityGroup('StepFunctions');

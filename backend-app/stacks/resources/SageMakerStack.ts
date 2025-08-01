@@ -5,7 +5,7 @@ import { IVpc, SecurityGroup } from 'aws-cdk-lib/aws-ec2';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import { Key } from 'aws-cdk-lib/aws-kms';
 import { Architecture, DockerImageCode, DockerImageFunction } from 'aws-cdk-lib/aws-lambda';
-import { Bucket } from 'aws-cdk-lib/aws-s3';
+import { IBucket } from 'aws-cdk-lib/aws-s3';
 import { Provider } from 'aws-cdk-lib/custom-resources';
 import { NagSuppressions } from 'cdk-nag';
 import { Construct } from 'constructs';
@@ -21,7 +21,7 @@ export interface LlamaNemotronStackProps extends cdk.StackProps {
   initialInstanceCount?: number;
   kmsKey: Key;
   vpc: IVpc;
-  sageMakerAsyncBucket: Bucket;
+  sageMakerAsyncBucket: IBucket;
   labels: Labels;
 }
 
@@ -35,7 +35,7 @@ export class SageMakerStack extends NestedStack {
   public readonly instanceType?: string;
   public readonly initialInstanceCount?: number;
   public readonly removalPolicy = RemovalPolicy.DESTROY;
-  public readonly sageMakerAsyncBucket: Bucket;
+  public readonly sageMakerAsyncBucket: IBucket;
 
   constructor(scope: Construct, id: string, props: LlamaNemotronStackProps) {
     super(scope, id, props);

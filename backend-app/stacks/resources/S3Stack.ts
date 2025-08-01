@@ -1,35 +1,37 @@
-import { CfnOutput, NestedStack, RemovalPolicy } from 'aws-cdk-lib';
+import { CfnOutput, RemovalPolicy } from 'aws-cdk-lib';
 import * as cdk from 'aws-cdk-lib';
-import { Table } from 'aws-cdk-lib/aws-dynamodb';
 import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { Key } from 'aws-cdk-lib/aws-kms';
 import { BlockPublicAccess, Bucket, BucketEncryption, CorsRule, HttpMethods } from 'aws-cdk-lib/aws-s3';
 import { NagSuppressions } from 'cdk-nag';
 import { Construct } from 'constructs';
+import { KmsStack } from './KmsStack';
+import { StackProps } from '../../lib/backend-app-stack';
 import { createDefaultLambdaRole, getCdkConstructId, getPolicyStatement } from '../../shared/helpers';
 import { Labels } from '../../shared/labels';
 
-interface IProps {
-  kmsKey: Key;
-  dataTable: Table;
+interface IProps extends cdk.StackProps {
   labels: Labels;
 }
 
 const IS_CDK_DEPLOY = process.env.DEPLOYMENT_TYPE === 'CDK';
 
-export class S3Stack extends NestedStack {
+export class S3Stack extends cdk.Stack {
   public readonly removalPolicy: RemovalPolicy = RemovalPolicy.DESTROY;
   public readonly kmsKey: Key;
   public readonly inputBucket: Bucket;
   public readonly outputBucket: Bucket;
   public readonly sageMakerAsyncBucket: Bucket;
-  public readonly dataTable: Table;
 
-  constructor(scope: Construct, id: string, props: IProps) {
+  constructor(scope: Construct, id: string, args: StackProps, props: IProps) {
     super(scope, id);
 
-    this.kmsKey = props.kmsKey;
-    this.dataTable = props.dataTable;
+    const labels = args.labels;
+
+    // KMS Stack - Enhanced for marketplace with customer-managed keys
+    const kmsStack = new KmsStack(this, 'Kms-Stack', { labels: labels });
+
+    this.kmsKey = kmsStack.kmsKey;
 
     // S3 buckets
     const corsRule: CorsRule = {
@@ -154,37 +156,37 @@ export class S3Stack extends NestedStack {
     );
 
     // Outputs
-    const exportInputBucketName = getCdkConstructId({ context: 'input', resourceName: 'bucket-name' }, this);
+    const exportInputBucketName = 'ExportInputBucketName';
     new CfnOutput(this, exportInputBucketName, {
       value: this.inputBucket.bucketName,
       exportName: exportInputBucketName,
     });
 
-    const exportInputBucketArn = getCdkConstructId({ context: 'input', resourceName: 'bucket-arn' }, this);
+    const exportInputBucketArn = 'ExportInputBucketArn';
     new CfnOutput(this, exportInputBucketArn, {
       value: this.inputBucket.bucketArn,
       exportName: exportInputBucketArn,
     });
 
-    const exportOutputBucketName = getCdkConstructId({ context: 'output', resourceName: 'bucket-name' }, this);
+    const exportOutputBucketName = 'ExportOutputBucketName';
     new CfnOutput(this, exportOutputBucketName, {
       value: this.outputBucket.bucketName,
       exportName: exportOutputBucketName,
     });
 
-    const exportOutputBucketArn = getCdkConstructId({ context: 'output', resourceName: 'bucket-arn' }, this);
+    const exportOutputBucketArn = 'ExportOutputBucketArn';
     new CfnOutput(this, exportOutputBucketArn, {
       value: this.outputBucket.bucketArn,
       exportName: exportOutputBucketArn,
     });
 
-    const exportSageMakerAsyncBucketName = getCdkConstructId({ context: 'sagemaker-async', resourceName: 'bucket-name' }, this);
+    const exportSageMakerAsyncBucketName = 'ExportSageMakerAsyncBucketName';
     new CfnOutput(this, exportSageMakerAsyncBucketName, {
       value: this.sageMakerAsyncBucket.bucketName,
       exportName: exportSageMakerAsyncBucketName,
     });
 
-    const exportSageMakerAsyncBucketArn = getCdkConstructId({ context: 'sagemaker-async', resourceName: 'bucket-arn' }, this);
+    const exportSageMakerAsyncBucketArn = 'ExportSageMakerAsyncBucketArn';
     new CfnOutput(this, exportSageMakerAsyncBucketArn, {
       value: this.sageMakerAsyncBucket.bucketArn,
       exportName: exportSageMakerAsyncBucketArn,
@@ -205,6 +207,7 @@ export class S3Stack extends NestedStack {
         { id: 'HIPAA.Security-S3DefaultEncryptionKMS', reason: 'Replication not needed for images uploaded by user' },
       ],
     );
+
 
     NagSuppressions.addResourceSuppressions(
       this,

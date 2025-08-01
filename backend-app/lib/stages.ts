@@ -3,6 +3,7 @@ import { AwsSolutionsChecks, HIPAASecurityChecks, NIST80053R5Checks, PCIDSS321Ch
 import { Construct } from 'constructs';
 import { BackendAppStack } from './backend-app-stack';
 import { Labels } from '../shared/labels';
+import { S3Stack } from '../stacks/resources/S3Stack';
 
 const REGION = process.env.CDK_DEFAULT_REGION || '';
 
@@ -12,8 +13,6 @@ export interface StackInputs extends StackProps {
 }
 
 export class ProdStage extends Stage {
-  public readonly backendAppStack: BackendAppStack;
-
   constructor(
     scope: Construct,
     id: string,
@@ -22,9 +21,18 @@ export class ProdStage extends Stage {
   ) {
     super(scope, id, props);
 
-    this.backendAppStack = new BackendAppStack(
+    const s3Stack = new S3Stack(
       this,
-      args.labels.name(),
+      `${args.labels.name()}-s3`,
+      args,
+      {
+        labels: args.labels,
+      },
+    );
+
+    const backendAppStack = new BackendAppStack(
+      this,
+      `${args.labels.name()}-backend-app`,
       args,
       {
         env: { region: REGION },
@@ -33,50 +41,50 @@ export class ProdStage extends Stage {
     );
 
     // Apply comprehensive compliance checks based on configuration
-    this.addComplianceChecks(args.complianceFramework);
+    this.addComplianceChecks(backendAppStack, args.complianceFramework);
 
     // Add marketplace-specific resource tags
-    this.addMarketplaceResourceTags();
+    this.addMarketplaceResourceTags(backendAppStack);
   }
 
-  private addComplianceChecks(framework?: string): void {
+  private addComplianceChecks(backendAppStack: BackendAppStack, framework?: string): void {
     // Always apply AWS Solutions checks
-    Aspects.of(this.backendAppStack).add(new AwsSolutionsChecks({ verbose: true }));
+    Aspects.of(backendAppStack).add(new AwsSolutionsChecks({ verbose: true }));
 
     // Apply additional compliance frameworks based on parameter
     switch (framework?.toLowerCase()) {
       case 'hipaa':
-        Aspects.of(this.backendAppStack).add(new HIPAASecurityChecks({ verbose: true }));
+        Aspects.of(backendAppStack).add(new HIPAASecurityChecks({ verbose: true }));
         Tags.of(this).add('ComplianceFramework', 'HIPAA');
         break;
 
       case 'nist':
-        Aspects.of(this.backendAppStack).add(new NIST80053R5Checks({ verbose: true }));
+        Aspects.of(backendAppStack).add(new NIST80053R5Checks({ verbose: true }));
         Tags.of(this).add('ComplianceFramework', 'NIST-800-53-R5');
         break;
 
       case 'pci':
-        Aspects.of(this.backendAppStack).add(new PCIDSS321Checks({ verbose: true }));
+        Aspects.of(backendAppStack).add(new PCIDSS321Checks({ verbose: true }));
         Tags.of(this).add('ComplianceFramework', 'PCI-DSS-3.2.1');
         break;
 
       case 'all':
         // Apply all compliance frameworks for maximum security
-        Aspects.of(this.backendAppStack).add(new HIPAASecurityChecks({ verbose: true }));
-        Aspects.of(this.backendAppStack).add(new NIST80053R5Checks({ verbose: true }));
-        Aspects.of(this.backendAppStack).add(new PCIDSS321Checks({ verbose: true }));
+        Aspects.of(backendAppStack).add(new HIPAASecurityChecks({ verbose: true }));
+        Aspects.of(backendAppStack).add(new NIST80053R5Checks({ verbose: true }));
+        Aspects.of(backendAppStack).add(new PCIDSS321Checks({ verbose: true }));
         Tags.of(this).add('ComplianceFramework', 'Multi-Framework');
         break;
 
       default:
         // Default to HIPAA for healthcare-related AI applications
-        Aspects.of(this.backendAppStack).add(new HIPAASecurityChecks({ verbose: true }));
+        Aspects.of(backendAppStack).add(new HIPAASecurityChecks({ verbose: true }));
         Tags.of(this).add('ComplianceFramework', 'HIPAA-Default');
         break;
     }
   }
 
-  private addMarketplaceResourceTags(): void {
+  private addMarketplaceResourceTags(backendAppStack: BackendAppStack): void {
     const commonTags = {
       'aws-marketplace:product': 'ai-document-processing-platform',
       'aws-marketplace:version': '1.0.0',
@@ -88,26 +96,26 @@ export class ProdStage extends Stage {
     };
 
     Object.entries(commonTags).forEach(([key, value]) => {
-      Tags.of(this.backendAppStack).add(key, value);
+      Tags.of(backendAppStack).add(key, value);
     });
 
     // Add component-specific tags
-    Tags.of(this.backendAppStack).add('component:api-gateway', 'regional-endpoint');
-    Tags.of(this.backendAppStack).add('component:sagemaker', 'ml-inference');
-    Tags.of(this.backendAppStack).add('component:cognito', 'user-authentication');
-    Tags.of(this.backendAppStack).add('component:s3', 'data-storage');
-    Tags.of(this.backendAppStack).add('component:dynamodb', 'metadata-storage');
-    Tags.of(this.backendAppStack).add('component:stepfunctions', 'workflow-orchestration');
-    Tags.of(this.backendAppStack).add('component:vpc', 'network-isolation');
-    Tags.of(this.backendAppStack).add('component:kms', 'encryption-at-rest');
+    Tags.of(backendAppStack).add('component:api-gateway', 'regional-endpoint');
+    Tags.of(backendAppStack).add('component:sagemaker', 'ml-inference');
+    Tags.of(backendAppStack).add('component:cognito', 'user-authentication');
+    Tags.of(backendAppStack).add('component:s3', 'data-storage');
+    Tags.of(backendAppStack).add('component:dynamodb', 'metadata-storage');
+    Tags.of(backendAppStack).add('component:stepfunctions', 'workflow-orchestration');
+    Tags.of(backendAppStack).add('component:vpc', 'network-isolation');
+    Tags.of(backendAppStack).add('component:kms', 'encryption-at-rest');
   }
 
   /**
    * Get the main stack outputs for marketplace documentation
    */
-  public getMarketplaceOutputs(): Record<string, string> {
+  public getMarketplaceOutputs(backendAppStack: BackendAppStack): Record<string, string> {
     return {
-      'Application Name': this.backendAppStack.stackName,
+      'Application Name': backendAppStack.stackName,
       'API Gateway URL': 'Available in CloudFormation outputs',
       'Cognito User Pool': 'Available in CloudFormation outputs',
       'S3 Buckets': 'Input and output buckets created',

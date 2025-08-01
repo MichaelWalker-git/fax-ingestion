@@ -1,4 +1,4 @@
-import { Aws, CfnCondition, CfnParameter, CustomResource, Fn, NestedStack, RemovalPolicy } from 'aws-cdk-lib';
+import { Aws, CustomResource, Fn, NestedStack, RemovalPolicy } from 'aws-cdk-lib';
 import {
   AccountRecovery,
   CfnIdentityPool, CfnIdentityPoolRoleAttachment,
@@ -7,10 +7,10 @@ import {
   UserPoolClient,
   UserPoolDomain,
 } from 'aws-cdk-lib/aws-cognito';
-import { IVpc, SecurityGroup, Vpc } from 'aws-cdk-lib/aws-ec2';
+import { IVpc, SecurityGroup } from 'aws-cdk-lib/aws-ec2';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import { Key } from 'aws-cdk-lib/aws-kms';
-import { Bucket } from 'aws-cdk-lib/aws-s3';
+import { IBucket } from 'aws-cdk-lib/aws-s3';
 import { Provider } from 'aws-cdk-lib/custom-resources';
 import { NagSuppressions } from 'cdk-nag';
 import { Construct } from 'constructs';
@@ -21,11 +21,10 @@ import { Labels } from '../../shared/labels';
 
 interface IProps {
   vpc: IVpc;
-  inputBucket: Bucket;
-  outputBucket: Bucket;
+  inputBucket: IBucket;
+  outputBucket: IBucket;
   kmsKey: Key;
   labels: Labels;
-  adminEmail: CfnParameter;
 }
 
 export class CognitoStack extends NestedStack {
@@ -37,9 +36,9 @@ export class CognitoStack extends NestedStack {
   public readonly identityPool: CfnIdentityPool;
   public readonly authenticatedRole: iam.Role;
   public readonly clientUrl: string;
-  public readonly inputBucket: Bucket;
+  public readonly inputBucket: IBucket;
   public readonly vpc: IVpc;
-  public readonly outputBucket: Bucket;
+  public readonly outputBucket: IBucket;
 
   constructor(scope: Construct, id: string, props: IProps) {
     super(scope, id);
@@ -187,11 +186,7 @@ export class CognitoStack extends NestedStack {
       securityGroups: [securityGroup],
     });
 
-    const hasExistingAdminEmail = new CfnCondition(this, 'HasAdminEmail', {
-      expression: Fn.conditionNot(Fn.conditionEquals(props.adminEmail.valueAsString, 'admin@example.com')),
-    });
-    const hasAdminEmail = Fn.conditionIf('HasAdminEmail', true, false).toString() === 'true';
-    const adminEmail = hasAdminEmail ? props.adminEmail.valueAsString : process.env.ADMIN_EMAIL;
+    const adminEmail = process.env.ADMIN_EMAIL || 'admin@example.com';
 
     const customResource = new CustomResource(this, getCdkConstructId({ context: 'cognito', resourceName: 'custom-resource' }, this), {
       serviceToken: customResourceProvider.serviceToken,

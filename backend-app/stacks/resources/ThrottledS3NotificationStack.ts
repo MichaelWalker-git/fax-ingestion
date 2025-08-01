@@ -1,19 +1,13 @@
-import { Duration, NestedStack, CfnOutput, CustomResource } from 'aws-cdk-lib';
+import { Duration, NestedStack, CfnOutput } from 'aws-cdk-lib';
 import { Table } from 'aws-cdk-lib/aws-dynamodb';
 import { IVpc, SecurityGroup } from 'aws-cdk-lib/aws-ec2';
-import {
-  PolicyStatement,
-  Effect,
-  AnyPrincipal, ServicePrincipal,
-} from 'aws-cdk-lib/aws-iam';
 import { Key } from 'aws-cdk-lib/aws-kms';
 import { SqsEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
-import { Bucket } from 'aws-cdk-lib/aws-s3';
+import { EventType, IBucket } from 'aws-cdk-lib/aws-s3';
+import { SqsDestination } from 'aws-cdk-lib/aws-s3-notifications';
 import { Queue } from 'aws-cdk-lib/aws-sqs';
-import { Provider } from 'aws-cdk-lib/custom-resources';
 import { NagSuppressions } from 'cdk-nag';
 import { Construct } from 'constructs';
-import { addNotifications } from '../../resources/lambda/customResources/addNotifications';
 import { startProcessing } from '../../resources/lambda/s3Triggers/startProcessing';
 import { getCdkConstructId, createDefaultLambdaRole, getPolicyStatement } from '../../shared/helpers';
 import { Labels } from '../../shared/labels';
@@ -22,20 +16,21 @@ interface IProps {
   vpc: IVpc;
   dataTable: Table;
   securityGroup: SecurityGroup;
-  inputBucket: Bucket;
-  outputBucket: Bucket;
-  sageMakerAsyncBucket: Bucket;
+  inputBucket: IBucket;
+  outputBucket: IBucket;
+  sageMakerAsyncBucket: IBucket;
   labels: Labels;
   stateMachineArn: String;
   kmsKey: Key;
+  processingQueue: Queue;
 }
 
 export class ThrottledS3NotificationStack extends NestedStack {
   public readonly processingQueue: Queue;
   public readonly startProcessingLambda: any;
-  public readonly inputBucket: Bucket;
-  public readonly outputBucket: Bucket;
-  public readonly sageMakerAsyncBucket: Bucket;
+  public readonly inputBucket: IBucket;
+  public readonly outputBucket: IBucket;
+  public readonly sageMakerAsyncBucket: IBucket;
   public readonly stateMachineArn: String;
   public readonly vpc: IVpc;
   public readonly dataTable: Table;
@@ -53,6 +48,7 @@ export class ThrottledS3NotificationStack extends NestedStack {
     this.dataTable = props.dataTable;
     this.securityGroup = props.securityGroup;
     this.kmsKey = props.kmsKey;
+    this.processingQueue = props.processingQueue;
 
     // Create IAM role for Lambda
     const startProcessingRole = createDefaultLambdaRole(this, getCdkConstructId({ context: 'file-processing', resourceName: 'role' }, this));
@@ -87,61 +83,6 @@ export class ThrottledS3NotificationStack extends NestedStack {
       resources: ['*'],
     }));
 
-    // Create Dead Letter Queue
-    const dlq = new Queue(this, getCdkConstructId({ context: 'processing-dlq', resourceName: 'queue' }, this), {
-      queueName: getCdkConstructId({ context: 'processing-dlq', resourceName: 'queue' }, this),
-      encryptionMasterKey: props.kmsKey,
-      retentionPeriod: Duration.days(14),
-    });
-
-    // Create main processing queue with throttling controls
-    this.processingQueue = new Queue(this, getCdkConstructId({ context: 'processing', resourceName: 'queue' }, this), {
-      queueName: getCdkConstructId({ context: 'processing', resourceName: 'queue' }, this),
-      visibilityTimeout: Duration.minutes(15),
-      deadLetterQueue: {
-        queue: dlq,
-        maxReceiveCount: 3,
-      },
-      encryptionMasterKey: props.kmsKey,
-      receiveMessageWaitTime: Duration.seconds(20),
-    });
-
-    // Add explicit permission for S3 to send messages to SQS
-    this.processingQueue.addToResourcePolicy(new PolicyStatement({
-      effect: Effect.ALLOW,
-      principals: [new ServicePrincipal('s3.amazonaws.com')],
-      actions: ['sqs:SendMessage'],
-      resources: [this.processingQueue.queueArn],
-      conditions: {
-        StringEquals: {
-          'aws:SourceAccount': this.account,
-        },
-        ArnEquals: {
-          'aws:SourceArn': this.inputBucket.bucketArn,
-        },
-      },
-    }));
-
-    // Modified SSL enforcement to allow S3 service
-    const sslEnforcementStatement = new PolicyStatement({
-      effect: Effect.DENY,
-      principals: [new AnyPrincipal()],
-      actions: ['sqs:*'],
-      resources: ['*'],
-      conditions: {
-        Bool: {
-          'aws:SecureTransport': 'false',
-        },
-        StringNotEquals: {
-          'aws:PrincipalServiceName': 's3.amazonaws.com',
-        },
-      },
-    });
-
-    // Add SSL enforcement to both queues
-    this.processingQueue.addToResourcePolicy(sslEnforcementStatement);
-    dlq.addToResourcePolicy(sslEnforcementStatement);
-
     // Create Lambda with conservative concurrency
     this.startProcessingLambda = startProcessing(this, {
       REGION: this.region || 'eu-central-1',
@@ -158,73 +99,18 @@ export class ThrottledS3NotificationStack extends NestedStack {
       maxConcurrency: 2,
     }));
 
-    // Create Security Group
-    const securityGroup = new SecurityGroup(scope, getCdkConstructId({ context: 'add-notifications', resourceName: 'security-group' }, this), {
-      vpc: this.vpc,
-      allowAllOutbound: true,
-    });
-    // Create Lambda
-    const s3NotificationLambdaRole = createDefaultLambdaRole(this, getCdkConstructId({ context: 'deploy-model-to-sagemaker', resourceName: 'lambda-role' }, this));
-    s3NotificationLambdaRole.addToPolicy(getPolicyStatement({
-      service: 's3',
-      operations: ['PutObject', 'GetObject', 'PutObjectAcl', 'ListBucket', 'DeleteObject', 'CreateBucket'],
-      resources: ['*'],
-    }));
-    s3NotificationLambdaRole.addToPolicy(getPolicyStatement({
-      service: 'kms',
-      operations: ['Encrypt', 'Decrypt', 'GenerateDataKey'],
-      resources: [this.kmsKey.keyArn],
-    }));
+    // s3 notification
+    this.inputBucket.addEventNotification(
+      EventType.OBJECT_CREATED_PUT,
+      new SqsDestination(this.processingQueue),
+      { prefix: 'files/' },
+    );
 
-    const s3NotificationLambda = addNotifications(this, {
-      INPUT_BUCKET: this.inputBucket.bucketName,
-      QUEUE_ARN: this.processingQueue.queueArn,
-      PREFIX: 'files/',
-    }, s3NotificationLambdaRole, this.vpc, securityGroup);
-
-    this.inputBucket.grantRead(s3NotificationLambda);
-    this.processingQueue.grantSendMessages(s3NotificationLambda);
-
-    // Create Custom Resource
-    const customResourceProviderRole = createDefaultLambdaRole(this, 'customResourceProviderRoleS3Notification');
-    customResourceProviderRole.addToPolicy(getPolicyStatement({
-      service: 'dynamodb',
-      operations: ['GetItem', 'PutItem', 'UpdateItem', 'DeleteItem', 'Query'],
-      resources: [this.dataTable.tableArn],
-    }));
-    customResourceProviderRole.addToPolicy(getPolicyStatement({
-      service: 's3',
-      operations: ['PutObject', 'GetObject', 'PutObjectAcl', 'ListBucket', 'DeleteObject'],
-      resources: [
-        `arn:aws:s3:::${this.inputBucket.bucketName}`,
-        `arn:aws:s3:::${this.inputBucket.bucketName}/*`,
-      ],
-    }));
-    customResourceProviderRole.addToPolicy(getPolicyStatement({
-      service: 'kms',
-      operations: ['Encrypt', 'Decrypt', 'GenerateDataKey'],
-      resources: [this.kmsKey.keyArn],
-    }));
-    customResourceProviderRole.addToPolicy(getPolicyStatement({
-      service: 'lambda',
-      operations: ['GetFunction'],
-      resources: ['*'],
-    }));
-
-    const customResourceProvider = new Provider(this, getCdkConstructId({ context: 'add-notifications', resourceName: 'CustomResourceProvider' }, this), {
-      onEventHandler: s3NotificationLambda,
-      vpc: this.vpc,
-      role: customResourceProviderRole,
-      securityGroups: [securityGroup],
-    });
-
-    const customResource = new CustomResource(this, getCdkConstructId({ context: 'add-notifications', resourceName: 'CustomResource' }, this), {
-      serviceToken: customResourceProvider.serviceToken,
-      properties: {
-        BucketName: this.inputBucket.bucketName,
-        DestinationPrefix: 'samples',
-      },
-    });
+    this.inputBucket.addEventNotification(
+      EventType.OBJECT_CREATED_POST,
+      new SqsDestination(this.processingQueue),
+      { prefix: 'files/' },
+    );
 
     // Grant permissions
     this.processingQueue.grantConsumeMessages(this.startProcessingLambda);
@@ -238,9 +124,9 @@ export class ThrottledS3NotificationStack extends NestedStack {
       description: 'URL of the processing queue for throttling',
     });
 
-    // CDK Nag suppressions
+    // CDK Nag suppressions for your Lambda
     NagSuppressions.addResourceSuppressions(
-      [this.startProcessingLambda, this.processingQueue, dlq],
+      [this.startProcessingLambda],
       [
         { id: 'HIPAA.Security-SQSEncryption', reason: 'Queue is encrypted with customer managed KMS key' },
         { id: 'AwsSolutions-SQS3', reason: 'DLQ is configured for the main processing queue' },
