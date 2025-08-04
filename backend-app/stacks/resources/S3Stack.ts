@@ -22,6 +22,7 @@ export class S3Stack extends cdk.Stack {
   public readonly inputBucket: Bucket;
   public readonly outputBucket: Bucket;
   public readonly sageMakerAsyncBucket: Bucket;
+  public readonly siteBucket: Bucket;
 
   constructor(scope: Construct, id: string, args: StackProps, props: IProps) {
     super(scope, id);
@@ -155,6 +156,15 @@ export class S3Stack extends cdk.Stack {
       }),
     );
 
+    this.siteBucket = new Bucket(this, getCdkConstructId({ context: 'website', resourceName: 'websiteBucket' }, this), {
+      publicReadAccess: false,
+      removalPolicy: RemovalPolicy.DESTROY,
+      autoDeleteObjects: true,
+      enforceSSL: true,
+      serverAccessLogsBucket: loggingBucket,
+      serverAccessLogsPrefix: 'websiteBucketLogs/',
+    });
+
     // Outputs
     const exportInputBucketName = 'ExportInputBucketName';
     new CfnOutput(this, exportInputBucketName, {
@@ -190,6 +200,12 @@ export class S3Stack extends cdk.Stack {
     new CfnOutput(this, exportSageMakerAsyncBucketArn, {
       value: this.sageMakerAsyncBucket.bucketArn,
       exportName: exportSageMakerAsyncBucketArn,
+    });
+
+    const exportWebsiteBucketArn = 'ExportWebsiteBucketName';
+    new CfnOutput(this, exportWebsiteBucketArn, {
+      value: this.siteBucket.bucketArn,
+      exportName: exportWebsiteBucketArn,
     });
 
     // NagSuppressions
