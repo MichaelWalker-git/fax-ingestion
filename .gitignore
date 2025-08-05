@@ -33,3 +33,4 @@ dist-ssr
 cdk.out
 .idea/
 !/backend-app/.env
+!/client-app/.env

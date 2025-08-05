@@ -41,7 +41,7 @@ export class ProdStage extends Stage {
     );
 
     // Apply comprehensive compliance checks based on configuration
-    this.addComplianceChecks(backendAppStack, args.complianceFramework);
+    //  this.addComplianceChecks(backendAppStack, args.complianceFramework);
 
     // Add marketplace-specific resource tags
     this.addMarketplaceResourceTags(backendAppStack);

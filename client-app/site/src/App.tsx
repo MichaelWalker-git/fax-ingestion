@@ -12,6 +12,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
 
 import 'simplebar-react/dist/simplebar.min.css'
+import {useEffect, useState} from 'react'
 
 configureAmplify()
 
@@ -20,6 +21,18 @@ initCloudWatchRum()
 const queryClient = new QueryClient()
 
 function App() {
+  const [config, setConfig] = useState<any>(null);
+
+  console.log('config', config)
+
+
+  useEffect(() => {
+    fetch('./config.json')
+        .then((response) => response.json())
+        .then(setConfig)
+        .catch(() => setConfig({ error: 'Could not load config' }));
+  }, []);
+
   return (
     <AuthenticatorWrapper>
       {() => (

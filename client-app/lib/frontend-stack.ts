@@ -1,6 +1,6 @@
 import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
-import {SiteAmplify} from "./site-amplify.ts";
+import {SiteCloudfront} from "./site-cloudfront.ts";
 
 export interface FrontendStackProps extends cdk.StackProps {
   restApiEndpoint: string;
@@ -18,7 +18,7 @@ export class FrontendStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: FrontendStackProps) {
     super(scope, id, props);
 
-    new SiteAmplify(this, 'Site', props);
+    new SiteCloudfront(this, 'Site', props);
 
   }
 }
