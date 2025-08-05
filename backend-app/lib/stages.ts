@@ -42,12 +42,13 @@ export class ProdStage extends Stage {
     );
     backendAppStack.addDependency(s3Stack);
 
-    const frontendStack = new FrontendStack(this, 'FrontEnd-Stack', args, {});
+    const frontendStack = new FrontendStack(this, 'FrontEnd-Stack', args, {
+      labels: args.labels,
+    });
     frontendStack.addDependency(backendAppStack);
 
-    // TODO
     // Apply comprehensive compliance checks based on configuration
-    //  this.addComplianceChecks(backendAppStack, args.complianceFramework);
+    this.addComplianceChecks(backendAppStack, args.complianceFramework);
 
     // Add marketplace-specific resource tags
     this.addMarketplaceResourceTags(backendAppStack);
