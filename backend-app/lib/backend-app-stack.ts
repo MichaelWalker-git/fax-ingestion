@@ -1,5 +1,6 @@
+import { execSync, ExecSyncOptions } from 'child_process';
 import * as cdk from 'aws-cdk-lib';
-import { CfnOutput, Fn } from 'aws-cdk-lib';
+import { CfnOutput, DockerImage, Fn, RemovalPolicy } from 'aws-cdk-lib';
 import {
   AccessLogFormat,
   Cors,
@@ -8,9 +9,13 @@ import {
   MethodLoggingLevel,
   RestApi,
 } from 'aws-cdk-lib/aws-apigateway';
-import { Bucket } from 'aws-cdk-lib/aws-s3';
+import { CachePolicy, Distribution, SecurityPolicyProtocol, ViewerProtocolPolicy } from 'aws-cdk-lib/aws-cloudfront';
+import { S3Origin } from 'aws-cdk-lib/aws-cloudfront-origins';
+import { Bucket, IBucket } from 'aws-cdk-lib/aws-s3';
+import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment';
 import { NagSuppressions } from 'cdk-nag';
 import { Construct } from 'constructs';
+import * as fsExtra from 'fs-extra';
 import { getCdkConstructId } from '../shared/helpers';
 import { Labels } from '../shared/labels';
 import { ApiStack } from '../stacks/ApiStack';
@@ -26,12 +31,17 @@ import { StepFunctionsStack } from '../stacks/resources/StepFunctionsStack';
 import { ThrottledS3NotificationStack } from '../stacks/resources/ThrottledS3NotificationStack';
 import { VpcStack } from '../stacks/resources/VpcStack';
 import { SharedResourcesStack } from '../stacks/SharedResourcesStack';
+import {UserPool} from "aws-cdk-lib/aws-cognito";
 
 export interface StackProps {
   labels: Labels;
 }
 
 export class BackendAppStack extends cdk.Stack {
+  public readonly websiteBucket: IBucket;
+  public readonly distribution: Distribution;
+  public readonly cognitoUserPool: UserPool;
+
   constructor(scope: Construct, id: string, args: StackProps, props?: cdk.StackProps) {
     super(scope, id, props);
 
@@ -64,10 +74,10 @@ export class BackendAppStack extends cdk.Stack {
     // Create secrets manager with marketplace-friendly configuration
     const stageName = this.node.tryGetContext('StageName') || process.env.STAGE || 'prod';
 
-    const secret = new Secret(this, 'Secret-Stack', {
+    /*    const secret = new Secret(this, 'Secret-Stack', {
       name: `${stageName}-${labels.application}-secret`, // Now stageName is a real string
       environment: labels.environment,
-    });
+    });*/
 
     // VPC Stack - Use existing VPC if available, create new if not
     const vpcStack = new VpcStack(this, 'Vpc-Stack', {
@@ -76,24 +86,25 @@ export class BackendAppStack extends cdk.Stack {
     const { vpc, securityGroupStepFunctions, securityGroupAPI, securityGroupS3 } = vpcStack;
 
     // DynamoDB Stack with point-in-time recovery for marketplace
-    const dynamoDbStack = new DynamoDbStack(this, 'DynamoDb-Stack', {
+    /*    const dynamoDbStack = new DynamoDbStack(this, 'DynamoDb-Stack', {
       kmsKey,
       labels: labels,
     });
-    const { dataTable } = dynamoDbStack;
+    const { dataTable } = dynamoDbStack;*/
 
-    const sqsStack = new SqsStack(this, 'SQS-Stack', {
+    /*    const sqsStack = new SqsStack(this, 'SQS-Stack', {
       kmsKey,
       labels: labels,
     });
-    const { processingQueue } = sqsStack;
+    const { processingQueue } = sqsStack;*/
 
     // SageMaker Stack with configurable parameters
     const modelName = getCdkConstructId({ context: 'sagemaker', resourceName: 'qwen-model' }, this);
     const endpointName = getCdkConstructId({ context: 'sagemaker', resourceName: 'qwen-endpoint' }, this);
     const modelId = 'Qwen/Qwen2.5-VL-7B-Instruct';
 
-    const sageMakerStack = new SageMakerStack(this, 'SageMaker-Stack', {
+    // TODO
+    /*    const sageMakerStack = new SageMakerStack(this, 'SageMaker-Stack', {
       modelName,
       endpointName,
       modelId,
@@ -102,10 +113,10 @@ export class BackendAppStack extends cdk.Stack {
       sageMakerAsyncBucket,
       inferenceType: 'ASYNC',
       labels: labels,
-    });
+    });*/
 
     // StepFunctions Stack
-    const stepFunctionsStack = new StepFunctionsStack(this, 'StepFunctions-Stack', {
+    /*    const stepFunctionsStack = new StepFunctionsStack(this, 'StepFunctions-Stack', {
       vpc,
       inputBucket,
       outputBucket,
@@ -115,9 +126,10 @@ export class BackendAppStack extends cdk.Stack {
       securityGroup: securityGroupStepFunctions,
       sageMakerEndpoint: endpointName,
     });
-    const { stateMachine } = stepFunctionsStack;
+    const { stateMachine } = stepFunctionsStack;*/
 
-    // Throttled S3Notification Stack
+    // TODO
+    /*    // Throttled S3Notification Stack
     const s3NotificationStack = new ThrottledS3NotificationStack(this, 'S3-Notification-Stack', {
       vpc,
       dataTable,
@@ -129,7 +141,7 @@ export class BackendAppStack extends cdk.Stack {
       outputBucket,
       stateMachineArn: stateMachine.stateMachineArn,
       processingQueue,
-    });
+    });*/
 
     // Shared Resources Stack
     const sharedResourcesStack = new SharedResourcesStack(this, 'Shared-Resources-Stack', {
@@ -147,6 +159,8 @@ export class BackendAppStack extends cdk.Stack {
       labels: labels,
     });
     const { userPool, cognitoClient, userPoolDomain, identityPool } = cognitoStack;
+
+    this.cognitoUserPool = userPool;
 
     // API Stack with enhanced security
     const restApiName = getCdkConstructId({ context: 'processing', resourceName: 'rest-api' }, this);
@@ -178,7 +192,7 @@ export class BackendAppStack extends cdk.Stack {
       policy: this.createRestrictiveApiPolicy(),
     });
 
-    const stackProps = {
+    /*    const stackProps = {
       securityGroup: securityGroupAPI,
       restApi: restApi,
       dataTableName: dataTable.tableName,
@@ -194,25 +208,106 @@ export class BackendAppStack extends cdk.Stack {
     // Api Stack
     const apiStack = new ApiStack(this, 'Api-Stack', stackProps);
 
-    apiStack.addDependency(cognitoStack);
+    apiStack.addDependency(cognitoStack);*/
 
-    const frontendStack = new FrontendStack(this, 'FrontEnd-Stack', {
-      awsUserPoolClientId: cognitoClient.userPoolClientId,
-      awsUserPoolId: userPool.userPoolId,
-      awsCognitoIdentityPoolId: identityPool.ref,
-      restApiEndpoint: apiStack.restApi.url,
-      websiteBucket: websiteBucket,
-    });
+    /*    const frontendStack = new FrontendStack(this, 'FrontEnd-Stack', {
+      /!*      cognitoClient: cognitoClient,
+      identityPool: identityPool,
+      userPool: userPool,*!/
+      restApiEndpoint: restApi.url,
+    });*/
 
-    frontendStack.addDependency(apiStack);
-    frontendStack.addDependency(cognitoStack);
+    // frontendStack.addDependency(restApi);
 
-    new CfnOutput(this, 'RestApiUrl', {
-      value: apiStack.restApi.url,
+    // frontendStack.addDependency(apiStack);
+    // frontendStack.addDependency(cognitoStack);
+
+    /*    new CfnOutput(this, 'RestApiUrl', {
+      value: restApi.url,
       description: 'REST API Gateway URL for the application',
       exportName: `${labels.name()}-rest-api-uri`,
+    });*/
+    /*
+
+    this.websiteBucket = new Bucket(this, getCdkConstructId({ context: 'website', resourceName: 'websiteBucket' }, this), {
+      publicReadAccess: false,
+      removalPolicy: RemovalPolicy.DESTROY,
+      autoDeleteObjects: true,
+      enforceSSL: true,
+      // serverAccessLogsBucket: loggingBucket,
+      // serverAccessLogsPrefix: 'websiteBucketLogs/',
     });
 
+    this.distribution = new Distribution(this, 'CloudfrontDistribution', {
+      enableLogging: true,
+      minimumProtocolVersion: SecurityPolicyProtocol.TLS_V1_2_2021,
+      defaultBehavior: {
+        origin: new S3Origin(this.websiteBucket),
+        viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+        cachePolicy: CachePolicy.CACHING_DISABLED,
+      },
+      defaultRootObject: 'index.html',
+    });
+    const execOptions: ExecSyncOptions = { stdio: 'inherit' };
+
+    const bundle = Source.asset('../client-app', {
+      bundling: {
+        command: [
+          'sh',
+          '-c',
+          'echo "Docker build not supported."',
+        ],
+        image: DockerImage.fromRegistry('alpine'),
+        local: {
+          /!* istanbul ignore next *!/
+          tryBundle(outputDir: string) {
+            execSync(
+              'cd ../client-app && npm install --legacy-peer-deps && npm run build',
+              execOptions,
+            );
+
+            fsExtra.copySync('../client-app/dist', outputDir, {
+              ...execOptions,
+              // @ts-ignore
+              recursive: true,
+            });
+            return true;
+          },
+        },
+      },
+    });
+
+    const config = {
+      /!*      API_ENDPOINT: restApi.url,
+      IDENTITY_POOL_ID: identityPool.ref,*!/
+      // USER_POOL_ID: userPool.userPoolId,
+      USER_POOL_ID: userPool,
+      USER_POOL_CLIENT_ID: cognitoClient.userPoolClientId,
+    };
+
+    const bucketDeployment = new BucketDeployment(this, 'DeployBucket', {
+      sources: [bundle, Source.jsonData('config.json', config)],
+      destinationBucket: this.websiteBucket,
+      distribution: this.distribution,
+      distributionPaths: ['/!*'],
+    });*/
+
+    /*    bucketDeployment.node.addDependency(userPool);
+    bucketDeployment.node.addDependency(cognitoClient);
+    bucketDeployment.node.addDependency(identityPool);*/
+
+    new CfnOutput(this, 'CognitoUserPoolId', {
+      value: userPool.userPoolId,
+      exportName: 'CognitoUserPoolId',
+    });
+
+    new CfnOutput(this, 'RestApiUrl', {
+      value: restApi.url,
+      description: 'REST API Gateway URL for the application',
+      exportName: 'rest-api-uri',
+    });
+
+    /*
     new CfnOutput(this, 'UserPoolId', {
       value: userPool.userPoolId,
       description: 'Cognito User Pool ID for authentication',
@@ -235,10 +330,11 @@ export class BackendAppStack extends cdk.Stack {
       value: identityPool.ref,
       description: 'Cognito Identity Pool ID',
       exportName: `${labels.name()}-identity-pool-id`,
-    });
+    });*/
 
+    // TODO
     // Enhanced CDK Nag suppressions for marketplace compliance
-    this.addMarketplaceNagSuppressions(restApi, iamStack, s3NotificationStack, sageMakerStack);
+    // this.addMarketplaceNagSuppressions(restApi, iamStack, s3NotificationStack, sageMakerStack);
 
     // Add suppressions for BucketNotificationsHandler (auto-generated by CDK)
     this.addBucketNotificationHandlerSuppressions();
@@ -272,7 +368,7 @@ export class BackendAppStack extends cdk.Stack {
   private addBucketNotificationHandlerSuppressions(): void {
     // Suppress violations for the auto-generated BucketNotificationsHandler
     // This construct is created automatically when using S3 bucket notifications
-    NagSuppressions.addResourceSuppressionsByPath(
+    /*    NagSuppressions.addResourceSuppressionsByPath(
       this,
       '/prod/fax-eu-central-1-prod-fax-ingestion-backend-app/BucketNotificationsHandler050a0587b7544547bf325f094a3db834/Role',
       [
@@ -298,7 +394,7 @@ export class BackendAppStack extends cdk.Stack {
           reason: 'BucketNotificationsHandler is an auto-generated CDK construct that uses inline policies for S3 bucket notification configuration. This is managed by the CDK framework and cannot be changed to managed policies.',
         },
       ],
-    );
+    );*/
   }
 
   private addMarketplaceNagSuppressions(

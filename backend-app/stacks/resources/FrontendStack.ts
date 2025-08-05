@@ -1,5 +1,6 @@
 import { execSync, ExecSyncOptions } from 'child_process';
-import { RemovalPolicy, DockerImage, CfnOutput, CfnParameter, Stack, NestedStack } from 'aws-cdk-lib';
+import { DockerImage, CfnOutput, Stack, NestedStack, RemovalPolicy, Fn } from 'aws-cdk-lib';
+import * as cdk from 'aws-cdk-lib';
 import {
   Distribution,
   SecurityPolicyProtocol,
@@ -7,27 +8,53 @@ import {
   CachePolicy,
 } from 'aws-cdk-lib/aws-cloudfront';
 import { S3Origin } from 'aws-cdk-lib/aws-cloudfront-origins';
-import { IBucket } from 'aws-cdk-lib/aws-s3';
+import { CfnIdentityPool, UserPool, UserPoolClient } from 'aws-cdk-lib/aws-cognito';
+import { Bucket, IBucket } from 'aws-cdk-lib/aws-s3';
 import { Source, BucketDeployment } from 'aws-cdk-lib/aws-s3-deployment';
 import { NagSuppressions } from 'cdk-nag';
 import { Construct } from 'constructs';
 import * as fsExtra from 'fs-extra';
+import { getCdkConstructId } from '../../shared/helpers';
 
 interface IProps {
-  awsUserPoolClientId: string;
-  awsUserPoolId: string;
-  awsCognitoIdentityPoolId: string;
-  restApiEndpoint: string;
-  websiteBucket: IBucket;
+  // restApiEndpoint: string;
+  // cognitoUserPoolId: string;
+/*  userPool: UserPool;
+  cognitoClient: UserPoolClient;
+  identityPool: CfnIdentityPool;*/
 }
 
-export class FrontendStack extends NestedStack {
+//export class FrontendStack extends NestedStack {
+export class FrontendStack extends cdk.Stack {
   public readonly websiteBucket: IBucket;
   public readonly distribution: Distribution;
 
-  constructor(scope: Construct, id: string, props: IProps) {
+  constructor(scope: Construct, id: string, args: any, props: IProps) {
     super(scope, id);
-    this.websiteBucket = props.websiteBucket;
+    // this.websiteBucket = props.websiteBucket;
+
+    const importCognitoUserPoolId = 'CognitoUserPoolId';
+
+    const cognitoUserPoolId = Fn.importValue(importCognitoUserPoolId);
+
+    /*    const userPool = UserPool.fromUserPoolArn(this, 'ImportedPool',
+      Stack.of(this).formatArn({
+        service: 'cognito-idp',
+        resource: 'userpool',
+        resourceName: cognitoUserPoolId,
+      }),
+    );*/
+
+    // const cognitoUserPoolId = props.cognitoUserPoolId;
+
+    this.websiteBucket = new Bucket(this, getCdkConstructId({ context: 'website', resourceName: 'websiteBucket' }, this), {
+      publicReadAccess: false,
+      removalPolicy: RemovalPolicy.DESTROY,
+      autoDeleteObjects: true,
+      enforceSSL: true,
+      // serverAccessLogsBucket: loggingBucket,
+      // serverAccessLogsPrefix: 'websiteBucketLogs/',
+    });
 
     this.distribution = new Distribution(this, 'CloudfrontDistribution', {
       enableLogging: true,
@@ -68,20 +95,20 @@ export class FrontendStack extends NestedStack {
       },
     });
 
-    const envVars = {
-      VITE_USER_POOL_CLIENT_ID: props.awsUserPoolClientId,
-      VITE_USER_POOL_ID: props.awsUserPoolId,
-      VITE_IDENTITY_POOL_ID: props.awsCognitoIdentityPoolId,
-      VITE_API_ENDPOINT: props.restApiEndpoint,
+    const config = {
+      /*      API_ENDPOINT: restApi.url,
+          IDENTITY_POOL_ID: identityPool.ref,*/
+      // USER_POOL_ID: userPool.userPoolId,
+      // USER_POOL_ID: userPool,
+      USER_POOL_CLIENT_ID: cognitoUserPoolId,
     };
 
     const bucketDeployment = new BucketDeployment(this, 'DeployBucket', {
-      sources: [bundle, Source.jsonData('.env', envVars)],
+      sources: [bundle, Source.jsonData('config.json', config)],
       destinationBucket: this.websiteBucket,
       distribution: this.distribution,
       distributionPaths: ['/*'],
     });
-
 
     new CfnOutput(this, 'distribution', {
       value: this.distribution.domainName,
@@ -90,7 +117,7 @@ export class FrontendStack extends NestedStack {
     new CfnOutput(this, 'siteBucket', { value: this.websiteBucket.bucketName });
 
 
-    NagSuppressions.addResourceSuppressionsByPath(
+    /*    NagSuppressions.addResourceSuppressionsByPath(
       Stack.of(this),
       '/prod/fax-eu-central-1-prod-fax-ingestion-backend-app/FrontEnd-Stack/CloudfrontDistribution/LoggingBucket/Resource',
       [
@@ -135,8 +162,8 @@ export class FrontendStack extends NestedStack {
             'Action::s3:List*',
             'Action::s3:Abort*',
             'Action::s3:DeleteObject*',
-            'Resource::arn:aws:s3:::cdk-hnb659fds-assets-039885961427-us-east-2/*',
-            'Resource::arn:aws:s3:::ExportWebsiteBucketName/*', // <-- FIXED: dynamically resolves real bucket ARN
+            'Resource::arn:aws:s3:::cdk-hnb659fds-assets-039885961427-us-east-2/!*',
+            'Resource::arn:aws:s3:::ExportWebsiteBucketName/!*', // <-- FIXED: dynamically resolves real bucket ARN
             'Resource::*',
           ],
           reason: 'BucketDeployment Lambda needs broad S3 actions for asset deployment.',
@@ -174,7 +201,7 @@ export class FrontendStack extends NestedStack {
         { id: 'AwsSolutions-S10', reason: 'Auto-created CloudFront log bucket; HTTPS enforcement not needed for logging bucket.' },
       ],
       true,
-    );
+    );*/
 
   }
 }
