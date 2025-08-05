@@ -1,21 +1,27 @@
 // @mui
-import { Theme, SxProps } from '@mui/material/styles'
-import TableRow from '@mui/material/TableRow'
-import TableCell from '@mui/material/TableCell'
+import { Theme, SxProps } from '@mui/material/styles';
+import TableRow from '@mui/material/TableRow';
+import TableCell from '@mui/material/TableCell';
 //
-import EmptyContent from '../empty-content'
+import EmptyContent from '../empty-content';
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  imgUrl?: string
-  notFound: boolean
-  sx?: SxProps<Theme>
-  title?: string
-  description?: string
-}
+  imgUrl?: string;
+  notFound: boolean;
+  sx?: SxProps<Theme>;
+  title?: string;
+  description?: string;
+};
 
-export default function TableNoData({ notFound, sx, imgUrl, title = 'No Data', description }: Props) {
+export default function TableNoData({
+  notFound,
+  sx,
+  imgUrl,
+  title = 'No Data',
+  description,
+}: Props) {
   return (
     <TableRow>
       {notFound ? (
@@ -35,5 +41,5 @@ export default function TableNoData({ notFound, sx, imgUrl, title = 'No Data', d
         <TableCell colSpan={12} sx={{ p: 0 }} />
       )}
     </TableRow>
-  )
+  );
 }

@@ -1,11 +1,11 @@
 // ----------------------------------------------------------------------
 
 export function remToPx(value: string) {
-  return Math.round(Number.parseFloat(value) * 16)
+  return Math.round(parseFloat(value) * 16);
 }
 
 export function pxToRem(value: number) {
-  return `${value / 16}rem`
+  return `${value / 16}rem`;
 }
 
 export function responsiveFontSizes({ sm, md, lg }: { sm: number; md: number; lg: number }) {
@@ -19,16 +19,16 @@ export function responsiveFontSizes({ sm, md, lg }: { sm: number; md: number; lg
     '@media (min-width:1200px)': {
       fontSize: pxToRem(lg),
     },
-  }
+  };
 }
 
 declare module '@mui/material/styles' {
   interface TypographyVariants {
-    fontWeightSemiBold: React.CSSProperties['fontWeight']
+    fontWeightSemiBold: React.CSSProperties['fontWeight'];
   }
 }
 
-const primaryFont = 'Public Sans, sans-serif' // Google Font
+const primaryFont = 'Public Sans, sans-serif'; // Google Font
 // const secondaryFont = 'CircularStd, sans-serif'; // Local Font
 
 // ----------------------------------------------------------------------
@@ -42,37 +42,37 @@ export const typography = {
   h1: {
     fontWeight: 800,
     lineHeight: 80 / 64,
-    fontSize: pxToRem(64),
+    fontSize: pxToRem(40),
     ...responsiveFontSizes({ sm: 52, md: 58, lg: 64 }),
   },
   h2: {
     fontWeight: 800,
     lineHeight: 64 / 48,
-    fontSize: pxToRem(48),
+    fontSize: pxToRem(32),
     ...responsiveFontSizes({ sm: 40, md: 44, lg: 48 }),
   },
   h3: {
     fontWeight: 700,
     lineHeight: 1.5,
-    fontSize: pxToRem(32),
+    fontSize: pxToRem(24),
     ...responsiveFontSizes({ sm: 26, md: 30, lg: 32 }),
   },
   h4: {
     fontWeight: 700,
     lineHeight: 1.5,
-    fontSize: pxToRem(24),
+    fontSize: pxToRem(20),
     ...responsiveFontSizes({ sm: 20, md: 24, lg: 24 }),
   },
   h5: {
     fontWeight: 700,
     lineHeight: 1.5,
-    fontSize: pxToRem(20),
+    fontSize: pxToRem(18),
     ...responsiveFontSizes({ sm: 19, md: 20, lg: 20 }),
   },
   h6: {
     fontWeight: 700,
     lineHeight: 28 / 18,
-    fontSize: pxToRem(18),
+    fontSize: pxToRem(17),
     ...responsiveFontSizes({ sm: 18, md: 18, lg: 18 }),
   },
   subtitle1: {
@@ -109,4 +109,4 @@ export const typography = {
     fontSize: pxToRem(14),
     textTransform: 'unset',
   },
-} as const
+} as const;

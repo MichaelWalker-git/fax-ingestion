@@ -1,72 +1,77 @@
-import CssBaseline from '@mui/material/CssBaseline'
-import { QueryClient, QueryClientProvider } from 'react-query'
-import { HashRouter as Router } from 'react-router-dom'
-import AuthenticatorWrapper from './shared/components/AuthenticatorWrapper.tsx'
-import { Layout } from './shared/components/Layout/Layout.tsx'
-import SnackbarContextProvider from './context/SnackbarContext.tsx'
-import { ViewSettingsProvider } from './context/view-settings'
-import ThemeProvider from './theme/Index.tsx'
-import { configureAmplify } from './utils/amplify-utils.ts'
-import { initCloudWatchRum } from './utils/cloudWatch-rum.ts'
-import { LocalizationProvider } from '@mui/x-date-pickers'
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
+import ThemeProvider from './theme/Index.tsx';
+import { HashRouter, Navigate, Route, Routes } from 'react-router';
+import MainLayout from './shared/components/layout/main-layout.tsx';
+import { paths } from './routes/paths.ts';
+import {lazy, useEffect, useState} from 'react';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { queryClient } from './api/query-client.ts';
+import SnackbarProvider from './shared/components/snackbar/snackbar-provider.tsx';
+import ProcessingResultView from './features/processing-results/pages/ProcessingResultView.tsx';
 
-import 'simplebar-react/dist/simplebar.min.css'
-import {useEffect, useState} from "react";
+import {AuthProvider, useAuth} from "./context/AuthContext";
+import { configureApiClient } from './api/api-config.ts';
+import LoginForm from './features/auth/components/LoginForm.tsx';
+import NewPasswordForm from './features/auth/components/NewPasswordForm.tsx';
 
-configureAmplify()
+const ProcessingResultsListView = lazy(
+    () => import('./features/processing-results/pages/ProcessingResultsListView.tsx')
+);
 
-initCloudWatchRum()
-
-const queryClient = new QueryClient()
-
-const VITE_USER_POOL_CLIENT_ID = import.meta.env.VITE_USER_POOL_CLIENT_ID!
-const VITE_USER_POOL_ID = import.meta.env.VITE_USER_POOL_ID!
-const VITE_IDENTITY_POOL_ID = import.meta.env.VITE_IDENTITY_POOL_ID!
-const VITE_API_ENDPOINT = import.meta.env.VITE_API_ENDPOINT!
+function ProtectedApp() {
+  const { user, authStep } = useAuth();
+  if (authStep === "login") return <LoginForm />;
+  if (authStep === "newPassword") return <NewPasswordForm />;
+  return                 <HashRouter>
+    <Routes>
+      <Route
+          path="/"
+          element={<Navigate to={paths.processingResults.root} replace />}
+      />
+      <Route path="/" element={<MainLayout />}>
+        <Route path={paths.processingResults.root}>
+          <Route index element={<ProcessingResultsListView />} />
+          <Route
+              path={paths.processingResults.view}
+              element={<ProcessingResultView />}
+          />
+        </Route>
+      </Route>
+    </Routes>
+  </HashRouter>;
+}
 
 function App() {
-  console.log('VITE_USER_POOL_CLIENT_ID', VITE_USER_POOL_CLIENT_ID)
-  console.log('VITE_USER_POOL_ID', VITE_USER_POOL_ID)
-  console.log('VITE_IDENTITY_POOL_ID', VITE_IDENTITY_POOL_ID)
-  console.log('VITE_API_ENDPOINT', VITE_API_ENDPOINT)
   const [config, setConfig] = useState<any>(null);
 
   console.log('config', config)
 
-
   useEffect(() => {
     fetch('./config.json')
         .then((response) => response.json())
-        .then(setConfig)
+        .then((data) => {
+          setConfig(data);
+          configureApiClient(data.API_ENDPOINT);
+        })
         .catch(() => setConfig({ error: 'Could not load config' }));
   }, []);
 
+  if (!config || config.error) return <div>Loading or error loading config</div>;
+
   return (
-    <AuthenticatorWrapper>
-      {() => (
-        <QueryClientProvider client={queryClient}>
+      <AuthProvider config={config}>
+        <ThemeProvider>
           <LocalizationProvider dateAdapter={AdapterDateFns}>
-            <ThemeProvider>
-              <ViewSettingsProvider
-                defaultSettings={{
-                  themeMode: 'light',
-                  themeLayout: 'vertical',
-                }}
-              >
-                <SnackbarContextProvider>
-                  <CssBaseline />
-                  <Router>
-                    <Layout />
-                  </Router>
-                </SnackbarContextProvider>
-              </ViewSettingsProvider>
-            </ThemeProvider>
+            <SnackbarProvider>
+              <QueryClientProvider client={queryClient}>
+              <ProtectedApp />
+              </QueryClientProvider>
+            </SnackbarProvider>
           </LocalizationProvider>
-        </QueryClientProvider>
-      )}
-    </AuthenticatorWrapper>
-  )
+        </ThemeProvider>
+      </AuthProvider>
+  );
 }
 
-export default App
+export default App;

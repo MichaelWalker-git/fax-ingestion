@@ -1,11 +1,10 @@
 // @mui
-import { Theme, SxProps } from '@mui/material/styles'
-import Box from '@mui/material/Box'
-import TableRow from '@mui/material/TableRow'
-import Checkbox from '@mui/material/Checkbox'
-import TableHead from '@mui/material/TableHead'
-import TableCell from '@mui/material/TableCell'
-import TableSortLabel from '@mui/material/TableSortLabel'
+import { Theme, SxProps } from '@mui/material/styles';
+import Box from '@mui/material/Box';
+import TableRow from '@mui/material/TableRow';
+import TableHead from '@mui/material/TableHead';
+import TableCell from '@mui/material/TableCell';
+import TableSortLabel from '@mui/material/TableSortLabel';
 
 // ----------------------------------------------------------------------
 
@@ -19,68 +18,52 @@ const visuallyHidden = {
   position: 'absolute',
   whiteSpace: 'nowrap',
   clip: 'rect(0 0 0 0)',
-} as const
+} as const;
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  order?: 'asc' | 'desc'
-  orderBy?: string
-  headLabel: any[]
-  rowCount?: number
-  numSelected?: number
-  onSort?: (id: string) => void
-  onSelectAllRows?: (checked: boolean) => void
-  sx?: SxProps<Theme>
-}
+  order?: 'asc' | 'desc';
+  orderBy?: string;
+  headLabel: any[];
+  rowCount?: number;
+  numSelected?: number;
+  onSort?: (id: string) => void;
+  onSelectAllRows?: (checked: boolean) => void;
+  sx?: SxProps<Theme>;
+  pinTheLastColumn?: boolean;
+};
 
 export default function TableHeadCustom({
   order,
   orderBy,
-  rowCount = 0,
   headLabel,
-  numSelected = 0,
   onSort,
-  onSelectAllRows,
   sx,
+  pinTheLastColumn,
 }: Props) {
   return (
     <TableHead sx={sx}>
       <TableRow>
-        {onSelectAllRows && (
-          <TableCell padding="checkbox">
-            <Checkbox
-              indeterminate={!!numSelected && numSelected < rowCount}
-              checked={!!rowCount && numSelected === rowCount}
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) => onSelectAllRows(event.target.checked)}
-            />
-          </TableCell>
-        )}
-
         {headLabel.map((headCell, index) => {
-          const isFirst = index === 0 && !onSelectAllRows
-          const isLast = index === headLabel.length - 1
-
           return (
             <TableCell
               key={headCell.id}
               align={headCell.align || 'left'}
               sortDirection={orderBy === headCell.id ? order : false}
-              sx={{
-                width: headCell.width,
-                minWidth: headCell.minWidth,
-                bgcolor: headCell.disabled ? 'background.default' : 'background.neutral',
-                ...(isFirst && {
-                  borderTopLeftRadius: 8,
-                  borderBottomLeftRadius: 8,
-                }),
-                ...(isLast && {
-                  borderTopRightRadius: 8,
-                  borderBottomRightRadius: 8,
-                }),
-              }}
+              sx={
+                pinTheLastColumn && index === headLabel.length - 1
+                  ? {
+                      position: 'sticky',
+                      right: 0,
+                      zIndex: 11,
+                      boxShadow: '-4px 0px 8px rgba(0,0,0,0.08)',
+                      width: 88,
+                    }
+                  : { width: headCell.width, minWidth: headCell.minWidth }
+              }
             >
-              {onSort ? (
+              {onSort && headCell.sortable ? (
                 <TableSortLabel
                   hideSortIcon
                   active={orderBy === headCell.id}
@@ -90,16 +73,18 @@ export default function TableHeadCustom({
                   {headCell.label}
 
                   {orderBy === headCell.id ? (
-                    <Box sx={{ ...visuallyHidden }}>{order === 'desc' ? 'sorted descending' : 'sorted ascending'}</Box>
+                    <Box sx={{ ...visuallyHidden }}>
+                      {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                    </Box>
                   ) : null}
                 </TableSortLabel>
               ) : (
                 headCell.label
               )}
             </TableCell>
-          )
+          );
         })}
       </TableRow>
     </TableHead>
-  )
+  );
 }

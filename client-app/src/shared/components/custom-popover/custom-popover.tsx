@@ -1,8 +1,12 @@
-import { menuItemClasses } from '@mui/material/MenuItem'
-import Popover, { PopoverOrigin } from '@mui/material/Popover'
-import { getPosition } from './utils.ts'
-import { StyledArrow } from './styles.tsx'
-import { MenuPopoverProps } from './types.ts'
+// @mui
+import { menuItemClasses } from '@mui/material/MenuItem';
+import Popover, { PopoverOrigin } from '@mui/material/Popover';
+//
+import { getPosition } from './utils.ts';
+import { StyledArrow } from './styles.tsx';
+import { MenuPopoverProps } from './types.ts';
+
+// ----------------------------------------------------------------------
 
 export default function CustomPopover({
   open,
@@ -12,7 +16,7 @@ export default function CustomPopover({
   sx,
   ...other
 }: MenuPopoverProps) {
-  const { style, anchorOrigin, transformOrigin } = getPosition(arrow)
+  const { style, anchorOrigin, transformOrigin } = getPosition(arrow);
 
   return (
     <Popover
@@ -40,5 +44,5 @@ export default function CustomPopover({
 
       {children}
     </Popover>
-  )
+  );
 }

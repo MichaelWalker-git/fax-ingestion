@@ -1,58 +1,45 @@
-import { Theme } from '@mui/material/styles'
-import { deepmerge } from '@mui/utils'
-import Accordion from './components/accordion.tsx'
-import Alert from './components/alert.tsx'
-import AppBar from './components/appbar.tsx'
-import Autocomplete from './components/autocomplete.tsx'
-import Avatar from './components/avatar.tsx'
-import Backdrop from './components/backdrop.tsx'
-import Badge from './components/badge.tsx'
-import Breadcrumbs from './components/breadcrumbs.tsx'
-import Button from './components/button.tsx'
-import ButtonGroup from './components/button-group.tsx'
-import Card from './components/card.tsx'
-import Checkbox from './components/checkbox.tsx'
-import Chip from './components/chip.tsx'
-import Container from './components/container.tsx'
-import CssBaseline from './components/css-baseline.tsx'
-import DataGrid from './components/data-grid.tsx'
-import MuiDatePicker from './components/date-picker.tsx'
-import Dialog from './components/dialog.tsx'
-import Drawer from './components/drawer.tsx'
+import { deepmerge } from '@mui/utils';
+import { Theme } from '@mui/material/styles';
 //
-import Fab from './components/fab.tsx'
-import Link from './components/link.tsx'
-import Lists from './components/list.tsx'
-import LoadingButton from './components/loading-button.tsx'
-import Menu from './components/menu.tsx'
-import Pagination from './components/pagination.tsx'
-import Paper from './components/paper.tsx'
-import Popover from './components/popover.tsx'
-import Progress from './components/progress.tsx'
-import RadioButton from './components/radio-button.tsx'
-import Rating from './components/rating.tsx'
-import Select from './components/select.tsx'
-import Skeleton from './components/skeleton.tsx'
-import Slider from './components/slider.tsx'
-import Stack from './components/stack.tsx'
-import Stepper from './components/stepper.tsx'
-import SvgIcon from './components/svg-icon.tsx'
-import Switch from './components/switch.tsx'
-import Table from './components/table.tsx'
-import Tabs from './components/tabs.tsx'
-import TextField from './components/textfield.tsx'
-import Timeline from './components/timeline.tsx'
-import ToggleButton from './components/toggle-button.tsx'
-import Tooltip from './components/tooltip.tsx'
-import TreeView from './components/tree-view.tsx'
-import Typography from './components/typography.tsx'
+import Card from './components/card';
+import Chip from './components/chip';
+import Menu from './components/menu';
+import Link from './components/link';
+import Lists from './components/list';
+import Table from './components/table';
+import Alert from './components/alert';
+import Badge from './components/badge';
+import Paper from './components/paper';
+import Stack from './components/stack';
+import Drawer from './components/drawer';
+import Dialog from './components/dialog';
+import Rating from './components/rating';
+import Slider from './components/slider';
+import Button from './components/button';
+import Select from './components/select';
+import Tooltip from './components/tooltip';
+import Popover from './components/popover';
+import SvgIcon from './components/svg-icon';
+import Skeleton from './components/skeleton';
+import Backdrop from './components/backdrop';
+import Checkbox from './components/checkbox';
+import TextField from './components/textfield';
+import Typography from './components/typography';
+import Pagination from './components/pagination';
+import Breadcrumbs from './components/breadcrumbs';
+import CssBaseline from './components/css-baseline';
+import RadioButton from './components/radio-button';
+import ButtonGroup from './components/button-group';
+import MuiDatePicker from './components/date-picker';
+import ToggleButton from './components/toggle-button';
+import LoadingButton from './components/loading-button';
+import Container from './components/container.tsx';
+import Tabs from './components/tabs.tsx';
 
 // ----------------------------------------------------------------------
 
 export function componentsOverrides(theme: Theme) {
   const overridesArray = [
-    Fab(theme),
-    Tabs(theme),
     Chip(theme),
     Card(theme),
     Menu(theme),
@@ -63,42 +50,33 @@ export function componentsOverrides(theme: Theme) {
     Table(theme),
     Paper(theme),
     Alert(theme),
-    Switch(theme),
     Select(),
     Button(theme),
     Rating(theme),
     Dialog(theme),
-    AppBar(),
-    Avatar(theme),
     Slider(theme),
     Drawer(theme),
-    Stepper(theme),
     Tooltip(theme),
     Popover(theme),
     SvgIcon(),
     Checkbox(theme),
-    DataGrid(theme),
     Skeleton(theme),
-    Timeline(theme),
-    TreeView(theme),
     Backdrop(theme),
-    Progress(theme),
     TextField(theme),
-    Accordion(theme),
     Typography(theme),
     Pagination(theme),
     RadioButton(theme),
     ButtonGroup(theme),
     Breadcrumbs(theme),
     CssBaseline(),
-    Autocomplete(theme),
     ToggleButton(theme),
     MuiDatePicker(theme),
     LoadingButton(),
+    Tabs(theme),
     Container(theme),
-  ]
+  ];
 
-  const components = overridesArray.reduce((acc, curr) => deepmerge(acc, curr), {})
+  const components = overridesArray.reduce((acc, curr) => deepmerge(acc, curr), {});
 
-  return components
+  return components;
 }
