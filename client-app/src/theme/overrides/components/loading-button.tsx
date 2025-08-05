@@ -1,4 +1,4 @@
-import { LoadingButtonProps } from '@mui/lab/LoadingButton'
+import { LoadingButtonProps } from '@mui/lab/LoadingButton';
 
 // ----------------------------------------------------------------------
 
@@ -7,7 +7,7 @@ export default function LoadingButton() {
     MuiLoadingButton: {
       styleOverrides: {
         root: ({ ownerState }: { ownerState: LoadingButtonProps }) => ({
-          ...(ownerState?.variant === 'soft' && {
+          ...(ownerState.variant === 'soft' && {
             '& .MuiLoadingButton-loadingIndicatorStart': {
               left: 10,
             },
@@ -26,5 +26,5 @@ export default function LoadingButton() {
         }),
       },
     },
-  }
+  };
 }

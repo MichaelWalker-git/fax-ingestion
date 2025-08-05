@@ -1,0 +1,6 @@
+export const USER_ROLES = {
+  SUPER_ADMIN: 'SUPER_ADMIN',
+  USER: 'USER',
+};
+
+export const ADMIN_ROLES = [USER_ROLES.SUPER_ADMIN];

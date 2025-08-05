@@ -83,8 +83,7 @@ export class FrontendStack extends cdk.Stack {
 
     const config = {
       API_ENDPOINT: apiUrl,
-      IDENTITY_POOL_ID: identityPoolId,
-      USER_POOL_ID: cognitoUserPoolId,
+      AWS_REGION: Stack.of(this).region,
       USER_POOL_CLIENT_ID: userPoolClientId,
     };
 

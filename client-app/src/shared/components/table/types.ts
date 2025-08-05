@@ -6,6 +6,8 @@ export type TableProps = {
   rowsPerPage: number;
   order: 'asc' | 'desc';
   orderBy: string;
+  hasMore: boolean;
+  totalRows: number;
   //
   selected: string[];
   onSelectRow: (id: string) => void;
@@ -33,4 +35,11 @@ export type TableProps = {
   setOrderBy: React.Dispatch<React.SetStateAction<string>>;
   setSelected: React.Dispatch<React.SetStateAction<string[]>>;
   setRowsPerPage: React.Dispatch<React.SetStateAction<number>>;
+  lastEvaluatedKey: any;
+  setLastEvaluatedKey: React.Dispatch<React.SetStateAction<any>>;
+  pageTokens: Record<number, any>;
+  pushPageToken: (page: number, token: any) => void;
+  getTokenForPage: (page: number) => any;
+  setHasMore: React.Dispatch<React.SetStateAction<boolean>>;
+  setTotalRows: React.Dispatch<React.SetStateAction<number>>;
 };

@@ -1,6 +1,6 @@
 import { Theme } from '@mui/material/styles';
 //
-import { menuItem } from '../../css.ts';
+import { menuItem } from '../../css';
 
 // ----------------------------------------------------------------------
 

@@ -1,6 +1,6 @@
-import { Theme, alpha } from '@mui/material/styles'
-import { tableCellClasses } from '@mui/material/TableCell'
-import { tableRowClasses } from '@mui/material/TableRow'
+import { Theme, alpha } from '@mui/material/styles';
+import { tableCellClasses } from '@mui/material/TableCell';
+import { tableRowClasses } from '@mui/material/TableRow';
 
 // ----------------------------------------------------------------------
 
@@ -16,7 +16,6 @@ export default function Table(theme: Theme) {
     MuiTableRow: {
       styleOverrides: {
         root: {
-          verticalAlign: 'baseline',
           [`&.${tableRowClasses.selected}`]: {
             backgroundColor: alpha(theme.palette.primary.dark, 0.04),
             '&:hover': {
@@ -84,5 +83,5 @@ export default function Table(theme: Theme) {
         },
       },
     },
-  }
+  };
 }

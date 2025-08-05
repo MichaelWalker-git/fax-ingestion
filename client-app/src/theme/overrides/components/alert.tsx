@@ -1,18 +1,24 @@
-import { AlertProps, alertClasses } from '@mui/material/Alert'
-import { Theme, alpha } from '@mui/material/styles'
-import Iconify from '../../../shared/components/iconify'
+import { Theme, alpha } from '@mui/material/styles';
+import { AlertProps, alertClasses } from '@mui/material/Alert';
+import Iconify from '../../../shared/components/iconify';
+// components
 
-const COLORS = ['info', 'success', 'warning', 'error'] as const
+
+// ----------------------------------------------------------------------
+
+const COLORS = ['info', 'success', 'warning', 'error'] as const;
+
+// ----------------------------------------------------------------------
 
 export default function Alert(theme: Theme) {
-  const isLight = theme.palette.mode === 'light'
+  const isLight = theme.palette.mode === 'light';
 
   const rootStyles = (ownerState: AlertProps) => {
-    const standardVariant = ownerState.variant === 'standard'
+    const standardVariant = ownerState.variant === 'standard';
 
-    const filledVariant = ownerState.variant === 'filled'
+    const filledVariant = ownerState.variant === 'filled';
 
-    const outlinedVariant = ownerState.variant === 'outlined'
+    const outlinedVariant = ownerState.variant === 'outlined';
 
     const colorStyle = COLORS.map((color) => ({
       ...(ownerState.severity === color && {
@@ -39,10 +45,10 @@ export default function Alert(theme: Theme) {
           },
         }),
       }),
-    }))
+    }));
 
-    return [...colorStyle]
-  }
+    return [...colorStyle];
+  };
 
   return {
     MuiAlert: {
@@ -70,5 +76,5 @@ export default function Alert(theme: Theme) {
         },
       },
     },
-  }
+  };
 }

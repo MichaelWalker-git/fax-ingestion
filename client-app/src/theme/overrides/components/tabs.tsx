@@ -42,6 +42,12 @@ export default function Tabs(theme: Theme) {
           [`&:not(.${tabClasses.selected})`]: {
             color: theme.palette.text.secondary,
           },
+          '&:focus': {
+            outline: 'none',
+          },
+          '&:focus-visible': {
+            outline: 'none',
+          },
         },
       },
     },
