@@ -1,5 +1,5 @@
 import * as cdk from 'aws-cdk-lib';
-import { Fn } from 'aws-cdk-lib';
+import { CfnOutput, Fn } from 'aws-cdk-lib';
 import {
   AccessLogFormat,
   Cors,
@@ -13,7 +13,6 @@ import { NagSuppressions } from 'cdk-nag';
 import { Construct } from 'constructs';
 import { getCdkConstructId } from '../shared/helpers';
 import { Labels } from '../shared/labels';
-import { ApiStack } from '../stacks/ApiStack';
 import { CognitoStack } from '../stacks/resources/CognitoStack';
 import { DynamoDbStack } from '../stacks/resources/DynamoDbStack';
 import { IamStack } from '../stacks/resources/IamStack';
@@ -39,10 +38,12 @@ export class BackendAppStack extends cdk.Stack {
     const importInputBucketName = 'ExportInputBucketName';
     const importOutputBucketName = 'ExportOutputBucketName';
     const importSageMakerAsyncBucketName = 'ExportSageMakerAsyncBucketName';
+    const importWebsiteBucketName = 'ExportWebsiteBucketName';
 
     const inputBucketName = Fn.importValue(importInputBucketName);
     const outputBucketName = Fn.importValue(importOutputBucketName);
     const sageMakerAsyncBucketName = Fn.importValue(importSageMakerAsyncBucketName);
+    const websiteBucketName = Fn.importValue(importWebsiteBucketName);
 
     const inputBucket = Bucket.fromBucketName(this, 'InputBucket', inputBucketName);
     const outputBucket = Bucket.fromBucketName(this, 'OutputBucket', outputBucketName);
@@ -113,6 +114,7 @@ export class BackendAppStack extends cdk.Stack {
     });
     const { stateMachine } = stepFunctionsStack;
 
+
     // Throttled S3Notification Stack
     const s3NotificationStack = new ThrottledS3NotificationStack(this, 'S3-Notification-Stack', {
       vpc,
@@ -142,7 +144,7 @@ export class BackendAppStack extends cdk.Stack {
       kmsKey,
       labels: labels,
     });
-    const { userPool } = cognitoStack;
+    const { userPool, cognitoClient, userPoolDomain, identityPool } = cognitoStack;
 
     // API Stack with enhanced security
     const restApiName = getCdkConstructId({ context: 'processing', resourceName: 'rest-api' }, this);
@@ -174,21 +176,34 @@ export class BackendAppStack extends cdk.Stack {
       policy: this.createRestrictiveApiPolicy(),
     });
 
-    const stackProps = {
-      securityGroup: securityGroupAPI,
-      restApi: restApi,
-      dataTableName: dataTable.tableName,
-      inputBucketName: inputBucket.bucketName,
-      outputBucketName: outputBucket.bucketName,
-      tableName: dataTable.tableName,
-      tableArn: dataTable.tableArn,
-      vpc: vpc,
-      kmsKey: kmsKey,
-      userPool: userPool,
-    };
+    new CfnOutput(this, 'CognitoUserPoolId', {
+      value: userPool.userPoolId,
+      exportName: `${labels.name()}-CognitoUserPoolId`,
+    });
 
-    // Api Stack
-    const apiStack = new ApiStack(this, 'Api-Stack', stackProps);
+    new CfnOutput(this, 'RestApiUrl', {
+      value: restApi.url,
+      description: 'REST API Gateway URL for the application',
+      exportName: `${labels.name()}-rest-api-uri`,
+    });
+
+    new CfnOutput(this, 'UserPoolClientId', {
+      value: cognitoClient.userPoolClientId,
+      description: 'Cognito User Pool Client ID',
+      exportName: `${labels.name()}-client-id`,
+    });
+
+    new CfnOutput(this, 'CognitoDomainUrl', {
+      value: `https://${userPoolDomain.domainName}.auth.${this.region}.amazoncognito.com`,
+      description: 'Cognito hosted UI domain URL',
+      exportName: `${labels.name()}-cognito-domain`,
+    });
+
+    new CfnOutput(this, 'IdentityPoolId', {
+      value: identityPool.ref,
+      description: 'Cognito Identity Pool ID',
+      exportName: `${labels.name()}-identity-pool-id`,
+    });
 
     // Enhanced CDK Nag suppressions for marketplace compliance
     this.addMarketplaceNagSuppressions(restApi, iamStack, s3NotificationStack, sageMakerStack);

@@ -1,8 +1,9 @@
-import { Aspects, StackProps, Stage, Tags } from 'aws-cdk-lib';
+import { Aspects, Fn, StackProps, Stage, Tags } from 'aws-cdk-lib';
 import { AwsSolutionsChecks, HIPAASecurityChecks, NIST80053R5Checks, PCIDSS321Checks } from 'cdk-nag';
 import { Construct } from 'constructs';
 import { BackendAppStack } from './backend-app-stack';
 import { Labels } from '../shared/labels';
+import { FrontendStack } from '../stacks/resources/FrontendStack';
 import { S3Stack } from '../stacks/resources/S3Stack';
 
 const REGION = process.env.CDK_DEFAULT_REGION || '';
@@ -23,7 +24,7 @@ export class ProdStage extends Stage {
 
     const s3Stack = new S3Stack(
       this,
-      `${args.labels.name()}-s3`,
+      'S3-Stack',
       args,
       {
         labels: args.labels,
@@ -32,13 +33,19 @@ export class ProdStage extends Stage {
 
     const backendAppStack = new BackendAppStack(
       this,
-      `${args.labels.name()}-backend-app`,
+      'Backend-App-Stack',
       args,
       {
         env: { region: REGION },
         description: 'AI-powered document processing platform with SageMaker integration - Marketplace Edition',
       },
     );
+    backendAppStack.addDependency(s3Stack);
+
+    const frontendStack = new FrontendStack(this, 'FrontEnd-Stack', args, {
+      labels: args.labels,
+    });
+    frontendStack.addDependency(backendAppStack);
 
     // Apply comprehensive compliance checks based on configuration
     this.addComplianceChecks(backendAppStack, args.complianceFramework);
