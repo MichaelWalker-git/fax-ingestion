@@ -11,6 +11,7 @@ import {
 } from 'aws-cdk-lib/aws-apigateway';
 import { CachePolicy, Distribution, SecurityPolicyProtocol, ViewerProtocolPolicy } from 'aws-cdk-lib/aws-cloudfront';
 import { S3Origin } from 'aws-cdk-lib/aws-cloudfront-origins';
+import { UserPool } from 'aws-cdk-lib/aws-cognito';
 import { Bucket, IBucket } from 'aws-cdk-lib/aws-s3';
 import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment';
 import { NagSuppressions } from 'cdk-nag';
@@ -31,7 +32,6 @@ import { StepFunctionsStack } from '../stacks/resources/StepFunctionsStack';
 import { ThrottledS3NotificationStack } from '../stacks/resources/ThrottledS3NotificationStack';
 import { VpcStack } from '../stacks/resources/VpcStack';
 import { SharedResourcesStack } from '../stacks/SharedResourcesStack';
-import {UserPool} from "aws-cdk-lib/aws-cognito";
 
 export interface StackProps {
   labels: Labels;

@@ -24,7 +24,7 @@ export class ProdStage extends Stage {
 
     const s3Stack = new S3Stack(
       this,
-      `${args.labels.name()}-s3`,
+      'S3-Stack',
       args,
       {
         labels: args.labels,
@@ -33,15 +33,17 @@ export class ProdStage extends Stage {
 
     const backendAppStack = new BackendAppStack(
       this,
-      `${args.labels.name()}-backend-app`,
+      'Backend-App-Stack',
       args,
       {
         env: { region: REGION },
         description: 'AI-powered document processing platform with SageMaker integration - Marketplace Edition',
       },
     );
+    backendAppStack.addDependency(s3Stack);
 
-    new FrontendStack(this, 'FrontEnd-Stack', args, {});
+    const frontendStack = new FrontendStack(this, 'FrontEnd-Stack', args, {});
+    frontendStack.addDependency(backendAppStack);
 
     // TODO
     // Apply comprehensive compliance checks based on configuration
