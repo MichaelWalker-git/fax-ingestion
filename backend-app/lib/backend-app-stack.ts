@@ -24,6 +24,7 @@ import { StepFunctionsStack } from '../stacks/resources/StepFunctionsStack';
 import { ThrottledS3NotificationStack } from '../stacks/resources/ThrottledS3NotificationStack';
 import { VpcStack } from '../stacks/resources/VpcStack';
 import { SharedResourcesStack } from '../stacks/SharedResourcesStack';
+import { ApiStack } from '../stacks/ApiStack';
 
 export interface StackProps {
   labels: Labels;
@@ -175,6 +176,22 @@ export class BackendAppStack extends cdk.Stack {
       },
       policy: this.createRestrictiveApiPolicy(),
     });
+
+    const stackProps = {
+      securityGroup: securityGroupAPI,
+      restApi: restApi,
+      dataTableName: dataTable.tableName,
+      inputBucketName: inputBucket.bucketName,
+      outputBucketName: outputBucket.bucketName,
+      tableName: dataTable.tableName,
+      tableArn: dataTable.tableArn,
+      vpc: vpc,
+      kmsKey: kmsKey,
+      userPool: userPool,
+    };
+
+    // Api Stack
+    const apiStack = new ApiStack(this, 'Api-Stack', stackProps);
 
     new CfnOutput(this, 'CognitoUserPoolId', {
       value: userPool.userPoolId,
