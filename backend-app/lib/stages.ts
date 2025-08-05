@@ -24,7 +24,7 @@ export class ProdStage extends Stage {
 
     const s3Stack = new S3Stack(
       this,
-      'S3-Stack',
+      `${args.labels.name()}-S3-Stack`,
       args,
       {
         labels: args.labels,
@@ -33,7 +33,7 @@ export class ProdStage extends Stage {
 
     const backendAppStack = new BackendAppStack(
       this,
-      'Backend-App-Stack',
+      `${args.labels.name()}-Backend-App-Stack`,
       args,
       {
         env: { region: REGION },
@@ -42,7 +42,7 @@ export class ProdStage extends Stage {
     );
     backendAppStack.addDependency(s3Stack);
 
-    const frontendStack = new FrontendStack(this, 'FrontEnd-Stack', args, {
+    const frontendStack = new FrontendStack(this, `${args.labels.name()}-FrontEnd-Stack`, args, {
       labels: args.labels,
     });
     frontendStack.addDependency(backendAppStack);

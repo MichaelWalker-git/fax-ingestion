@@ -24,7 +24,7 @@ const app = new cdk.App();
 // Create labels for the marketplace deployment
 const labels = new Labels(
   APP_LABEL,
-  STAGES.prod,
+  '',
   APP_REGION,
   APP_NAME,
   'marketplace',

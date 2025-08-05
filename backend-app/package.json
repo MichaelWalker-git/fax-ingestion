@@ -60,6 +60,7 @@
     "@google-cloud/functions-framework": "^3.5.1",
     "@google-cloud/local-auth": "^2.1.0",
     "@google-cloud/pubsub": "^4.10.0",
+    "@horustech/ai-document-processor-cdk": "^1.3.0",
     "@opensearch-project/opensearch": "^3.4.0",
     "@types/aws-lambda": "^8.10.146",
     "@types/busboy": "^1.5.4",
